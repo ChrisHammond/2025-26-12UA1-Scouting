@@ -2,6 +2,8 @@
 
 An almost-maybe-ready-to-use Astro site for youth hockey scouting: teams, tournaments, games, plus **MyHockeyRankings (MHR)** rating/record/ranks and a rating-history chart.
 
+This repo is designed to run on a local linux machine that has Astro and Node available. You may be able to run it 100% from Netlify without having a local build, but debugging any issues may become difficult. 
+
 ---
 
 ## Quick Start
@@ -44,7 +46,7 @@ Edit **src/config/settings.ts** and update these values:
 
 ## Add Your Data (content files)
 
-All season data lives in **/src/content**. You’ll mainly edit JSON files.
+All season data lives in **/src/content**. You’ll mainly add/edit JSON files.
 
 ### Teams
 Create one file per team in **src/content/teams/**:
