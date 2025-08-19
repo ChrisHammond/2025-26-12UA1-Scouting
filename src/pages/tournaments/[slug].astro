@@ -1,0 +1,82 @@
+---
+import BaseLayout from "../../layouts/BaseLayout.astro";
+import { getCollection } from "astro:content";
+
+export async function getStaticPaths() {
+  const tournaments = await getCollection("tournaments");
+  return tournaments.map((t) => ({
+    params: { slug: t.data.slug },
+    props: { tournament: t.data },
+  }));
+}
+
+const { tournament } = Astro.props;
+
+const teams = (await getCollection("teams")).map((t) => t.data);
+const games = (await getCollection("games"))
+  .map((g) => g.data)
+  .filter((g) => g.tournament === tournament.slug)
+  .sort((a, b) => new Date(a.date).getTime() - new Date(b.date).getTime());
+
+function getTeam(slug) {
+  return teams.find((t) => t.slug === slug);
+}
+---
+
+<BaseLayout title={`${tournament.name} – Chesterfield 12U A1`}>
+  <a href="/tournaments/" class="text-white hover:text-red-400">← Back to Tournaments</a>
+  <h1 class="text-2xl font-bold text-red-500 mt-2">{tournament.name}</h1>
+  <p class="text-gray-300">{tournament.location} • {new Date(tournament.startDate).toLocaleDateString()} – {new Date(tournament.endDate).toLocaleDateString()}</p>
+  {tournament.website && (
+    <p class="mt-1 text-gray-300">
+      Website: <a class="underline hover:text-red-400" href={tournament.website} target="_blank" rel="noopener">{tournament.website}</a>
+    </p>
+  )}
+
+  {tournament.opponents.length > 0 && (
+    <section class="mt-6">
+      <h2 class="text-xl font-semibold text-red-500 mb-2">Opponents</h2>
+      <ul class="list-disc list-inside text-gray-300">
+        {tournament.opponents.map((slug) => {
+          const team = getTeam(slug);
+          return <li>{team ? <a href={`/teams/${slug}/`} class="underline hover:text-red-400">{team.name}</a> : slug}</li>;
+        })}
+      </ul>
+    </section>
+  )}
+
+  {games.length > 0 && (
+    <section class="mt-6">
+      <h2 class="text-xl font-semibold text-red-500 mb-2">Games</h2>
+      <div class="overflow-x-auto rounded-lg border border-red-600">
+        <table class="min-w-full text-sm">
+          <thead class="bg-red-600 text-white uppercase text-xs">
+            <tr>
+              <th class="px-3 py-2 text-left">Date</th>
+              <th class="px-3 py-2 text-left">Opponent</th>
+              <th class="px-3 py-2">Home/Away</th>
+              <th class="px-3 py-2">League</th>
+              <th class="px-3 py-2 text-left">Venue</th>
+              <th class="px-3 py-2 text-left">Result</th>
+            </tr>
+          </thead>
+          <tbody class="bg-gray-900 divide-y divide-gray-700">
+            {games.map((g) => {
+              const opp = getTeam(g.opponent);
+              return (
+                <tr class="hover:bg-gray-800">
+                  <td class="px-3 py-2">{new Date(g.date).toLocaleDateString()}</td>
+                  <td class="px-3 py-2">{opp ? <a href={`/teams/${opp.slug}/`} class="underline hover:text-red-400">{opp.name}</a> : g.opponent}</td>
+                  <td class="px-3 py-2">{g.homeAway}</td>
+                  <td class="px-3 py-2">{g.leagueGame ? "Yes" : "No"}</td>
+                  <td class="px-3 py-2">{g.venue ?? "—"}</td>
+                  <td class="px-3 py-2">{g.result ? `${g.result} ${g.scoreFor}-${g.scoreAgainst}` : "—"}</td>
+                </tr>
+              );
+            })}
+          </tbody>
+        </table>
+      </div>
+    </section>
+  )}
+</BaseLayout>

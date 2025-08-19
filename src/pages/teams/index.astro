@@ -1,8 +1,29 @@
 ---
 import BaseLayout from "../../layouts/BaseLayout.astro";
+import { getCollection } from "astro:content";
+
+const teams = (await getCollection("teams"))
+  .map((t) => t.data)
+  .sort((a, b) => a.name.localeCompare(b.name));
 ---
 
 <BaseLayout title="Teams – Chesterfield 12U A1">
   <h1 class="text-2xl font-bold text-red-500 mb-4">Teams</h1>
-  <p class="text-gray-300">Coming soon…</p>
+
+  {teams.length === 0 ? (
+    <p class="text-gray-300">No teams added yet. Add JSON files to <code>src/content/teams/</code> and run <code>npx astro sync</code>.</p>
+  ) : (
+    <div class="grid gap-4 md:grid-cols-2 lg:grid-cols-3">
+      {teams.map((team) => (
+        <a href={`/teams/${team.slug}/`} class="block bg-gray-900 p-4 rounded-lg shadow hover:shadow-lg transition">
+          <div class="flex items-center justify-between">
+            <h2 class="text-lg font-bold text-red-400">{team.name}</h2>
+            <span class="text-xs text-gray-400">{team.division ?? ""}</span>
+          </div>
+          <p class="text-gray-300 mt-1">{team.league ?? ""}</p>
+          {team.record && <p class="text-gray-400 mt-2">Record: {team.record}</p>}
+        </a>
+      ))}
+    </div>
+  )}
 </BaseLayout>

@@ -1,0 +1,94 @@
+---
+import BaseLayout from "../../layouts/BaseLayout.astro";
+import { getCollection } from "astro:content";
+import RatingHistoryChart from "../../components/RatingHistoryChart.astro";
+
+export async function getStaticPaths() {
+  const teams = await getCollection("teams");
+  return teams.map((t) => ({
+    params: { slug: t.data.slug },
+    props: { team: t.data },
+  }));
+}
+
+const { team } = Astro.props;
+
+// Load games
+const games = (await getCollection("games"))
+  .map((g) => g.data)
+  .filter((g) => g.opponent === team.slug)
+  .sort((a, b) => new Date(a.date).getTime() - new Date(b.date).getTime());
+
+// Load tournaments
+const tournaments = (await getCollection("tournaments")).map((t) => t.data);
+function getTournament(slug) {
+  return tournaments.find((t) => t.slug === slug);
+}
+
+// Load rating history JSON from src/data/mhr-history/<slug>.json
+// Use import.meta.glob to include at build-time and pick by path key.
+const histMods = import.meta.glob("../../data/mhr-history/*.json", { eager: true });
+const histKey = `../../data/mhr-history/${team.slug}.json`;
+const ratingHistory = (histMods[histKey]?.default ?? []).filter(p => p && p.date && typeof p.rating === "number");
+ratingHistory.sort((a, b) => a.date.localeCompare(b.date));
+---
+
+<BaseLayout title={`${team.name} – Chesterfield 12U A1`}>
+  <a href="/teams/" class="text-white hover:text-red-400">← Back to Teams</a>
+  <h1 class="text-2xl font-bold text-red-500 mt-2">{team.name}</h1>
+
+  <div class="mt-2 text-gray-300 space-y-1">
+    {team.division && <p>Division: {team.division}</p>}
+    {team.league && <p>League: {team.league}</p>}
+    {team.record && <p>Record: {team.record}</p>}
+    {team.rating != null && <p>Current MHR Rating: {team.rating}</p>}
+    {team.website && (
+      <p>Website: <a href={team.website} target="_blank" rel="noopener" class="underline hover:text-red-400">{team.website}</a></p>
+    )}
+    {team.mhrUrl && (
+      <p>MHR: <a href={team.mhrUrl} target="_blank" rel="noopener" class="underline hover:text-red-400">{team.mhrUrl}</a></p>
+    )}
+  </div>
+
+  <section class="mt-6">
+    <RatingHistoryChart points={ratingHistory} title="MHR Rating Trend" />
+  </section>
+
+  <h2 class="text-xl font-semibold text-red-500 mt-8 mb-2">Games vs {team.name}</h2>
+
+  {games.length === 0 ? (
+    <p class="text-gray-300">No games recorded yet against this team.</p>
+  ) : (
+    <div class="overflow-x-auto rounded-lg border border-red-600">
+      <table class="min-w-full text-sm">
+        <thead class="bg-red-600 text-white uppercase text-xs">
+          <tr>
+            <th class="px-3 py-2 text-left">Date</th>
+            <th class="px-3 py-2">Home/Away</th>
+            <th class="px-3 py-2">League</th>
+            <th class="px-3 py-2 text-left">Tournament</th>
+            <th class="px-3 py-2 text-left">Venue</th>
+            <th class="px-3 py-2 text-left">Result</th>
+          </tr>
+        </thead>
+        <tbody class="bg-gray-900 divide-y divide-gray-700">
+          {games.map((g) => {
+            const tourney = g.tournament ? getTournament(g.tournament) : null;
+            return (
+              <tr class="hover:bg-gray-800">
+                <td class="px-3 py-2">{new Date(g.date).toLocaleDateString()}</td>
+                <td class="px-3 py-2">{g.homeAway}</td>
+                <td class="px-3 py-2">{g.leagueGame ? "Yes" : "No"}</td>
+                <td class="px-3 py-2">
+                  {tourney ? <a class="underline hover:text-red-400" href={`/tournaments/${tourney.slug}/`}>{tourney.name}</a> : "—"}
+                </td>
+                <td class="px-3 py-2">{g.venue ?? "—"}</td>
+                <td class="px-3 py-2">{g.result ? `${g.result} ${g.scoreFor}-${g.scoreAgainst}` : "—"}</td>
+              </tr>
+            );
+          })}
+        </tbody>
+      </table>
+    </div>
+  )}
+</BaseLayout>

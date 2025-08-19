@@ -1,8 +1,50 @@
 ---
 import BaseLayout from "../../layouts/BaseLayout.astro";
+import { getCollection } from "astro:content";
+
+const tournaments = (await getCollection("tournaments"))
+  .map((t) => t.data)
+  .sort((a, b) => new Date(a.startDate).getTime() - new Date(b.startDate).getTime());
+
+const now = new Date();
+const upcoming = tournaments.filter((t) => new Date(t.endDate) >= now);
+const past = tournaments.filter((t) => new Date(t.endDate) < now);
 ---
 
 <BaseLayout title="Tournaments – Chesterfield 12U A1">
   <h1 class="text-2xl font-bold text-red-500 mb-4">Tournaments</h1>
-  <p class="text-gray-300">Coming soon…</p>
+
+  <section class="mb-8">
+    <h2 class="text-xl font-semibold text-red-500 mb-2">Upcoming</h2>
+    {upcoming.length === 0 ? (
+      <p class="text-gray-300">No upcoming tournaments.</p>
+    ) : (
+      <div class="grid gap-4 md:grid-cols-2 lg:grid-cols-3">
+        {upcoming.map((t) => (
+          <a href={`/tournaments/${t.slug}/`} class="block bg-gray-900 p-4 rounded-lg shadow hover:shadow-lg transition">
+            <h3 class="text-lg font-bold text-red-400">{t.name}</h3>
+            <p class="text-gray-300">{t.location}</p>
+            <p class="text-gray-400">{new Date(t.startDate).toLocaleDateString()} – {new Date(t.endDate).toLocaleDateString()}</p>
+          </a>
+        ))}
+      </div>
+    )}
+  </section>
+
+  <section>
+    <h2 class="text-xl font-semibold text-red-500 mb-2">Past</h2>
+    {past.length === 0 ? (
+      <p class="text-gray-300">No past tournaments.</p>
+    ) : (
+      <div class="grid gap-4 md:grid-cols-2 lg:grid-cols-3">
+        {past.map((t) => (
+          <a href={`/tournaments/${t.slug}/`} class="block bg-gray-900 p-4 rounded-lg shadow hover:shadow-lg transition">
+            <h3 class="text-lg font-bold text-red-400">{t.name}</h3>
+            <p class="text-gray-300">{t.location}</p>
+            <p class="text-gray-400">{new Date(t.startDate).toLocaleDateString()} – {new Date(t.endDate).toLocaleDateString()}</p>
+          </a>
+        ))}
+      </div>
+    )}
+  </section>
 </BaseLayout>
