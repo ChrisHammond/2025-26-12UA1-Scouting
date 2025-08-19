@@ -1,0 +1,1 @@
+export const buildTimestampISO = new Date().toISOString();

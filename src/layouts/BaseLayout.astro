@@ -1,6 +1,23 @@
 ---
 import "../styles/global.css";
+import { buildTimestampISO } from "../lib/build-info";
+
 const { title = "Chesterfield 12U A1 Scouting" } = Astro.props;
+
+// Build timestamp (frozen on build, live in dev)
+const isDev = import.meta.env.DEV;
+const builtAt = isDev ? new Date() : new Date(buildTimestampISO);
+const builtAtDisplay = builtAt.toLocaleString("en-US", {
+  timeZone: "America/Chicago",
+  year: "numeric",
+  month: "short",
+  day: "2-digit",
+  hour: "2-digit",
+  minute: "2-digit",
+  second: "2-digit",
+  hour12: true,
+  timeZoneName: "short",
+});
 ---
 
 <html lang="en" class="bg-black text-white">
@@ -11,7 +28,7 @@ const { title = "Chesterfield 12U A1 Scouting" } = Astro.props;
   </head>
 
   <body class="min-h-screen flex flex-col font-sans">
-    <!-- Header -->
+    <!-- Header (NAV) -->
     <header class="bg-black border-b border-red-600">
       <div class="max-w-6xl mx-auto px-4 py-3 flex justify-between items-center">
         <h1 class="text-xl md:text-2xl font-bold text-red-500 tracking-wide">
@@ -33,6 +50,9 @@ const { title = "Chesterfield 12U A1 Scouting" } = Astro.props;
     <!-- Footer -->
     <footer class="bg-black border-t border-red-600 text-gray-400 text-sm p-4 text-center">
       © {new Date().getFullYear()} Chesterfield 12U A1 Scouting
+      <div class="mt-1 text-xs text-gray-500">
+        Last built: {builtAtDisplay}
+      </div>
     </footer>
   </body>
 </html>
