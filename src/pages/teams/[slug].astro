@@ -21,27 +21,28 @@ const games = (await getCollection("games"))
 
 // Load tournaments
 const tournaments = (await getCollection("tournaments")).map((t) => t.data);
-function getTournament(slug) {
+function getTournament(slug: string) {
   return tournaments.find((t) => t.slug === slug);
 }
 
-// Load rating history JSON from src/data/mhr-history/<slug>.json
-// Use import.meta.glob to include at build-time and pick by path key.
+// Load rating history from src/data/mhr-history/<slug>.json
 const histMods = import.meta.glob("../../data/mhr-history/*.json", { eager: true });
 const histKey = `../../data/mhr-history/${team.slug}.json`;
-const ratingHistory = (histMods[histKey]?.default ?? []).filter(p => p && p.date && typeof p.rating === "number");
-ratingHistory.sort((a, b) => a.date.localeCompare(b.date));
+const ratingHistory = (histMods[histKey]?.default ?? [])
+  .filter((p: any) => p && p.date && typeof p.rating === "number")
+  .sort((a: any, b: any) => a.date.localeCompare(b.date));
 ---
 
 <BaseLayout title={`${team.name} – Chesterfield 12U A1`}>
   <a href="/teams/" class="text-white hover:text-red-400">← Back to Teams</a>
   <h1 class="text-2xl font-bold text-red-500 mt-2">{team.name}</h1>
 
+  <!-- Team meta -->
   <div class="mt-2 text-gray-300 space-y-1">
     {team.division && <p>Division: {team.division}</p>}
     {team.league && <p>League: {team.league}</p>}
     {team.record && <p>Record: {team.record}</p>}
-    {team.rating != null && <p>Current MHR Rating: {team.rating}</p>}
+    {typeof team.rating === "number" && <p>Current MHR Rating: {team.rating.toFixed(2)}</p>}
     {team.website && (
       <p>Website: <a href={team.website} target="_blank" rel="noopener" class="underline hover:text-red-400">{team.website}</a></p>
     )}
@@ -50,10 +51,30 @@ ratingHistory.sort((a, b) => a.date.localeCompare(b.date));
     )}
   </div>
 
+  <!-- Ranks row -->
+  <div class="mt-3 flex flex-wrap gap-2">
+    <span class="inline-flex items-center gap-2 px-3 py-1 rounded-full border border-red-600 bg-red-600/20 text-red-300">
+      <span class="text-xs uppercase tracking-wide">State Rank</span>
+      <span class="font-semibold text-white">{typeof team.mhrStateRank === "number" ? `#${team.mhrStateRank}` : "—"}</span>
+    </span>
+    <span class="inline-flex items-center gap-2 px-3 py-1 rounded-full border border-red-600 bg-red-600/20 text-red-300">
+      <span class="text-xs uppercase tracking-wide">National Rank</span>
+      <span class="font-semibold text-white">{typeof team.mhrNationalRank === "number" ? `#${team.mhrNationalRank}` : "—"}</span>
+    </span>
+    {team.lastUpdated && (
+      <span class="inline-flex items-center gap-2 px-3 py-1 rounded-full border border-gray-700 bg-gray-800 text-gray-300">
+        <span class="text-xs uppercase tracking-wide">Updated</span>
+        <span class="font-mono">{team.lastUpdated}</span>
+      </span>
+    )}
+  </div>
+
+  <!-- Rating trend -->
   <section class="mt-6">
     <RatingHistoryChart points={ratingHistory} title="MHR Rating Trend" />
   </section>
 
+  <!-- Games table -->
   <h2 class="text-xl font-semibold text-red-500 mt-8 mb-2">Games vs {team.name}</h2>
 
   {games.length === 0 ? (
