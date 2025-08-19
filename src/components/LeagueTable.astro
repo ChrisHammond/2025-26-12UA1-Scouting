@@ -1,0 +1,73 @@
+---
+import { getCollection } from "astro:content";
+
+// Helpers: normalize strings like "MO Hockey" → "mohockey", "12U A1" → "12ua1"
+const norm = (s?: string) => (s ?? "").replace(/[^a-z0-9]/gi, "").toLowerCase();
+
+// Load all teams from content collections
+const allTeams = await getCollection("teams");
+
+// Filter to MO Hockey + 12U A1 (case/format-insensitive)
+const leagueKey = "mohockey";
+const divisionKey = "12ua1";
+
+const rows = allTeams
+  .map((t) => t.data)
+  .filter((t) => norm(t.league) === leagueKey && norm(t.division) === divisionKey)
+  .sort((a, b) => {
+    // Sort by rating desc, then by name
+    const ra = typeof a.rating === "number" ? a.rating : -1;
+    const rb = typeof b.rating === "number" ? b.rating : -1;
+    if (rb !== ra) return rb - ra;
+    return a.name.localeCompare(b.name);
+  });
+---
+
+<div class="mt-8">
+  <h2 class="text-2xl font-semibold text-red-500 mb-3">
+    MO Hockey — 12U A1 Standings
+  </h2>
+
+  {rows.length === 0 ? (
+    <p class="text-gray-300">
+      No teams matched. Make sure each team JSON has <code>league: "MO Hockey"</code> and
+      <code>division: "12U A1"</code>.
+    </p>
+  ) : (
+    <div class="overflow-x-auto rounded-lg border border-red-600">
+      <table class="min-w-full text-sm">
+        <thead class="bg-red-600 text-white uppercase text-xs">
+          <tr>
+            <th class="px-3 py-2 text-left">#</th>
+            <th class="px-3 py-2 text-left">Team</th>
+            <th class="px-3 py-2 text-left">Record</th>
+            <th class="px-3 py-2 text-left">MHR Rating</th>
+            <th class="px-3 py-2 text-left">Links</th>
+            <th class="px-3 py-2 text-left">Updated</th>
+          </tr>
+        </thead>
+        <tbody class="bg-gray-900 divide-y divide-gray-700">
+          {rows.map((t, i) => (
+            <tr class="hover:bg-gray-800">
+              <td class="px-3 py-2">{i + 1}</td>
+              <td class="px-3 py-2">
+                <a href={`/teams/${t.slug}/`} class="underline hover:text-red-400">{t.name}</a>
+              </td>
+              <td class="px-3 py-2">{t.record ?? "—"}</td>
+              <td class="px-3 py-2">{typeof t.rating === "number" ? t.rating.toFixed(2) : "—"}</td>
+              <td class="px-3 py-2 space-x-3">
+                {t.website && (
+                  <a href={t.website} target="_blank" rel="noopener" class="underline hover:text-red-400">Site</a>
+                )}
+                {t.mhrUrl && (
+                  <a href={t.mhrUrl} target="_blank" rel="noopener" class="underline hover:text-red-400">MHR</a>
+                )}
+              </td>
+              <td class="px-3 py-2">{t.lastUpdated ?? "—"}</td>
+            </tr>
+          ))}
+        </tbody>
+      </table>
+    </div>
+  )}
+</div>

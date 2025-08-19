@@ -18,7 +18,7 @@ const teams = (await getCollection("teams"))
         <a href={`/teams/${team.slug}/`} class="block bg-gray-900 p-4 rounded-lg shadow hover:shadow-lg transition">
           <div class="flex items-center justify-between">
             <h2 class="text-lg font-bold text-red-400">{team.name}</h2>
-            <span class="text-xs text-gray-400">{team.division ?? ""}</span>
+            
           </div>
           <p class="text-gray-300 mt-1">{team.league ?? ""}</p>
           {team.record && <p class="text-gray-400 mt-2">Record: {team.record}</p>}
