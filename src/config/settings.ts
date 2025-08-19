@@ -11,7 +11,7 @@ export type PortalSettings = {
 
 // Prefer PUBLIC_ env vars (work locally & on Netlify) and fall back to sensible defaults.
 const settings: PortalSettings = {
-  portalName: import.meta.env.PUBLIC_PORTAL_NAME ?? "Chesterfield Falcons 12UA1 Scouting Portal",
+  portalName: import.meta.env.PUBLIC_PORTAL_NAME ?? "Chesterfield Falcons 12U A1 Scouting Portal",
   teamName: import.meta.env.PUBLIC_TEAM_NAME ?? "Chesterfield 12U A1",
   teamSlug: import.meta.env.PUBLIC_TEAM_SLUG ?? "chesterfield-a1",
   leagueName: import.meta.env.PUBLIC_LEAGUE_NAME ?? "MO Hockey",
