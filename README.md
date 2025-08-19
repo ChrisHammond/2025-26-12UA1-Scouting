@@ -145,11 +145,11 @@ It updates:
 
 ## License
 
-Add your preferred license (MIT recommended).
+This project is licensed under a very broad MIT license.
 
 ---
 
 ## Credits
 
-Originally built for a Falcons 12U A1 scouting portal. 🏒🟥⬛️  
+Originally built for a Chesterfield Falcons 12U A1 scouting portal. 🏒🟥⬛️  
 Powered by Astro + Tailwind.
