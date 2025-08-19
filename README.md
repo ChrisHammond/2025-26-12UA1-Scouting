@@ -4,7 +4,7 @@ An almost-maybe-ready-to-use Astro site for youth hockey scouting: teams, tourna
 
 This repo is designed to run on a local linux machine that has Astro and Node available. You may be able to run it 100% from Netlify without having a local build, but debugging any issues may become difficult. 
 
-You can view what this looks like on our [LIVE PRODUCTION] site(https://chesterfield12ua1.netlify.app/)
+You can view what this looks like on our [LIVE PRODUCTION](https://chesterfield12ua1.netlify.app/) site.
 
 ---
 
