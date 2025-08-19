@@ -1,0 +1,38 @@
+---
+import "../styles/global.css";
+const { title = "Chesterfield 12U A1 Scouting" } = Astro.props;
+---
+
+<html lang="en" class="bg-black text-white">
+  <head>
+    <meta charset="utf-8" />
+    <title>{title}</title>
+    <meta name="viewport" content="width=device-width, initial-scale=1" />
+  </head>
+
+  <body class="min-h-screen flex flex-col font-sans">
+    <!-- Header -->
+    <header class="bg-black border-b border-red-600">
+      <div class="max-w-6xl mx-auto px-4 py-3 flex justify-between items-center">
+        <h1 class="text-xl md:text-2xl font-bold text-red-500 tracking-wide">
+          <a href="/">Chesterfield 12U A1</a>
+        </h1>
+        <nav class="space-x-4 text-sm md:text-base">
+          <a href="/teams/" class="text-white hover:text-red-400">Teams</a>
+          <a href="/tournaments/" class="text-white hover:text-red-400">Tournaments</a>
+          <a href="/schedule/" class="text-white hover:text-red-400">Schedule</a>
+        </nav>
+      </div>
+    </header>
+
+    <!-- Main -->
+    <main class="flex-1 max-w-6xl mx-auto p-6">
+      <slot />
+    </main>
+
+    <!-- Footer -->
+    <footer class="bg-black border-t border-red-600 text-gray-400 text-sm p-4 text-center">
+      © {new Date().getFullYear()} Chesterfield 12U A1 Scouting
+    </footer>
+  </body>
+</html>

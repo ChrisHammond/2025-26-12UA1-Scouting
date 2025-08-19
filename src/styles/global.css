@@ -1,0 +1,8 @@
+/* Tell Tailwind to scan your Astro/JS/TS files for class names */
+@source "./src/**/*.{astro,html,js,jsx,ts,tsx,vue,svelte}";
+
+
+@import "tailwindcss";
+
+/* Optional: tiny global polish; avoid @apply for arbitrary utilities in v4 */
+* { box-sizing: border-box; }
