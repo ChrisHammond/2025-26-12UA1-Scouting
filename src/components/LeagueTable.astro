@@ -1,16 +1,17 @@
 ---
 import { getCollection } from "astro:content";
+import settings from "../config/settings";
 
-/** Props */
+/** Props (all optional) */
 const {
-  league = "MO Hockey",
-  division = "12U A1",
+  league = settings.leagueName,
+  division = settings.divisionName,
   hideSelf = false,
-  selfSlug = "chesterfield-a1",
+  selfSlug = settings.teamSlug,
+  highlightSelf = true,
 } = Astro.props;
 
 const norm = (s?: string) => (s ?? "").replace(/[^a-z0-9]/gi, "").toLowerCase();
-
 const leagueKey = norm(league);
 const divisionKey = norm(division);
 
@@ -28,6 +29,21 @@ const rows = (await getCollection("teams"))
     if (na !== nb) return na - nb;
     return a.name.localeCompare(b.name);
   });
+
+function updatedBadge(lastUpdated?: string) {
+  if (!lastUpdated) return { text: "—", cls: "" };
+  const d = new Date(lastUpdated);
+  if (isNaN(d.getTime())) return { text: lastUpdated, cls: "" };
+  const ms = Date.now() - d.getTime();
+  const days = Math.floor(ms / (1000 * 60 * 60 * 24));
+  const text = days === 0 ? "today" : `${days}d ago`;
+  // color code staleness
+  const cls =
+    days <= 7 ? "text-green-300" :
+    days <= 21 ? "text-yellow-300" :
+    "text-red-300";
+  return { text, cls };
+}
 ---
 
 <div class="mt-8">
@@ -56,23 +72,35 @@ const rows = (await getCollection("teams"))
           </tr>
         </thead>
         <tbody class="bg-gray-900 divide-y divide-gray-700">
-          {rows.map((t, i) => (
-            <tr class="hover:bg-gray-800">
-              <td class="px-3 py-2">{i + 1}</td>
-              <td class="px-3 py-2">
-                <a href={`/teams/${t.slug}/`} class="underline hover:text-red-400">{t.name}</a>
-              </td>
-              <td class="px-3 py-2">{t.record ?? "—"}</td>
-              <td class="px-3 py-2">{typeof t.rating === "number" ? t.rating.toFixed(2) : "—"}</td>
-              <td class="px-3 py-2">{typeof t.mhrStateRank === "number" ? `#${t.mhrStateRank}` : "—"}</td>
-              <td class="px-3 py-2">{typeof t.mhrNationalRank === "number" ? `#${t.mhrNationalRank}` : "—"}</td>
-              <td class="px-3 py-2 space-x-3">
-                {t.website && <a href={t.website} target="_blank" rel="noopener" class="underline hover:text-red-400">Site</a>}
-                {t.mhrUrl && <a href={t.mhrUrl} target="_blank" rel="noopener" class="underline hover:text-red-400">MHR</a>}
-              </td>
-              <td class="px-3 py-2">{t.lastUpdated ?? "—"}</td>
-            </tr>
-          ))}
+          {rows.map((t, i) => {
+            const isSelf = t.slug === selfSlug;
+            const badge = updatedBadge(t.lastUpdated);
+            return (
+              <tr class={`hover:bg-gray-800 ${highlightSelf && isSelf ? "ring-1 ring-red-600/70" : ""}`}>
+                <td class="px-3 py-2">{i + 1}</td>
+                <td class="px-3 py-2">
+                  <a href={`/teams/${t.slug}/`} class="underline hover:text-red-400">
+                    {t.name}
+                  </a>
+                  {highlightSelf && isSelf && (
+                    <span class="ml-2 inline-block rounded-full bg-red-600/30 border border-red-600 px-2 py-0.5 text-[10px] uppercase tracking-wide text-red-300 align-middle">Your Team</span>
+                  )}
+                </td>
+                <td class="px-3 py-2">{t.record ?? "—"}</td>
+                <td class="px-3 py-2">{typeof t.rating === "number" ? t.rating.toFixed(2) : "—"}</td>
+                <td class="px-3 py-2">{typeof t.mhrStateRank === "number" ? `#${t.mhrStateRank}` : "—"}</td>
+                <td class="px-3 py-2">{typeof t.mhrNationalRank === "number" ? `#${t.mhrNationalRank}` : "—"}</td>
+                <td class="px-3 py-2 space-x-3">
+                  {t.website && <a href={t.website} target="_blank" rel="noopener" class="underline hover:text-red-400">Site</a>}
+                  {t.mhrUrl && <a href={t.mhrUrl} target="_blank" rel="noopener" class="underline hover:text-red-400">MHR</a>}
+                </td>
+                <td class="px-3 py-2">
+                  <span class={`font-mono ${badge.cls}`}>{badge.text}</span>
+                  {t.lastUpdated && <span class="ml-2 text-gray-400">({t.lastUpdated})</span>}
+                </td>
+              </tr>
+            );
+          })}
         </tbody>
       </table>
     </div>

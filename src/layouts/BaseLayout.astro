@@ -1,8 +1,9 @@
 ---
 import "../styles/global.css";
 import { buildTimestampISO } from "../lib/build-info";
+import settings from "../config/settings";
 
-const { title = "Chesterfield 12U A1 Scouting" } = Astro.props;
+const { title = settings.portalName } = Astro.props;
 
 // Build timestamp (frozen on build, live in dev)
 const isDev = import.meta.env.DEV;
@@ -25,6 +26,7 @@ const builtAtDisplay = builtAt.toLocaleString("en-US", {
     <meta charset="utf-8" />
     <title>{title}</title>
     <meta name="viewport" content="width=device-width, initial-scale=1" />
+    <link rel="icon" href="/favicon.svg" type="image/svg+xml" />
   </head>
 
   <body class="min-h-screen flex flex-col font-sans">
@@ -32,7 +34,7 @@ const builtAtDisplay = builtAt.toLocaleString("en-US", {
     <header class="bg-black border-b border-red-600">
       <div class="max-w-6xl mx-auto px-4 py-3 flex justify-between items-center">
         <h1 class="text-xl md:text-2xl font-bold text-red-500 tracking-wide">
-          <a href="/">Chesterfield 12U A1</a>
+          <a href="/">{settings.portalName}</a>
         </h1>
         <nav class="space-x-4 text-sm md:text-base">
           <a href="/teams/" class="text-white hover:text-red-400">Teams</a>
@@ -49,10 +51,10 @@ const builtAtDisplay = builtAt.toLocaleString("en-US", {
 
     <!-- Footer -->
     <footer class="bg-black border-t border-red-600 text-gray-400 text-sm p-4 text-center">
-      © {new Date().getFullYear()} Chesterfield 12U A1 Scouting
+      © {new Date().getFullYear()} {settings.portalName}
       <div class="mt-1 text-xs text-gray-500">
-        Last built: {builtAtDisplay}
-        <p>This page is for entertainment purposes only and is not officially affiliated with anyone.</p>
+        <div>Last built: {builtAtDisplay}</div>
+        <p class="mt-1">This page is for entertainment purposes only and is not officially affiliated with anyone.</p>
       </div>
     </footer>
   </body>
