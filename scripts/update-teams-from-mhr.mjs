@@ -153,6 +153,21 @@ async function updateTeam(teamPath) {
     changed = true;
   }
 
+
+  const natRank = findNationalRank(html);
+  const stRank = findStateRank(html);
+
+  if (natRank != null && natRank !== team.mhrNationalRank) {
+    console.log(`  national rank: ${team.mhrNationalRank ?? "—"} -> ${natRank}`);
+    team.mhrNationalRank = natRank;
+    changed = true;
+  }
+  if (stRank != null && stRank !== team.mhrStateRank) {
+    console.log(`  state rank: ${team.mhrStateRank ?? "—"} -> ${stRank}`);
+    team.mhrStateRank = stRank;
+    changed = true;
+  }
+
   team.lastUpdated = today;
 
   // Append to history
@@ -201,6 +216,29 @@ async function main() {
 
   console.log("Done.");
 }
+
+function findNationalRank(html) {
+  const text = toText(html);
+  // Looks for "National Rank: 123" (robust to punctuation and #)
+  const rx = /National\s*Rank\s*[:#]?\s*#?\s*([0-9,]+)/i;
+  const m = text.match(rx);
+  return m ? parseInt(m[1].replace(/,/g, ""), 10) : null;
+}
+
+function findStateRank(html) {
+  const text = toText(html);
+  // Common variants: "State Rank: 5", "Rank (State): 5"
+  const patterns = [
+    /State\s*Rank\s*[:#]?\s*#?\s*([0-9,]+)/i,
+    /Rank\s*\(State\)\s*[:#]?\s*#?\s*([0-9,]+)/i,
+  ];
+  for (const rx of patterns) {
+    const m = text.match(rx);
+    if (m) return parseInt(m[1].replace(/,/g, ""), 10);
+  }
+  return null;
+}
+
 
 main().catch((e) => {
   console.error(e);

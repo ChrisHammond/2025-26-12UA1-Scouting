@@ -1,15 +1,20 @@
 import { defineCollection, z } from 'astro:content';
 
 const teams = defineCollection({
-  type: 'data',
+  type: "data",
   schema: z.object({
     name: z.string(),
     slug: z.string(),
     division: z.string().optional(),
     league: z.string().optional(),
+    // NEW (optional)
     website: z.string().url().optional(),
     mhrUrl: z.string().url().optional(),
-    record: z.string().optional(), // "10-4-2"
+    rating: z.number().optional(),
+    record: z.string().optional(),
+    lastUpdated: z.string().optional(),
+    mhrStateRank: z.number().int().optional(),     // NEW
+    mhrNationalRank: z.number().int().optional(),  // NEW
   }),
 });
 

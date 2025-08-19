@@ -1,37 +1,44 @@
 ---
 import { getCollection } from "astro:content";
 
-// Helpers: normalize strings like "MO Hockey" → "mohockey", "12U A1" → "12ua1"
+/** Props */
+const {
+  league = "MO Hockey",
+  division = "12U A1",
+  hideSelf = false,
+  selfSlug = "chesterfield-a1",
+} = Astro.props;
+
 const norm = (s?: string) => (s ?? "").replace(/[^a-z0-9]/gi, "").toLowerCase();
 
-// Load all teams from content collections
-const allTeams = await getCollection("teams");
+const leagueKey = norm(league);
+const divisionKey = norm(division);
 
-// Filter to MO Hockey + 12U A1 (case/format-insensitive)
-const leagueKey = "mohockey";
-const divisionKey = "12ua1";
-
-const rows = allTeams
+const rows = (await getCollection("teams"))
   .map((t) => t.data)
   .filter((t) => norm(t.league) === leagueKey && norm(t.division) === divisionKey)
+  .filter((t) => (hideSelf ? t.slug !== selfSlug : true))
   .sort((a, b) => {
-    // Sort by rating desc, then by name
+    // Sort by rating desc, then national rank asc, then name
     const ra = typeof a.rating === "number" ? a.rating : -1;
     const rb = typeof b.rating === "number" ? b.rating : -1;
     if (rb !== ra) return rb - ra;
+    const na = typeof a.mhrNationalRank === "number" ? a.mhrNationalRank : 999999;
+    const nb = typeof b.mhrNationalRank === "number" ? b.mhrNationalRank : 999999;
+    if (na !== nb) return na - nb;
     return a.name.localeCompare(b.name);
   });
 ---
 
 <div class="mt-8">
   <h2 class="text-2xl font-semibold text-red-500 mb-3">
-    MO Hockey — 12U A1 Standings
+    {league} — {division} Standings
   </h2>
 
   {rows.length === 0 ? (
     <p class="text-gray-300">
-      No teams matched. Make sure each team JSON has <code>league: "MO Hockey"</code> and
-      <code>division: "12U A1"</code>.
+      No teams matched. Ensure team JSON has <code>league: "{league}"</code> and
+      <code>division: "{division}"</code>.
     </p>
   ) : (
     <div class="overflow-x-auto rounded-lg border border-red-600">
@@ -42,6 +49,8 @@ const rows = allTeams
             <th class="px-3 py-2 text-left">Team</th>
             <th class="px-3 py-2 text-left">Record</th>
             <th class="px-3 py-2 text-left">MHR Rating</th>
+            <th class="px-3 py-2 text-left">State Rank</th>
+            <th class="px-3 py-2 text-left">National Rank</th>
             <th class="px-3 py-2 text-left">Links</th>
             <th class="px-3 py-2 text-left">Updated</th>
           </tr>
@@ -55,13 +64,11 @@ const rows = allTeams
               </td>
               <td class="px-3 py-2">{t.record ?? "—"}</td>
               <td class="px-3 py-2">{typeof t.rating === "number" ? t.rating.toFixed(2) : "—"}</td>
+              <td class="px-3 py-2">{typeof t.mhrStateRank === "number" ? `#${t.mhrStateRank}` : "—"}</td>
+              <td class="px-3 py-2">{typeof t.mhrNationalRank === "number" ? `#${t.mhrNationalRank}` : "—"}</td>
               <td class="px-3 py-2 space-x-3">
-                {t.website && (
-                  <a href={t.website} target="_blank" rel="noopener" class="underline hover:text-red-400">Site</a>
-                )}
-                {t.mhrUrl && (
-                  <a href={t.mhrUrl} target="_blank" rel="noopener" class="underline hover:text-red-400">MHR</a>
-                )}
+                {t.website && <a href={t.website} target="_blank" rel="noopener" class="underline hover:text-red-400">Site</a>}
+                {t.mhrUrl && <a href={t.mhrUrl} target="_blank" rel="noopener" class="underline hover:text-red-400">MHR</a>}
               </td>
               <td class="px-3 py-2">{t.lastUpdated ?? "—"}</td>
             </tr>
