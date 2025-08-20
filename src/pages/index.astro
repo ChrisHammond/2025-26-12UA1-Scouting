@@ -1,6 +1,7 @@
 ---
 import BaseLayout from "../layouts/BaseLayout.astro";
 import LeagueTable from "../components/LeagueTable.astro";
+import MultiTeamRatingChart from "../components/MultiTeamRatingChart.astro";
 import settings from "../config/settings";
 import { getCollection } from "astro:content";
 
@@ -37,4 +38,9 @@ const tournaments = await getCollection("tournaments");
     division={settings.divisionName}
     selfSlug={settings.teamSlug}
   />
+
+
+  <MultiTeamRatingChart />
+
+  
 </BaseLayout>

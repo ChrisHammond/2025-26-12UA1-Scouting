@@ -2,7 +2,6 @@
 import { getCollection } from "astro:content";
 import settings from "../config/settings";
 
-/** Props (all optional) */
 const {
   league = settings.leagueName,
   division = settings.divisionName,
@@ -15,12 +14,36 @@ const norm = (s?: string) => (s ?? "").replace(/[^a-z0-9]/gi, "").toLowerCase();
 const leagueKey = norm(league);
 const divisionKey = norm(division);
 
+// Load history files (rating + optional ranks)
+const histMods = import.meta.glob("../data/mhr-history/*.json", { eager: true });
+
+function lastTwoRanks(slug: string) {
+  const hist = (histMods[`../data/mhr-history/${slug}.json`]?.default ?? []) as any[];
+  const ranks = hist
+    .map(h => ({
+      date: h.date,
+      stateRank: typeof h.stateRank === "number" ? h.stateRank : undefined,
+      nationalRank: typeof h.nationalRank === "number" ? h.nationalRank : undefined,
+    }))
+    .filter(h => typeof h.nationalRank === "number" || typeof h.stateRank === "number")
+    .slice(-2);
+  if (ranks.length < 2) return null;
+  return ranks;
+}
+
+function rankArrow(current?: number, prev?: number) {
+  if (typeof current !== "number" || typeof prev !== "number") return { arrow: "", delta: "" };
+  const d = prev - current; // positive = improved (lower rank number)
+  if (d > 0) return { arrow: "▲", cls: "text-green-300", delta: `+${Math.abs(d)}` };
+  if (d < 0) return { arrow: "▼", cls: "text-red-300", delta: `-${Math.abs(d)}` };
+  return { arrow: "■", cls: "text-yellow-300", delta: "0" };
+}
+
 const rows = (await getCollection("teams"))
   .map((t) => t.data)
   .filter((t) => norm(t.league) === leagueKey && norm(t.division) === divisionKey)
   .filter((t) => (hideSelf ? t.slug !== selfSlug : true))
   .sort((a, b) => {
-    // Sort by rating desc, then national rank asc, then name
     const ra = typeof a.rating === "number" ? a.rating : -1;
     const rb = typeof b.rating === "number" ? b.rating : -1;
     if (rb !== ra) return rb - ra;
@@ -29,21 +52,6 @@ const rows = (await getCollection("teams"))
     if (na !== nb) return na - nb;
     return a.name.localeCompare(b.name);
   });
-
-function updatedBadge(lastUpdated?: string) {
-  if (!lastUpdated) return { text: "—", cls: "" };
-  const d = new Date(lastUpdated);
-  if (isNaN(d.getTime())) return { text: lastUpdated, cls: "" };
-  const ms = Date.now() - d.getTime();
-  const days = Math.floor(ms / (1000 * 60 * 60 * 24));
-  const text = days === 0 ? "today" : `${days}d ago`;
-  // color code staleness
-  const cls =
-    days <= 7 ? "text-green-300" :
-    days <= 21 ? "text-yellow-300" :
-    "text-red-300";
-  return { text, cls };
-}
 ---
 
 <div class="mt-8">
@@ -74,7 +82,14 @@ function updatedBadge(lastUpdated?: string) {
         <tbody class="bg-gray-900 divide-y divide-gray-700">
           {rows.map((t, i) => {
             const isSelf = t.slug === selfSlug;
-            const badge = updatedBadge(t.lastUpdated);
+            const hist = lastTwoRanks(t.slug);
+            let stateArrow = { arrow: "", cls: "", delta: "" };
+            let natArrow = { arrow: "", cls: "", delta: "" };
+            if (hist) {
+              const [prev, curr] = hist;
+              stateArrow = rankArrow(curr.stateRank, prev.stateRank);
+              natArrow = rankArrow(curr.nationalRank, prev.nationalRank);
+            }
             return (
               <tr class={`hover:bg-gray-800 ${highlightSelf && isSelf ? "ring-1 ring-red-600/70" : ""}`}>
                 <td class="px-3 py-2">{i + 1}</td>
@@ -88,16 +103,19 @@ function updatedBadge(lastUpdated?: string) {
                 </td>
                 <td class="px-3 py-2">{t.record ?? "—"}</td>
                 <td class="px-3 py-2">{typeof t.rating === "number" ? t.rating.toFixed(2) : "—"}</td>
-                <td class="px-3 py-2">{typeof t.mhrStateRank === "number" ? `#${t.mhrStateRank}` : "—"}</td>
-                <td class="px-3 py-2">{typeof t.mhrNationalRank === "number" ? `#${t.mhrNationalRank}` : "—"}</td>
+                <td class="px-3 py-2">
+                  {typeof t.mhrStateRank === "number" ? `#${t.mhrStateRank}` : "—"}
+                  {stateArrow.arrow && <span class={`ml-2 ${stateArrow.cls}`}>{stateArrow.arrow} {stateArrow.delta}</span>}
+                </td>
+                <td class="px-3 py-2">
+                  {typeof t.mhrNationalRank === "number" ? `#${t.mhrNationalRank}` : "—"}
+                  {natArrow.arrow && <span class={`ml-2 ${natArrow.cls}`}>{natArrow.arrow} {natArrow.delta}</span>}
+                </td>
                 <td class="px-3 py-2 space-x-3">
                   {t.website && <a href={t.website} target="_blank" rel="noopener" class="underline hover:text-red-400">Site</a>}
                   {t.mhrUrl && <a href={t.mhrUrl} target="_blank" rel="noopener" class="underline hover:text-red-400">MHR</a>}
                 </td>
-                <td class="px-3 py-2">
-                  <span class={`font-mono ${badge.cls}`}>{badge.text}</span>
-                  {t.lastUpdated && <span class="ml-2 text-gray-400">({t.lastUpdated})</span>}
-                </td>
+                <td class="px-3 py-2">{t.lastUpdated ?? "—"}</td>
               </tr>
             );
           })}

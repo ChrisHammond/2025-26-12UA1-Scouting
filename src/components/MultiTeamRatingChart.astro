@@ -1,0 +1,60 @@
+---
+import { getCollection } from "astro:content";
+import settings from "../config/settings";
+
+// Props: optional explicit slugs to include
+const { slugs = [] } = Astro.props as { slugs?: string[] };
+
+const teamEntries = await getCollection("teams");
+const teams = teamEntries.map(t => t.data);
+
+// choose teams: either provided slugs or top 4 by rating in current league/division
+let chosen = slugs.length
+  ? teams.filter(t => slugs.includes(t.slug))
+  : teams
+      .filter(t => (t.league ?? "").toLowerCase().replace(/[^a-z0-9]/g, "") === (settings.leagueName ?? "").toLowerCase().replace(/[^a-z0-9]/g, ""))
+      .filter(t => (t.division ?? "").toLowerCase().replace(/[^a-z0-9]/g, "") === (settings.divisionName ?? "").toLowerCase().replace(/[^a-z0-9]/g, ""))
+      .sort((a, b) => (b.rating ?? -1) - (a.rating ?? -1))
+      .slice(0, 4);
+
+// load histories
+const mods = import.meta.glob("../data/mhr-history/*.json", { eager: true });
+const datasets = [];
+let labelSet = new Set();
+for (const t of chosen) {
+  const hist = (mods[`../data/mhr-history/${t.slug}.json`]?.default ?? []) as any[];
+  hist.forEach(h => labelSet.add(h.date));
+}
+const labels = Array.from(labelSet).sort();
+
+for (const t of chosen) {
+  const hist = (mods[`../data/mhr-history/${t.slug}.json`]?.default ?? []) as any[];
+  const data = labels.map(d => hist.find(h => h.date === d)?.rating ?? null);
+  datasets.push({ label: t.name, data });
+}
+---
+
+<div class="bg-gray-900 rounded-lg p-4 border border-red-600">
+  <h2 class="text-lg font-semibold text-red-400 mb-2">Rating Comparison</h2>
+  <canvas id="multiTeamChart" height="140"></canvas>
+</div>
+
+<script type="module">
+  import {
+    Chart, LineController, LineElement, PointElement, LinearScale, CategoryScale, Title, Tooltip, Legend
+  } from "chart.js";
+  Chart.register(LineController, LineElement, PointElement, LinearScale, CategoryScale, Title, Tooltip, Legend);
+  const ctx = document.getElementById("multiTeamChart");
+  const labels = {JSON.stringify(labels)};
+  const datasets = {JSON.stringify(datasets)};
+  new Chart(ctx, {
+    type: "line",
+    data: { labels, datasets: datasets.map(d => ({ ...d, spanGaps: true })) },
+    options: {
+      responsive: true,
+      interaction: { mode: "nearest", intersect: false },
+      plugins: { legend: { display: true }, title: { display: false } },
+      scales: { x: { ticks: { autoSkip: true, maxTicksLimit: 10 } } }
+    }
+  });
+</script>

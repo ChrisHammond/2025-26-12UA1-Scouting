@@ -1,0 +1,93 @@
+---
+import BaseLayout from "../../layouts/BaseLayout.astro";
+import { getCollection } from "astro:content";
+import settings from "../../config/settings";
+import { winProb, pct } from "../../lib/probability";
+
+// Data
+const teams = (await getCollection("teams")).map(t => t.data);
+const me = teams.find(t => t.slug === settings.teamSlug);
+const opponentSlug = Astro.params.slug;
+const them = teams.find(t => t.slug === opponentSlug);
+if (!them) {
+  throw new Error(`Unknown opponent slug: ${opponentSlug}`);
+}
+
+// History
+const mods = import.meta.glob("../../data/mhr-history/*.json", { eager: true });
+const myHist = (mods[`../../data/mhr-history/${me.slug}.json`]?.default ?? []) as any[];
+const theirHist = (mods[`../../data/mhr-history/${them.slug}.json`]?.default ?? []) as any[];
+
+// Compute
+const p = (typeof me.rating === "number" && typeof them.rating === "number") ? winProb(me.rating, them.rating) : undefined;
+const title = `Matchup – ${me.name} vs ${them.name}`;
+
+// Prepare chart data
+const labels = Array.from(new Set([...myHist.map(h => h.date), ...theirHist.map(h => h.date)])).sort();
+const seriesA = labels.map(d => (myHist.find(h => h.date === d)?.rating ?? null));
+const seriesB = labels.map(d => (theirHist.find(h => h.date === d)?.rating ?? null));
+---
+
+<BaseLayout title={title}>
+  <h1 class="text-2xl font-bold text-red-500 mb-2">{me.name} vs {them.name}</h1>
+  <div class="text-gray-300 mb-4">
+    {typeof p === "number" ? (
+      <span>Win probability for <strong>{me.name}</strong>: <strong>{pct(p)}</strong></span>
+    ) : (
+      <span>Win probability pending ratings.</span>
+    )}
+  </div>
+
+  <div class="bg-gray-900 rounded-lg p-4 border border-red-600 mb-6">
+    <h2 class="text-lg font-semibold text-red-400 mb-2">Rating Trend</h2>
+    <canvas id="twoTeamChart" height="120"></canvas>
+  </div>
+
+  <div class="grid md:grid-cols-2 gap-6 text-sm">
+    <div class="bg-gray-900 rounded-lg p-4 border border-gray-700">
+      <h3 class="text-red-400 font-semibold mb-2">{me.name}</h3>
+      <ul class="space-y-1 text-gray-200">
+        <li>Rating: {typeof me.rating === "number" ? me.rating.toFixed(2) : "—"}</li>
+        <li>State Rank: {typeof me.mhrStateRank === "number" ? `#${me.mhrStateRank}` : "—"}</li>
+        <li>National Rank: {typeof me.mhrNationalRank === "number" ? `#${me.mhrNationalRank}` : "—"}</li>
+        <li>Record: {me.record ?? "—"}</li>
+      </ul>
+    </div>
+    <div class="bg-gray-900 rounded-lg p-4 border border-gray-700">
+      <h3 class="text-red-400 font-semibold mb-2">{them.name}</h3>
+      <ul class="space-y-1 text-gray-200">
+        <li>Rating: {typeof them.rating === "number" ? them.rating.toFixed(2) : "—"}</li>
+        <li>State Rank: {typeof them.mhrStateRank === "number" ? `#${them.mhrStateRank}` : "—"}</li>
+        <li>National Rank: {typeof them.mhrNationalRank === "number" ? `#${them.mhrNationalRank}` : "—"}</li>
+        <li>Record: {them.record ?? "—"}</li>
+      </ul>
+    </div>
+  </div>
+
+  <script type="module">
+    import {
+      Chart, LineController, LineElement, PointElement, LinearScale, CategoryScale, Title, Tooltip, Legend
+    } from "chart.js";
+    Chart.register(LineController, LineElement, PointElement, LinearScale, CategoryScale, Title, Tooltip, Legend);
+    const ctx = document.getElementById("twoTeamChart");
+    const labels = {JSON.stringify(labels)};
+    const dataA = {JSON.stringify(seriesA)};
+    const dataB = {JSON.stringify(seriesB)};
+    new Chart(ctx, {
+      type: "line",
+      data: {
+        labels,
+        datasets: [
+          { label: {JSON.stringify(me.name)}, data: dataA, spanGaps: true },
+          { label: {JSON.stringify(them.name)}, data: dataB, spanGaps: true },
+        ]
+      },
+      options: {
+        responsive: true,
+        interaction: { mode: "nearest", intersect: false },
+        plugins: { legend: { display: true }, title: { display: false } },
+        scales: { x: { ticks: { autoSkip: true, maxTicksLimit: 10 } } }
+      }
+    });
+  </script>
+</BaseLayout>

@@ -1,0 +1,12 @@
+---
+import { pct } from "../lib/probability";
+const { p } = Astro.props as { p?: number };
+let label = "—", cls = "bg-gray-700 text-gray-200";
+if (typeof p === "number") {
+  label = pct(p);
+  if (p >= 0.65) cls = "bg-green-700/60 text-green-200 border border-green-500/50";
+  else if (p <= 0.35) cls = "bg-red-700/60 text-red-200 border border-red-500/50";
+  else cls = "bg-gray-700/60 text-gray-200 border border-gray-500/40";
+}
+---
+<span class={`inline-block rounded px-2 py-0.5 text-xs font-semibold ${cls}`}>{label}</span>
