@@ -4,11 +4,22 @@ import { getCollection } from "astro:content";
 import settings from "../../config/settings";
 import { winProb, pct } from "../../lib/probability";
 
+/** Tell Astro which matchup pages to build statically */
+export async function getStaticPaths() {
+  const teams = await getCollection("teams");
+  // Build matchups for every team except your own
+  const slugs = teams
+    .map((t) => t.data.slug)
+    .filter((s) => s && s !== settings.teamSlug);
+
+  return slugs.map((slug) => ({ params: { slug } }));
+}
+
 // Data
-const teams = (await getCollection("teams")).map(t => t.data);
-const me = teams.find(t => t.slug === settings.teamSlug);
-const opponentSlug = Astro.params.slug;
-const them = teams.find(t => t.slug === opponentSlug);
+const teams = (await getCollection("teams")).map((t) => t.data);
+const me = teams.find((t) => t.slug === settings.teamSlug)!;
+const opponentSlug = Astro.params.slug!;
+const them = teams.find((t) => t.slug === opponentSlug);
 if (!them) {
   throw new Error(`Unknown opponent slug: ${opponentSlug}`);
 }
@@ -19,13 +30,24 @@ const myHist = (mods[`../../data/mhr-history/${me.slug}.json`]?.default ?? []) a
 const theirHist = (mods[`../../data/mhr-history/${them.slug}.json`]?.default ?? []) as any[];
 
 // Compute
-const p = (typeof me.rating === "number" && typeof them.rating === "number") ? winProb(me.rating, them.rating) : undefined;
+const p =
+  typeof me.rating === "number" && typeof them.rating === "number"
+    ? winProb(me.rating, them.rating)
+    : undefined;
 const title = `Matchup – ${me.name} vs ${them.name}`;
 
 // Prepare chart data
-const labels = Array.from(new Set([...myHist.map(h => h.date), ...theirHist.map(h => h.date)])).sort();
-const seriesA = labels.map(d => (myHist.find(h => h.date === d)?.rating ?? null));
-const seriesB = labels.map(d => (theirHist.find(h => h.date === d)?.rating ?? null));
+const labels: string[] = Array.from(
+  new Set([...myHist.map((h) => h.date), ...theirHist.map((h) => h.date)])
+).sort();
+const seriesA: (number | null)[] = labels.map((d) => {
+  const hit = myHist.find((h) => h.date === d);
+  return typeof hit?.rating === "number" ? hit.rating : null;
+});
+const seriesB: (number | null)[] = labels.map((d) => {
+  const hit = theirHist.find((h) => h.date === d);
+  return typeof hit?.rating === "number" ? hit.rating : null;
+});
 ---
 
 <BaseLayout title={title}>
@@ -64,22 +86,19 @@ const seriesB = labels.map(d => (theirHist.find(h => h.date === d)?.rating ?? nu
     </div>
   </div>
 
-  <script type="module">
+  <script type="module" define:vars={{ labels, seriesA, seriesB, meName: me.name, themName: them.name }}>
     import {
       Chart, LineController, LineElement, PointElement, LinearScale, CategoryScale, Title, Tooltip, Legend
     } from "chart.js";
     Chart.register(LineController, LineElement, PointElement, LinearScale, CategoryScale, Title, Tooltip, Legend);
     const ctx = document.getElementById("twoTeamChart");
-    const labels = {JSON.stringify(labels)};
-    const dataA = {JSON.stringify(seriesA)};
-    const dataB = {JSON.stringify(seriesB)};
     new Chart(ctx, {
       type: "line",
       data: {
         labels,
         datasets: [
-          { label: {JSON.stringify(me.name)}, data: dataA, spanGaps: true },
-          { label: {JSON.stringify(them.name)}, data: dataB, spanGaps: true },
+          { label: meName, data: seriesA, spanGaps: true },
+          { label: themName, data: seriesB, spanGaps: true },
         ]
       },
       options: {
