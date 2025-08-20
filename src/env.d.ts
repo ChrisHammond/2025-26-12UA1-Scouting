@@ -6,4 +6,5 @@ interface ImportMetaEnv {
   readonly PUBLIC_TEAM_SLUG?: string;
   readonly PUBLIC_LEAGUE_NAME?: string;
   readonly PUBLIC_DIVISION_NAME?: string;
+  readonly PUBLIC_COMPANY_NAME?: string;
 }
