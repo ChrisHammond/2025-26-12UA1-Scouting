@@ -5,34 +5,42 @@ import settings from "../config/settings";
 import { winProb } from "../lib/probability";
 import WinProbBadge from "../components/WinProbBadge.astro";
 
-// Manual games (content)
 const manualGames = (await getCollection("games")).map((g) => g.data);
-
-// Teams
 const teamEntries = await getCollection("teams");
-const teams = teamEntries.map(t => t.data);
-const teamBySlug = new Map(teams.map(t => [t.slug, t]));
+const teams = teamEntries.map((t) => t.data);
+const teamBySlug = new Map(teams.map((t) => [t.slug, t]));
 const myTeam = teamBySlug.get(settings.teamSlug);
 
-// Auto (generated) for your team
+// Auto (generated) for your team)
 const autoMods = import.meta.glob("../data/auto-schedule/*.json", { eager: true });
 const autoGames = (autoMods[`../data/auto-schedule/${settings.teamSlug}.json`]?.default ?? []);
 
-// Merge & de-duplicate by date+time+opponent (manual overrides auto on conflict)
-const key = (g) => [g.date, g.time ?? "", (g.opponent ?? "").toLowerCase()].join("|");
+// Merge & de-duplicate
+const key = (g) => [g.date, g.time ?? "", (g.opponent ?? g.opponentSlug ?? "").toLowerCase()].join("|");
 const mergedMap = new Map();
 [...autoGames, ...manualGames].forEach((g) => mergedMap.set(key(g), g));
 const games = [...mergedMap.values()].sort((a, b) => (a.date + (a.time ?? "")).localeCompare(b.date + (b.time ?? "")));
 
-// helper: fuzzy match opponent to a team object
-function matchTeamByName(name: string) {
-  const n = (name || '').toLowerCase().replace(/[^a-z0-9]/g, '');
-  let best = null;
+/** NEW: robust opponent resolution */
+function findOpponent(g: any) {
+  // 1) explicit opponentSlug wins
+  if (g.opponentSlug && teamBySlug.has(g.opponentSlug)) return teamBySlug.get(g.opponentSlug);
+
+  // 2) if opponent string equals a slug
+  const raw = (g.opponent || "").trim();
+  if (teamBySlug.has(raw)) return teamBySlug.get(raw);
+
+  // 3) slugify guess
+  const guess = raw.toLowerCase().replace(/[^a-z0-9]+/g, "-").replace(/(^-|-$)/g, "");
+  if (teamBySlug.has(guess)) return teamBySlug.get(guess);
+
+  // 4) fuzzy by name
+  const n = raw.toLowerCase().replace(/[^a-z0-9]/g, "");
   for (const t of teams) {
-    const tn = t.name.toLowerCase().replace(/[^a-z0-9]/g, '');
-    if (tn.includes(n) || n.includes(tn)) { best = t; break; }
+    const tn = t.name.toLowerCase().replace(/[^a-z0-9]/g, "");
+    if (tn.includes(n) || n.includes(tn)) return t;
   }
-  return best;
+  return null;
 }
 ---
 
@@ -57,22 +65,32 @@ function matchTeamByName(name: string) {
         </thead>
         <tbody class="bg-gray-900 divide-y divide-gray-700">
           {games.map((g) => {
-            const opp = matchTeamByName(g.opponent ?? "");
-            const p = (myTeam && opp && typeof myTeam.rating === "number" && typeof opp.rating === "number")
-              ? winProb(myTeam.rating, opp.rating) : undefined;
-            const previewHref = opp ? `/matchups/${opp.slug}/` : undefined;
+            const opp = findOpponent(g);
+            const p =
+              (myTeam && opp &&
+                typeof myTeam.rating === "number" &&
+                typeof opp.rating === "number")
+                ? winProb(myTeam.rating, opp.rating)
+                : undefined;
+
             return (
               <tr class="hover:bg-gray-800">
                 <td class="px-3 py-2">{g.date}</td>
                 <td class="px-3 py-2">{g.time ?? "—"}</td>
                 <td class="px-3 py-2">
-                  {opp ? <a class="underline hover:text-red-400" href={`/teams/${opp.slug}/`}>{opp.name}</a> : (g.opponent ?? "TBD")}
+                  {opp ? (
+                    <a class="underline hover:text-red-400" href={`/teams/${opp.slug}/`}>{opp.name}</a>
+                  ) : (
+                    g.opponent ?? g.opponentSlug ?? "TBD"
+                  )}
                 </td>
                 <td class="px-3 py-2">{g.homeAway ?? "Neutral"}</td>
                 <td class="px-3 py-2">{g.venue ?? "—"}</td>
                 <td class="px-3 py-2"><WinProbBadge p={p} /></td>
                 <td class="px-3 py-2">
-                  {previewHref ? <a class="underline hover:text-red-400" href={previewHref}>Matchup</a> : "—"}
+                  {opp ? (
+                    <a class="underline hover:text-red-400" href={`/matchups/${opp.slug}/`}>Matchup</a>
+                  ) : "—"}
                 </td>
                 <td class="px-3 py-2 uppercase text-xs text-gray-400">{g.source ?? "manual"}</td>
               </tr>

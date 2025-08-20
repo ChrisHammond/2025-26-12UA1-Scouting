@@ -2,6 +2,7 @@
 import BaseLayout from "../../layouts/BaseLayout.astro";
 import { getCollection } from "astro:content";
 import RatingHistoryChart from "../../components/RatingHistoryChart.astro";
+import settings from "../../config/settings";
 
 export async function getStaticPaths() {
   const teams = await getCollection("teams");
@@ -13,10 +14,14 @@ export async function getStaticPaths() {
 
 const { team } = Astro.props;
 
-// Load games
+// Load all teams so we can find "our" team for matchup preview
+const allTeams = (await getCollection("teams")).map((t) => t.data);
+const myTeam = allTeams.find((t) => t.slug === settings.teamSlug);
+
+// Load games (vs this opponent)
 const games = (await getCollection("games"))
   .map((g) => g.data)
-  .filter((g) => g.opponent === team.slug)
+  .filter((g) => g.opponent === team.slug || g.opponentSlug === team.slug)
   .sort((a, b) => new Date(a.date).getTime() - new Date(b.date).getTime());
 
 // Load tournaments
@@ -31,9 +36,25 @@ const histKey = `../../data/mhr-history/${team.slug}.json`;
 const ratingHistory = (histMods[histKey]?.default ?? [])
   .filter((p: any) => p && p.date && typeof p.rating === "number")
   .sort((a: any, b: any) => a.date.localeCompare(b.date));
+
+// --- Matchup preview helpers ---
+const isSelf = team.slug === settings.teamSlug;
+const SCALE = 6;
+function winProb(rA?: number, rB?: number) {
+  if (typeof rA !== "number" || typeof rB !== "number") return undefined;
+  return 1 / (1 + Math.exp(-(rA - rB) / SCALE));
+}
+const prob =
+  !isSelf && myTeam ? winProb(myTeam?.rating as number, team?.rating as number) : undefined;
+const probLabel =
+  typeof prob === "number" ? `${Math.round(prob * 100)}%` : "—";
+const ratingDiff =
+  typeof myTeam?.rating === "number" && typeof team?.rating === "number"
+    ? (myTeam.rating - team.rating).toFixed(2)
+    : null;
 ---
 
-<BaseLayout title={`${team.name} – Chesterfield 12U A1`}>
+<BaseLayout title={`${team.name} – ${settings.portalName}`}>
   <a href="/teams/" class="text-white hover:text-red-400">← Back to Teams</a>
   <h1 class="text-2xl font-bold text-red-500 mt-2">{team.name}</h1>
 
@@ -68,6 +89,37 @@ const ratingHistory = (histMods[histKey]?.default ?? [])
       </span>
     )}
   </div>
+
+  <!-- Matchup preview card -->
+  {!isSelf && myTeam && (
+    <section class="mt-6">
+      <div class="bg-gray-900 rounded-lg p-4 border border-red-600">
+        <h2 class="text-lg font-semibold text-red-400 mb-2">Matchup vs {myTeam.name}</h2>
+
+        <div class="flex flex-wrap items-center gap-3 text-sm">
+          <span class="inline-block rounded px-2 py-0.5 bg-gray-700 text-gray-200">
+            Win % for {myTeam.name}: <strong class="ml-1">{probLabel}</strong>
+          </span>
+          {ratingDiff && (
+            <span class="inline-block rounded px-2 py-0.5 bg-gray-800 text-gray-300">
+              Rating Δ (us - them): <strong class="ml-1">{ratingDiff}</strong>
+            </span>
+          )}
+          {typeof myTeam.mhrNationalRank === "number" && typeof team.mhrNationalRank === "number" && (
+            <span class="inline-block rounded px-2 py-0.5 bg-gray-800 text-gray-300">
+              Nat Rank: <strong class="ml-1">#{myTeam.mhrNationalRank}</strong> vs <strong class="ml-1">#{team.mhrNationalRank}</strong>
+            </span>
+          )}
+        </div>
+
+        <div class="mt-3">
+          <a href={`/matchups/${team.slug}/`} class="inline-block rounded-lg border border-red-600 bg-red-600/20 px-3 py-1.5 text-sm text-red-200 hover:bg-red-600/30">
+            Open full matchup
+          </a>
+        </div>
+      </div>
+    </section>
+  )}
 
   <!-- Rating trend -->
   <section class="mt-6">

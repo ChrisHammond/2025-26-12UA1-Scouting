@@ -1,6 +1,7 @@
 {
   "date": "2025-09-20",
-  "opponent": "kirkwood-a1",
+  "opponent": "Kirkwood A1",
+  "opponentSlug": "kirkwood-a1",
   "homeAway": "Home",
   "leagueGame": true,
   "venue": "Maryville University Center"
