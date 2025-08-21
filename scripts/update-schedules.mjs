@@ -2,8 +2,13 @@
 import fs from "node:fs/promises";
 import path from "node:path";
 import process from "node:process";
-import fetch from "node-fetch";
-import * as ical from "node-ical";
+// Node 18+ has global fetch; no need for node-fetch
+// import fetch from "node-fetch";
+
+// node-ical is CommonJS; default-import then destructure
+import icalPkg from "node-ical";
+const ical = icalPkg.default ?? icalPkg;
+const { parseICS } = ical;
 
 import { scheduleSources } from "./config/schedule-sources.mjs";
 import { normalizeEvent, gameDedupKey } from "./lib/schedule-normalize.mjs";
@@ -28,7 +33,7 @@ async function fetchICS(url) {
   const res = await fetch(normalized, { headers: { "user-agent": "scouting-portal/1.0" } });
   if (!res.ok) throw new Error(`ICS fetch failed ${res.status} ${res.statusText}`);
   const text = await res.text();
-  return ical.parseICS(text);
+  return parseICS(text);
 }
 
 async function fromIcs(url, selfName) {
@@ -73,7 +78,9 @@ async function buildForTeam(teamSlug) {
   // Dedup
   const map = new Map();
   for (const g of games) map.set(gameDedupKey(g), g);
-  const unique = [...map.values()].sort((a, b) => (a.date + (a.time ?? "")).localeCompare(b.date + (b.time ?? "")));
+  const unique = [...map.values()].sort((a, b) =>
+    (a.date + (a.time ?? "")).localeCompare(b.date + (b.time ?? ""))
+  );
   return unique;
 }
 
