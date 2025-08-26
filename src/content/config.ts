@@ -3,21 +3,21 @@ import { defineCollection, z } from 'astro:content';
 const teams = defineCollection({
   type: "data",
   schema: z.object({
-    name: z.string(),
     slug: z.string(),
-    division: z.string().optional(),
+    name: z.string(),
     league: z.string().optional(),
-    // NEW (optional)
+    division: z.string().optional(),
+    record: z.string().optional(),
+    rating: z.number().optional(),
     website: z.string().url().optional(),
     mhrUrl: z.string().url().optional(),
-    rating: z.number().optional(),
-    record: z.string().optional(),
+    mhrStateRank: z.number().int().optional(),
+    mhrNationalRank: z.number().int().optional(),
     lastUpdated: z.string().optional(),
-    mhrStateRank: z.number().int().optional(),     // NEW
-    mhrNationalRank: z.number().int().optional(),  // NEW
+    /** NEW: free-text note for status, tryouts, etc. */
+    note: z.string().optional(),
   }),
 });
-
 const tournaments = defineCollection({
   type: 'data',
   schema: z.object({
