@@ -1,37 +1,44 @@
 ---
+// src/components/MultiTeamRatingChart.astro
 import { getCollection } from "astro:content";
 import settings from "../config/settings";
 
-// Props: optional explicit slugs to include
 const { slugs = [] } = Astro.props as { slugs?: string[] };
 
-const teamEntries = await getCollection("teams");
-const teams = teamEntries.map(t => t.data);
+const norm = (s?: string) => (s ?? "").toLowerCase().replace(/[^a-z0-9]/g, "");
 
-// choose teams: either provided slugs or top 4 by rating in current league/division
+// pick teams (explicit slugs or top 4 in your league/division)
+const teamEntries = await getCollection("teams");
+const teams = teamEntries.map((t) => t.data);
+
 let chosen = slugs.length
-  ? teams.filter(t => slugs.includes(t.slug))
+  ? teams.filter((t) => slugs.includes(t.slug))
   : teams
-      .filter(t => (t.league ?? "").toLowerCase().replace(/[^a-z0-9]/g, "") === (settings.leagueName ?? "").toLowerCase().replace(/[^a-z0-9]/g, ""))
-      .filter(t => (t.division ?? "").toLowerCase().replace(/[^a-z0-9]/g, "") === (settings.divisionName ?? "").toLowerCase().replace(/[^a-z0-9]/g, ""))
+      .filter((t) => norm(t.league) === norm(settings.leagueName))
+      .filter((t) => norm(t.division) === norm(settings.divisionName))
       .sort((a, b) => (b.rating ?? -1) - (a.rating ?? -1))
       .slice(0, 4);
 
-// load histories
+// load rating histories
 const mods = import.meta.glob("../data/mhr-history/*.json", { eager: true });
-const datasets = [];
-let labelSet = new Set();
-for (const t of chosen) {
-  const hist = (mods[`../data/mhr-history/${t.slug}.json`]?.default ?? []) as any[];
-  hist.forEach(h => labelSet.add(h.date));
-}
-const labels = Array.from(labelSet).sort();
 
+// build shared label axis
+const labelSet = new Set<string>();
 for (const t of chosen) {
   const hist = (mods[`../data/mhr-history/${t.slug}.json`]?.default ?? []) as any[];
-  const data = labels.map(d => hist.find(h => h.date === d)?.rating ?? null);
-  datasets.push({ label: t.name, data });
+  hist.forEach((h) => h?.date && labelSet.add(h.date));
 }
+const labels: string[] = Array.from(labelSet).sort();
+
+// datasets per team (align to labels)
+const datasets = chosen.map((t) => {
+  const hist = (mods[`../data/mhr-history/${t.slug}.json`]?.default ?? []) as any[];
+  const data = labels.map((d) => {
+    const hit = hist.find((h) => h.date === d);
+    return typeof hit?.rating === "number" ? hit.rating : null;
+  });
+  return { label: t.name, data };
+});
 ---
 
 <div class="bg-gray-900 rounded-lg p-4 border border-red-600">
@@ -39,14 +46,12 @@ for (const t of chosen) {
   <canvas id="multiTeamChart" height="140"></canvas>
 </div>
 
-<script type="module">
+<script type="module" define:vars={{ labels, datasets }}>
   import {
     Chart, LineController, LineElement, PointElement, LinearScale, CategoryScale, Title, Tooltip, Legend
   } from "chart.js";
   Chart.register(LineController, LineElement, PointElement, LinearScale, CategoryScale, Title, Tooltip, Legend);
   const ctx = document.getElementById("multiTeamChart");
-  const labels = {JSON.stringify(labels)};
-  const datasets = {JSON.stringify(datasets)};
   new Chart(ctx, {
     type: "line",
     data: { labels, datasets: datasets.map(d => ({ ...d, spanGaps: true })) },
