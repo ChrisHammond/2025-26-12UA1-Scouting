@@ -146,7 +146,7 @@ It updates:
 
 ## License
 
-This project is licensed under a very broad MIT license.
+[This project is licensed under a very broad MIT license](https://github.com/ChrisHammond/2025-26-12UA1-Scouting?tab=MIT-1-ov-file#readme).
 
 ---
 
