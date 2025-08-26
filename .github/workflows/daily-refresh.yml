@@ -1,0 +1,74 @@
+name: Daily data refresh
+
+on:
+  schedule:
+    # Runs daily at 11:15 UTC (≈ 05:15 America/Chicago most of the year).
+    - cron: "15 11 * * *"
+  workflow_dispatch: {}
+
+permissions:
+  contents: write  # allow pushing commits
+
+concurrency:
+  group: daily-refresh
+  cancel-in-progress: false
+
+jobs:
+  refresh:
+    runs-on: ubuntu-latest
+    env:
+      # Optional: add this secret in GitHub → Settings → Secrets and variables → Actions
+      # Name: NETLIFY_BUILD_HOOK  Value: https://api.netlify.com/build_hooks/xxxxxxxxxxxxxxxxxxxx
+      NETLIFY_BUILD_HOOK: ${{ secrets.NETLIFY_BUILD_HOOK }}
+    steps:
+      - name: Checkout
+        uses: actions/checkout@v4
+        with:
+          persist-credentials: true
+          fetch-depth: 0
+
+      - name: Use Node.js 22
+        uses: actions/setup-node@v4
+        with:
+          node-version: '22'
+          cache: 'npm'
+
+      - name: Install dependencies
+        run: npm ci
+
+      - name: Generate content types (Astro)
+        run: npx astro sync
+
+      - name: Run schedule updater
+        run: |
+          if [ -f scripts/update-schedules.mjs ]; then
+            node scripts/update-schedules.mjs
+          else
+            echo "scripts/update-schedules.mjs not found; skipping."
+          fi
+
+      - name: Run MHR updater
+        run: |
+          if [ -f scripts/update-teams-from-mhr.mjs ]; then
+            node scripts/update-teams-from-mhr.mjs
+          else
+            echo "scripts/update-teams-from-mhr.mjs not found; skipping."
+          fi
+
+      - name: Commit changes (if any)
+        run: |
+          git config user.name  "github-actions[bot]"
+          git config user.email "41898282+github-actions[bot]@users.noreply.github.com"
+          git add -A
+          if git diff --staged --quiet; then
+            echo "No changes to commit."
+          else
+            git commit -m "chore: daily data refresh"
+            git push
+          fi
+
+      - name: Trigger Netlify build (optional)
+        if: env.NETLIFY_BUILD_HOOK != ''
+        run: |
+          echo "Triggering Netlify build hook…"
+          curl -sS -X POST "$NETLIFY_BUILD_HOOK" -o /dev/null -w "HTTP %{http_code}\n"
