@@ -64,7 +64,8 @@ Create one file per team in **src/content/teams/**:
   "rating": 0,
   "mhrStateRank": 0,
   "mhrNationalRank": 0,
-  "lastUpdated": "YYYY-MM-DD"
+  "lastUpdated": "YYYY-MM-DD",
+  "notes": "Text based notes to be displayed on a team page"
 }
 ```
 > Only `name` and `slug` are required to start. The updater fills `rating`, `record`, ranks, and `lastUpdated` if `mhrUrl` is present.
