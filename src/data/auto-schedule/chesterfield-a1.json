@@ -1,1 +1,262 @@
-[]
+[
+  {
+    "date": "2025-09-26",
+    "time": "00:00",
+    "opponent": "TBD",
+    "homeAway": "Neutral",
+    "leagueGame": false,
+    "venue": "Cleveland  Cleveland OH ",
+    "source": "ics",
+    "sourceId": "7071561175963@www.accounts.crossbar.org"
+  },
+  {
+    "date": "2025-09-27",
+    "time": "00:00",
+    "opponent": "TBD",
+    "homeAway": "Neutral",
+    "leagueGame": false,
+    "venue": "Cleveland  Cleveland OH ",
+    "source": "ics",
+    "sourceId": "7071574175963@www.accounts.crossbar.org"
+  },
+  {
+    "date": "2025-09-28",
+    "time": "00:00",
+    "opponent": "TBD",
+    "homeAway": "Neutral",
+    "leagueGame": false,
+    "venue": "Cleveland  Cleveland OH ",
+    "source": "ics",
+    "sourceId": "7071579175963@www.accounts.crossbar.org"
+  },
+  {
+    "date": "2025-10-23",
+    "time": "00:00",
+    "opponent": "POSSIBLE TRAVEL DAY",
+    "homeAway": "Neutral",
+    "leagueGame": false,
+    "venue": "    ",
+    "source": "ics",
+    "sourceId": "7073078175963@www.accounts.crossbar.org"
+  },
+  {
+    "date": "2025-10-24",
+    "time": "00:00",
+    "opponent": "TBD",
+    "homeAway": "Neutral",
+    "leagueGame": false,
+    "venue": "Tulsa  Tulsa OK ",
+    "source": "ics",
+    "sourceId": "7071694175963@www.accounts.crossbar.org"
+  },
+  {
+    "date": "2025-10-25",
+    "time": "00:00",
+    "opponent": "TBD",
+    "homeAway": "Neutral",
+    "leagueGame": false,
+    "venue": "Tulsa  Tulsa OK ",
+    "source": "ics",
+    "sourceId": "7071698175963@www.accounts.crossbar.org"
+  },
+  {
+    "date": "2025-10-26",
+    "time": "00:00",
+    "opponent": "TBD",
+    "homeAway": "Neutral",
+    "leagueGame": false,
+    "venue": "Tulsa  Tulsa OK ",
+    "source": "ics",
+    "sourceId": "7071707175963@www.accounts.crossbar.org"
+  },
+  {
+    "date": "2025-11-07",
+    "time": "00:00",
+    "opponent": "TBD",
+    "homeAway": "Neutral",
+    "leagueGame": false,
+    "venue": "STL    ",
+    "source": "ics",
+    "sourceId": "7071730175963@www.accounts.crossbar.org"
+  },
+  {
+    "date": "2025-11-08",
+    "time": "00:00",
+    "opponent": "TBD",
+    "homeAway": "Neutral",
+    "leagueGame": false,
+    "venue": "STL    ",
+    "source": "ics",
+    "sourceId": "7071735175963@www.accounts.crossbar.org"
+  },
+  {
+    "date": "2025-11-09",
+    "time": "00:00",
+    "opponent": "TBD",
+    "homeAway": "Neutral",
+    "leagueGame": false,
+    "venue": "STL    ",
+    "source": "ics",
+    "sourceId": "7071737175963@www.accounts.crossbar.org"
+  },
+  {
+    "date": "2025-11-21",
+    "time": "21:10",
+    "opponent": "Colorado Team",
+    "homeAway": "Neutral",
+    "leagueGame": false,
+    "venue": "Maryville University Hockey Center (MUHC) 18383 Chesterfield Airport Rd Chesterfield MO 63005",
+    "source": "ics",
+    "sourceId": "7071810175963@www.accounts.crossbar.org"
+  },
+  {
+    "date": "2025-11-23",
+    "time": "00:10",
+    "opponent": "Colorado Team",
+    "homeAway": "Neutral",
+    "leagueGame": false,
+    "venue": "Pacific Ice Rink 460 Indian Warpath Dr Pacific MO 63069",
+    "source": "ics",
+    "sourceId": "7071812175963@www.accounts.crossbar.org"
+  },
+  {
+    "date": "2025-11-23",
+    "time": "13:00",
+    "opponent": "Colorado Team",
+    "homeAway": "Neutral",
+    "leagueGame": false,
+    "venue": "Maryville University Hockey Center (MUHC) 18383 Chesterfield Airport Rd Chesterfield MO 63005",
+    "source": "ics",
+    "sourceId": "7071814175963@www.accounts.crossbar.org"
+  },
+  {
+    "date": "2025-12-12",
+    "time": "00:00",
+    "opponent": "TBD",
+    "homeAway": "Neutral",
+    "leagueGame": false,
+    "venue": "STL    ",
+    "source": "ics",
+    "sourceId": "7071882175963@www.accounts.crossbar.org"
+  },
+  {
+    "date": "2025-12-13",
+    "time": "00:00",
+    "opponent": "TBD",
+    "homeAway": "Neutral",
+    "leagueGame": false,
+    "venue": "    ",
+    "source": "ics",
+    "sourceId": "7071919175963@www.accounts.crossbar.org"
+  },
+  {
+    "date": "2025-12-14",
+    "time": "00:00",
+    "opponent": "TBD",
+    "homeAway": "Neutral",
+    "leagueGame": false,
+    "venue": "STL    ",
+    "source": "ics",
+    "sourceId": "7071956175963@www.accounts.crossbar.org"
+  },
+  {
+    "date": "2026-01-15",
+    "time": "00:00",
+    "opponent": "POSSIBLE TRAVEL DAY",
+    "homeAway": "Neutral",
+    "leagueGame": false,
+    "venue": "Pittsburgh  Pittsburgh PA ",
+    "source": "ics",
+    "sourceId": "7072030175963@www.accounts.crossbar.org"
+  },
+  {
+    "date": "2026-01-16",
+    "time": "00:00",
+    "opponent": "TBD",
+    "homeAway": "Neutral",
+    "leagueGame": false,
+    "venue": "Pittsburgh  Pittsburgh PA ",
+    "source": "ics",
+    "sourceId": "7072099175963@www.accounts.crossbar.org"
+  },
+  {
+    "date": "2026-01-17",
+    "time": "00:00",
+    "opponent": "TBD",
+    "homeAway": "Neutral",
+    "leagueGame": false,
+    "venue": "Pittsburgh  Pittsburgh PA ",
+    "source": "ics",
+    "sourceId": "7072236175963@www.accounts.crossbar.org"
+  },
+  {
+    "date": "2026-01-18",
+    "time": "00:00",
+    "opponent": "TBD",
+    "homeAway": "Neutral",
+    "leagueGame": false,
+    "venue": "Pittsburgh  Pittsburgh PA ",
+    "source": "ics",
+    "sourceId": "7072155175963@www.accounts.crossbar.org"
+  },
+  {
+    "date": "2026-01-19",
+    "time": "00:00",
+    "opponent": "TBD",
+    "homeAway": "Neutral",
+    "leagueGame": false,
+    "venue": "Pittsburgh  Pittsburgh PA ",
+    "source": "ics",
+    "sourceId": "7072316175963@www.accounts.crossbar.org"
+  },
+  {
+    "date": "2026-02-12",
+    "time": "00:00",
+    "opponent": "POSSIBLE TRAVEL DAY",
+    "homeAway": "Neutral",
+    "leagueGame": false,
+    "venue": "Nashville  Nashville TN ",
+    "source": "ics",
+    "sourceId": "7072322175963@www.accounts.crossbar.org"
+  },
+  {
+    "date": "2026-02-13",
+    "time": "00:00",
+    "opponent": "TBD",
+    "homeAway": "Neutral",
+    "leagueGame": false,
+    "venue": "Nashville  Nashville TN ",
+    "source": "ics",
+    "sourceId": "7072881175963@www.accounts.crossbar.org"
+  },
+  {
+    "date": "2026-02-14",
+    "time": "00:00",
+    "opponent": "TBD",
+    "homeAway": "Neutral",
+    "leagueGame": false,
+    "venue": "Nashville  Nashville TN ",
+    "source": "ics",
+    "sourceId": "7072338175963@www.accounts.crossbar.org"
+  },
+  {
+    "date": "2026-02-15",
+    "time": "00:00",
+    "opponent": "TBD",
+    "homeAway": "Neutral",
+    "leagueGame": false,
+    "venue": "Nashville  Nashville TN ",
+    "source": "ics",
+    "sourceId": "7072352175963@www.accounts.crossbar.org"
+  },
+  {
+    "date": "2026-02-16",
+    "time": "00:00",
+    "opponent": "TBD",
+    "homeAway": "Neutral",
+    "leagueGame": false,
+    "venue": "Nashville  Nashville TN ",
+    "source": "ics",
+    "sourceId": "7072992175963@www.accounts.crossbar.org"
+  }
+]
