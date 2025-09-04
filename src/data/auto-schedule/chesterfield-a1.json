@@ -1,5 +1,25 @@
 [
   {
+    "date": "2025-09-14",
+    "time": "15:50",
+    "opponent": "FRIENDLY-Sharks A1",
+    "homeAway": "Neutral",
+    "leagueGame": false,
+    "venue": "All American Sports Mall 11133 Lindbergh Business Ct St. Louis MO 63123",
+    "source": "ics",
+    "sourceId": "7116639175963@www.accounts.crossbar.org"
+  },
+  {
+    "date": "2025-09-25",
+    "time": "00:00",
+    "opponent": "TRAVEL DAY",
+    "homeAway": "Neutral",
+    "leagueGame": false,
+    "venue": "Cleveland  Cleveland OH ",
+    "source": "ics",
+    "sourceId": "7123311175963@www.accounts.crossbar.org"
+  },
+  {
     "date": "2025-09-26",
     "time": "00:00",
     "opponent": "TBD",
