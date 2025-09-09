@@ -10,6 +10,16 @@
     "sourceId": "7116639175963@www.accounts.crossbar.org"
   },
   {
+    "date": "2025-09-20",
+    "time": "15:40",
+    "opponent": "Kirkwood 12U A1",
+    "homeAway": "Neutral",
+    "leagueGame": false,
+    "venue": "Pacific Rink 460 Indian Warpath Dr Pacific MO 63069",
+    "source": "ics",
+    "sourceId": "7018343175963@www.accounts.crossbar.org"
+  },
+  {
     "date": "2025-09-25",
     "time": "00:00",
     "opponent": "TRAVEL DAY",
@@ -48,6 +58,26 @@
     "venue": "Cleveland  Cleveland OH ",
     "source": "ics",
     "sourceId": "7071579175963@www.accounts.crossbar.org"
+  },
+  {
+    "date": "2025-10-18",
+    "time": "19:10",
+    "opponent": "Rockets 12U A1",
+    "homeAway": "Neutral",
+    "leagueGame": false,
+    "venue": "Webster Groves 33 E Glendale Rd Webster Groves MO 63119",
+    "source": "ics",
+    "sourceId": "7156388175963@www.accounts.crossbar.org"
+  },
+  {
+    "date": "2025-10-19",
+    "time": "16:50",
+    "opponent": "STP 12U - A1 Heller",
+    "homeAway": "Neutral",
+    "leagueGame": false,
+    "venue": "Wentzville Ice Gray 910 Main Plaza Dr Wentzville MO 63385",
+    "source": "ics",
+    "sourceId": "7160007175963@www.accounts.crossbar.org"
   },
   {
     "date": "2025-10-23",
@@ -121,33 +151,23 @@
   },
   {
     "date": "2025-11-21",
-    "time": "21:10",
-    "opponent": "Colorado Team",
+    "time": "20:50",
+    "opponent": "COLORADO",
     "homeAway": "Neutral",
     "leagueGame": false,
-    "venue": "Maryville University Hockey Center (MUHC) 18383 Chesterfield Airport Rd Chesterfield MO 63005",
+    "venue": "MUHC Hartwig Kaiman 18383 Chesterfield Airport Rd Chesterfield MO 63005",
     "source": "ics",
-    "sourceId": "7071810175963@www.accounts.crossbar.org"
-  },
-  {
-    "date": "2025-11-23",
-    "time": "00:10",
-    "opponent": "Colorado Team",
-    "homeAway": "Neutral",
-    "leagueGame": false,
-    "venue": "Pacific Ice Rink 460 Indian Warpath Dr Pacific MO 63069",
-    "source": "ics",
-    "sourceId": "7071812175963@www.accounts.crossbar.org"
+    "sourceId": "7157336175963@www.accounts.crossbar.org"
   },
   {
     "date": "2025-11-23",
     "time": "13:00",
-    "opponent": "Colorado Team",
+    "opponent": "COLORADO",
     "homeAway": "Neutral",
     "leagueGame": false,
-    "venue": "Maryville University Hockey Center (MUHC) 18383 Chesterfield Airport Rd Chesterfield MO 63005",
+    "venue": "MUHC Shanahan 18383 Chesterfield Airport Rd Chesterfield MO 63005",
     "source": "ics",
-    "sourceId": "7071814175963@www.accounts.crossbar.org"
+    "sourceId": "7157338175963@www.accounts.crossbar.org"
   },
   {
     "date": "2025-12-12",
