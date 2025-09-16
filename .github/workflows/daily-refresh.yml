@@ -7,7 +7,7 @@ on:
   workflow_dispatch: {}
 
 permissions:
-  contents: write  # allow pushing commits
+  contents: write
 
 concurrency:
   group: daily-refresh
@@ -20,6 +20,7 @@ jobs:
       # Optional: add this secret in GitHub → Settings → Secrets and variables → Actions
       # Name: NETLIFY_BUILD_HOOK  Value: https://api.netlify.com/build_hooks/xxxxxxxxxxxxxxxxxxxx
       NETLIFY_BUILD_HOOK: ${{ secrets.NETLIFY_BUILD_HOOK }}
+
     steps:
       - name: Checkout
         uses: actions/checkout@v4
@@ -39,21 +40,27 @@ jobs:
       - name: Generate content types (Astro)
         run: npx astro sync
 
-      - name: Run schedule updater
+      # Run ALL update scripts (each only if present)
+      - name: Run data updaters
         run: |
-          if [ -f scripts/update-schedules.mjs ]; then
-            node scripts/update-schedules.mjs
-          else
-            echo "scripts/update-schedules.mjs not found; skipping."
-          fi
+          set -e
+          run_or_skip () {
+            local script="$1"
+            if [ -f "$script" ]; then
+              echo "▶ Running $script"
+              node "$script"
+            else
+              echo "⏭  $script not found; skipping."
+            fi
+          }
 
-      - name: Run MHR updater
-        run: |
-          if [ -f scripts/update-teams-from-mhr.mjs ]; then
-            node scripts/update-teams-from-mhr.mjs
-          else
-            echo "scripts/update-teams-from-mhr.mjs not found; skipping."
-          fi
+          run_or_skip scripts/update-schedules.mjs
+          run_or_skip scripts/update-teams-from-mhr.mjs
+          run_or_skip scripts/append-ranks-to-history.mjs
+          run_or_skip scripts/update-tournaments-inline-from-mhr.mjs
+
+      - name: Build (sanity check)
+        run: npm run build
 
       - name: Commit changes (if any)
         run: |
