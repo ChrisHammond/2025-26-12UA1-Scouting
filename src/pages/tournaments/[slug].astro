@@ -2,6 +2,21 @@
 import BaseLayout from "../../layouts/BaseLayout.astro";
 import { getCollection } from "astro:content";
 
+const formatUpdated = (v?: string) => {
+  if (!v) return "—";
+  const d = new Date(v);
+  if (isNaN(d.getTime())) return v; // fall back if it isn't a date
+  return d.toLocaleString("en-US", {
+    timeZone: "America/Chicago",
+    year: "numeric",
+    month: "short",
+    day: "2-digit",
+    hour: "2-digit",
+    minute: "2-digit",
+  });
+};
+
+
 // Generate all tournament routes
 export async function getStaticPaths() {
   const tournaments = await getCollection("tournaments");
@@ -107,7 +122,9 @@ function getTeam(slug: string) {
                   {t?.website && <a href={t.website} target="_blank" rel="noopener" class="underline hover:text-red-400">Site</a>}
                   {t?.mhrUrl && <a href={t.mhrUrl} target="_blank" rel="noopener" class="underline hover:text-red-400">MHR</a>}
                 </td>
-                <td class="px-3 py-2">{t?.lastUpdated ?? "—"}</td>
+                <td class="px-3 py-2">
+                  {formatUpdated(t.lastUpdated ?? t.updatedFromMHRAt)}
+                </td>
               </tr>
             ))}
           </tbody>

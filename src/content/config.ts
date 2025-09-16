@@ -28,33 +28,27 @@ const tournaments = defineCollection({
     startDate: z.string(),
     endDate: z.string(),
     website: z.string().url().optional(),
-    /**
-     * Opponents can be either:
-     *  - a slug string (references a team in /src/content/teams)
-     *  - or an inline object for ad-hoc / tournament-only teams
-     */
-    opponents: z
-      .array(
-        z.union([
-          z.string(),
-          z.object({
-            // Inline opponent (no /teams entry required)
+    opponents: z.array(
+      z.union([
+        z.string(),
+        z
+          .object({
+            slug: z.string().optional(),
             name: z.string(),
             website: z.string().url().optional(),
             mhrUrl: z.string().url().optional(),
             rating: z.number().optional(),
             mhrStateRank: z.number().int().optional(),
             mhrNationalRank: z.number().int().optional(),
+            record: z.string().optional(),
             note: z.string().optional(),
-            /**
-             * Optional: if you ALSO have a /teams entry and want to
-             * merge/enrich it on the tournament page.
-             */
-            slug: z.string().optional(),
-          }),
-        ])
-      )
-      .default([]),
+            // include both to be flexible with scripts/UI
+            lastUpdated: z.string().optional(),
+            updatedFromMHRAt: z.string().optional(),
+          })
+          .passthrough(), // keep any extra fields we might add later
+      ])
+    ).default([]),
   }),
 });
 

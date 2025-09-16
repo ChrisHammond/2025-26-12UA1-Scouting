@@ -6,7 +6,12 @@
     "dev": "astro dev",
     "build": "astro build",
     "preview": "astro preview",
-    "astro": "astro"
+    "astro": "astro",
+    "sync": "astro sync",
+    "update:schedules": "node scripts/update-schedules.mjs",
+    "update:tournaments:inline": "node scripts/update-tournaments-inline-from-mhr.mjs",
+    "update:teams:from-mhr": "node scripts/update-teams-from-mhr.mjs",
+    "update:all": "npm run update:teams:from-mhr && npm run update:schedules && npm run update:tournaments:inline"
   },
   "dependencies": {
     "@tailwindcss/vite": "^4.1.13",
