@@ -4,5 +4,15 @@
   "location": "Cleveland, OH",
   "startDate": "2025-09-26",
   "endDate": "2025-09-28",
-  "opponents": ["chesterfield-a1", "TBD"]
+  "opponents": [
+    "chesterfield-a1",
+    {
+      "name": "Pittsburgh Aviators (2013)",
+      "website": "https://www.pghaviators.com/team/119493",
+      "mhrUrl": "https://myhockeyrankings.com/team_info.php?y=2025&t=28561",
+      "note": "Added as tournament-only opponent."
+    }
+  ]
 }
+
+

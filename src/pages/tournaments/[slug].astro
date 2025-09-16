@@ -15,29 +15,48 @@ const { tournament } = Astro.props;
 
 // Load all teams and games
 const teams = (await getCollection("teams")).map((t) => t.data);
+const bySlug = new Map(teams.map((t) => [t.slug, t]));
+
 const games = (await getCollection("games"))
   .map((g) => g.data)
   .filter((g) => g.tournament === tournament.slug)
   .sort((a, b) => new Date(a.date).getTime() - new Date(b.date).getTime());
 
-function getTeam(slug: string) {
-  return teams.find((t) => t.slug === slug);
+// Resolve opponents: accept slug string OR inline object
+function resolveOpponent(op: any) {
+  if (typeof op === "string") {
+    return bySlug.get(op) ?? { name: op }; // fallback shows plain name if not found
+  }
+  // Inline object
+  if (op && typeof op === "object") {
+    // If inline also includes a slug that matches a local team, merge local data + overrides from inline
+    if (op.slug && bySlug.has(op.slug)) {
+      return { ...bySlug.get(op.slug), ...op };
+    }
+    return op; // pure inline object (no local team)
+  }
+  return null;
 }
 
-// Teams appearing in this tournament (from opponents list)
-const opponentTeams = tournament.opponents
-  .map((slug) => getTeam(slug))
+const opponentsRaw = Array.isArray(tournament.opponents) ? tournament.opponents : [];
+const opponentTeams = opponentsRaw
+  .map(resolveOpponent)
   .filter(Boolean)
   // sort: rating desc, then national rank asc, then name
-  .sort((a, b) => {
-    const ra = typeof a!.rating === "number" ? a!.rating! : -1;
-    const rb = typeof b!.rating === "number" ? b!.rating! : -1;
+  .sort((a: any, b: any) => {
+    const ra = typeof a?.rating === "number" ? a.rating : -1;
+    const rb = typeof b?.rating === "number" ? b.rating : -1;
     if (rb !== ra) return rb - ra;
-    const na = typeof a!.mhrNationalRank === "number" ? a!.mhrNationalRank! : 999999;
-    const nb = typeof b!.mhrNationalRank === "number" ? b!.mhrNationalRank! : 999999;
+    const na = typeof a?.mhrNationalRank === "number" ? a.mhrNationalRank : 999999;
+    const nb = typeof b?.mhrNationalRank === "number" ? b.mhrNationalRank : 999999;
     if (na !== nb) return na - nb;
-    return a!.name.localeCompare(b!.name);
+    return String(a?.name ?? "").localeCompare(String(b?.name ?? ""));
   });
+
+// Helper to find local team by slug for games table linking
+function getTeam(slug: string) {
+  return bySlug.get(slug);
+}
 ---
 
 <BaseLayout title={`${tournament.name} – Chesterfield 12U A1`}>
@@ -73,26 +92,22 @@ const opponentTeams = tournament.opponents
             </tr>
           </thead>
           <tbody class="bg-gray-900 divide-y divide-gray-700">
-            {opponentTeams.map((t) => (
+            {opponentTeams.map((t: any) => (
               <tr class="hover:bg-gray-800">
                 <td class="px-3 py-2">
-                  <a href={`/teams/${t.slug}/`} class="underline hover:text-red-400">{t.name}</a>
+                  {t?.slug
+                    ? <a href={`/teams/${t.slug}/`} class="underline hover:text-red-400">{t.name}</a>
+                    : t?.name ?? "—"}
                 </td>
-                <td class="px-3 py-2">{t.record ?? "—"}</td>
-                <td class="px-3 py-2">
-                  {typeof t.rating === "number" ? t.rating.toFixed(2) : "—"}
-                </td>
-                <td class="px-3 py-2">
-                  {typeof t.mhrStateRank === "number" ? `#${t.mhrStateRank}` : "—"}
-                </td>
-                <td class="px-3 py-2">
-                  {typeof t.mhrNationalRank === "number" ? `#${t.mhrNationalRank}` : "—"}
-                </td>
+                <td class="px-3 py-2">{t?.record ?? "—"}</td>
+                <td class="px-3 py-2">{typeof t?.rating === "number" ? t.rating.toFixed(2) : "—"}</td>
+                <td class="px-3 py-2">{typeof t?.mhrStateRank === "number" ? `#${t.mhrStateRank}` : "—"}</td>
+                <td class="px-3 py-2">{typeof t?.mhrNationalRank === "number" ? `#${t.mhrNationalRank}` : "—"}</td>
                 <td class="px-3 py-2 space-x-3">
-                  {t.website && <a href={t.website} target="_blank" rel="noopener" class="underline hover:text-red-400">Site</a>}
-                  {t.mhrUrl && <a href={t.mhrUrl} target="_blank" rel="noopener" class="underline hover:text-red-400">MHR</a>}
+                  {t?.website && <a href={t.website} target="_blank" rel="noopener" class="underline hover:text-red-400">Site</a>}
+                  {t?.mhrUrl && <a href={t.mhrUrl} target="_blank" rel="noopener" class="underline hover:text-red-400">MHR</a>}
                 </td>
-                <td class="px-3 py-2">{t.lastUpdated ?? "—"}</td>
+                <td class="px-3 py-2">{t?.lastUpdated ?? "—"}</td>
               </tr>
             ))}
           </tbody>
@@ -124,7 +139,9 @@ const opponentTeams = tournament.opponents
                 <tr class="hover:bg-gray-800">
                   <td class="px-3 py-2">{new Date(g.date).toLocaleDateString()}</td>
                   <td class="px-3 py-2">
-                    {opp ? <a href={`/teams/${opp.slug}/`} class="underline hover:text-red-400">{opp.name}</a> : g.opponent}
+                    {opp
+                      ? <a href={`/teams/${opp.slug}/`} class="underline hover:text-red-400">{opp.name}</a>
+                      : g.opponent}
                   </td>
                   <td class="px-3 py-2">{g.homeAway}</td>
                   <td class="px-3 py-2">{g.leagueGame ? "Yes" : "No"}</td>
