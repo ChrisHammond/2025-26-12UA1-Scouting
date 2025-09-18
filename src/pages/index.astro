@@ -33,17 +33,16 @@ const tournaments = await getCollection("tournaments");
     </a>
   </div>
 
-  <!-- League table section -->
+  <!-- League table section (compact ranks for mobile) -->
   <LeagueTable
     league={settings.leagueName}
     division={settings.divisionName}
     selfSlug={settings.teamSlug}
+    combineRanks={true}
   />
 
   <br />
   <br />
 
   <MultiTeamRatingChart />
-
-  
 </BaseLayout>
