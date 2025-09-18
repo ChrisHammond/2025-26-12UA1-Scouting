@@ -12,7 +12,7 @@
       "mhrUrl": "https://myhockeyrankings.com/team_info.php?y=2025&t=5034",
       "note": "Added as tournament-only opponent.",
       "rating": 0,
-      "updatedFromMHRAt": "2025-09-18T16:46:31.710Z",
+      "updatedFromMHRAt": "2025-09-18T16:47:54.673Z",
       "record": "0-0-0"
     },
     {
@@ -21,7 +21,7 @@
       "mhrUrl": "https://myhockeyrankings.com/team_info.php?y=2025&t=2434",
       "note": "Added as tournament-only opponent.",
       "rating": 0,
-      "updatedFromMHRAt": "2025-09-18T16:46:32.084Z",
+      "updatedFromMHRAt": "2025-09-18T16:47:54.913Z",
       "record": "0-0-0"
     },
     {
@@ -30,7 +30,7 @@
       "mhrUrl": "https://myhockeyrankings.com/team_info.php?y=2025&t=1169",
       "note": "Added as tournament-only opponent.",
       "rating": 0,
-      "updatedFromMHRAt": "2025-09-18T16:46:32.228Z",
+      "updatedFromMHRAt": "2025-09-18T16:47:55.060Z",
       "record": "0-0-0"
     },
     {
@@ -39,7 +39,7 @@
       "mhrUrl": "https://myhockeyrankings.com/team_info.php?y=2025&t=16649",
       "note": "Added as tournament-only opponent.",
       "rating": 0,
-      "updatedFromMHRAt": "2025-09-18T16:46:32.444Z",
+      "updatedFromMHRAt": "2025-09-18T16:47:55.191Z",
       "record": "1-4-0"
     },
     {
@@ -48,7 +48,7 @@
       "mhrUrl": "https://myhockeyrankings.com/team_info.php?y=2025&t=4610",
       "note": "Added as tournament-only opponent.",
       "rating": 0,
-      "updatedFromMHRAt": "2025-09-18T16:46:32.591Z",
+      "updatedFromMHRAt": "2025-09-18T16:47:55.313Z",
       "record": "0-0-1"
     },
     {
@@ -57,8 +57,17 @@
       "mhrUrl": "https://myhockeyrankings.com/team_info.php?y=2025&t=2983",
       "note": "Added as tournament-only opponent.",
       "rating": 0,
-      "updatedFromMHRAt": "2025-09-18T16:46:32.806Z",
+      "updatedFromMHRAt": "2025-09-18T16:47:55.436Z",
       "record": "1-0-0"
+    },
+    {
+      "name": "Pittsburgh Aviators (2013)",
+      "website": "https://www.pghaviators.com/team/119493",
+      "mhrUrl": "https://myhockeyrankings.com/team_info.php?y=2025&t=28561",
+      "note": "Added as tournament-only opponent.",
+      "rating": 0,
+      "updatedFromMHRAt": "2025-09-18T16:47:55.564Z",
+      "record": "5-3-1"
     }
   ]
 }
