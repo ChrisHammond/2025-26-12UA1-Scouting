@@ -1,0 +1,19 @@
+{
+  "name": "Tulsa Showdown",
+  "slug": "tulsa-showdown",
+  "location": "Tulsa, OK",
+  "startDate": "2025-10-24",
+  "endDate": "2025-10-27",
+  "opponents": [
+    "chesterfield-a1",
+    {
+      "name": "Tulsa JR Oilers AA",
+      "website": "https://www.tulsajroilers.com/page/show/9154808?subseason=950261&tab=content",
+      "mhrUrl": "https://myhockeyrankings.com/team_info.php?y=2025&t=34768",
+      "note": "Added as tournament-only opponent.",
+      "rating": 0,
+      "updatedFromMHRAt": "2025-09-17T23:17:32.877Z",
+      "record": "1-6-0"
+    }
+  ]
+}
