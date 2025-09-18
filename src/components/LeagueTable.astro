@@ -7,7 +7,7 @@ const {
   division = "12U A1",
   hideSelf = false,
   selfSlug = "chesterfield-a1",
-  combineRanks = false, // NEW
+  combineRanks = false, // may be set true on homepage
 } = Astro.props;
 
 const norm = (s?: string) => (s ?? "").replace(/[^a-z0-9]/gi, "").toLowerCase();
@@ -29,6 +29,11 @@ const rows = (await getCollection("teams"))
     if (na !== nb) return na - nb;
     return a.name.localeCompare(b.name);
   });
+
+// NEW: only show rank column(s) if someone has a rank
+const hasAnyRank = rows.some(
+  (t) => typeof t.mhrStateRank === "number" || typeof t.mhrNationalRank === "number"
+);
 
 function fmtStNat(t: any) {
   const st = typeof t.mhrStateRank === "number" ? String(t.mhrStateRank) : "—";
@@ -57,12 +62,14 @@ function fmtStNat(t: any) {
             <th class="px-3 py-2 text-left">Record</th>
             <th class="px-3 py-2 text-left">MHR Rating</th>
             {combineRanks ? (
-              <th class="px-3 py-2 text-left">ST/NAT Rank</th>
+              hasAnyRank && <th class="px-3 py-2 text-left">ST/NAT Rank</th>
             ) : (
-              <>
-                <th class="px-3 py-2 text-left">State Rank</th>
-                <th class="px-3 py-2 text-left">National Rank</th>
-              </>
+              hasAnyRank && (
+                <>
+                  <th class="px-3 py-2 text-left">State Rank</th>
+                  <th class="px-3 py-2 text-left">National Rank</th>
+                </>
+              )
             )}
             <th class="px-3 py-2 text-left">Links</th>
             <th class="px-3 py-2 text-left">Updated</th>
@@ -79,12 +86,14 @@ function fmtStNat(t: any) {
               <td class="px-3 py-2">{typeof t.rating === "number" ? t.rating.toFixed(2) : "—"}</td>
 
               {combineRanks ? (
-                <td class="px-3 py-2">{fmtStNat(t)}</td>
+                hasAnyRank && <td class="px-3 py-2">{fmtStNat(t)}</td>
               ) : (
-                <>
-                  <td class="px-3 py-2">{typeof t.mhrStateRank === "number" ? `#${t.mhrStateRank}` : "—"}</td>
-                  <td class="px-3 py-2">{typeof t.mhrNationalRank === "number" ? `#${t.mhrNationalRank}` : "—"}</td>
-                </>
+                hasAnyRank && (
+                  <>
+                    <td class="px-3 py-2">{typeof t.mhrStateRank === "number" ? `#${t.mhrStateRank}` : "—"}</td>
+                    <td class="px-3 py-2">{typeof t.mhrNationalRank === "number" ? `#${t.mhrNationalRank}` : "—"}</td>
+                  </>
+                )
               )}
 
               <td class="px-3 py-2 space-x-3">

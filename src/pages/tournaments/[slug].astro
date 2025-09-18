@@ -16,7 +16,6 @@ const formatUpdated = (v?: string) => {
   });
 };
 
-
 // Generate all tournament routes
 export async function getStaticPaths() {
   const tournaments = await getCollection("tournaments");
@@ -63,10 +62,23 @@ const opponentTeams = opponentsRaw
     const rb = typeof b?.rating === "number" ? b.rating : -1;
     if (rb !== ra) return rb - ra;
     const na = typeof a?.mhrNationalRank === "number" ? a.mhrNationalRank : 999999;
-    const nb = typeof b?.mhrNationalRank === "number" ? b.mhrNationalRank : 999999;
+    const nb = typeof b?.mhrNationalRank === "number" ? b?.mhrNationalRank : 999999;
     if (na !== nb) return na - nb;
     return String(a?.name ?? "").localeCompare(String(b?.name ?? ""));
   });
+
+// Rank helpers
+const hasAnyRank = opponentTeams.some(
+  (t: any) =>
+    Number.isFinite(t?.mhrStateRank) || Number.isFinite(t?.mhrNationalRank)
+);
+
+function formatRankPair(t: any) {
+  const st = Number.isFinite(t?.mhrStateRank) ? t.mhrStateRank : "—";
+  const nat = Number.isFinite(t?.mhrNationalRank) ? t.mhrNationalRank : "—";
+  if (st === "—" && nat === "—") return "—";
+  return `${st}/${nat}`;
+}
 
 // Helper to find local team by slug for games table linking
 function getTeam(slug: string) {
@@ -100,8 +112,7 @@ function getTeam(slug: string) {
               <th class="px-3 py-2 text-left">Team</th>
               <th class="px-3 py-2 text-left">Record</th>
               <th class="px-3 py-2 text-left">MHR Rating</th>
-              <th class="px-3 py-2 text-left">State Rank</th>
-              <th class="px-3 py-2 text-left">National Rank</th>
+              {hasAnyRank && <th class="px-3 py-2 text-left">Rank (ST/NAT)</th>}
               <th class="px-3 py-2 text-left">Links</th>
               <th class="px-3 py-2 text-left">Updated</th>
             </tr>
@@ -116,8 +127,7 @@ function getTeam(slug: string) {
                 </td>
                 <td class="px-3 py-2">{t?.record ?? "—"}</td>
                 <td class="px-3 py-2">{typeof t?.rating === "number" ? t.rating.toFixed(2) : "—"}</td>
-                <td class="px-3 py-2">{typeof t?.mhrStateRank === "number" ? `#${t.mhrStateRank}` : "—"}</td>
-                <td class="px-3 py-2">{typeof t?.mhrNationalRank === "number" ? `#${t.mhrNationalRank}` : "—"}</td>
+                {hasAnyRank && <td class="px-3 py-2">{formatRankPair(t)}</td>}
                 <td class="px-3 py-2 space-x-3">
                   {t?.website && <a href={t.website} target="_blank" rel="noopener" class="underline hover:text-red-400">Site</a>}
                   {t?.mhrUrl && <a href={t.mhrUrl} target="_blank" rel="noopener" class="underline hover:text-red-400">MHR</a>}
