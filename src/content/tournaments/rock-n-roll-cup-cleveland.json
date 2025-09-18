@@ -7,40 +7,58 @@
   "opponents": [
     "chesterfield-a1",
     {
-      "name": "Pittsburgh Aviators (2013)",
-      "website": "https://www.pghaviators.com/team/119493",
-      "mhrUrl": "https://myhockeyrankings.com/team_info.php?y=2025&t=28561",
-      "note": "Added as tournament-only opponent.",
-      "rating": 0,
-      "updatedFromMHRAt": "2025-09-18T16:36:35.175Z",
-      "record": "5-3-1"
-    },
-    {
-      "name": "Windsor Jr Spitfires (2013)",
+      "name": "Windsor Jr Spitfires (ON)",
       "website": "https://wmha.net/Teams/2662/",
       "mhrUrl": "https://myhockeyrankings.com/team_info.php?y=2025&t=5034",
       "note": "Added as tournament-only opponent.",
       "rating": 0,
-      "updatedFromMHRAt": "2025-09-18T16:36:35.570Z",
+      "updatedFromMHRAt": "2025-09-18T16:46:31.710Z",
       "record": "0-0-0"
     },
     {
-      "name": "West Dundee Leafs A1",
+      "name": "West Dundee Leafs (IL)",
       "website": "https://www.leafshockeyclub.com/",
       "mhrUrl": "https://myhockeyrankings.com/team_info.php?y=2025&t=2434",
       "note": "Added as tournament-only opponent.",
       "rating": 0,
-      "updatedFromMHRAt": "2025-09-18T16:36:35.735Z",
+      "updatedFromMHRAt": "2025-09-18T16:46:32.084Z",
       "record": "0-0-0"
     },
     {
-      "name": "West Seneca Wings",
+      "name": "West Seneca Wings (NY)",
       "website": "https://westsenecayouthhockey.com/team/peewee-minor-blue/",
       "mhrUrl": "https://myhockeyrankings.com/team_info.php?y=2025&t=1169",
       "note": "Added as tournament-only opponent.",
       "rating": 0,
-      "updatedFromMHRAt": "2025-09-18T16:36:35.966Z",
+      "updatedFromMHRAt": "2025-09-18T16:46:32.228Z",
       "record": "0-0-0"
+    },
+    {
+      "name": "McKinney North Stars (TX) (Other Division)",
+      "website": "https://www.mckinneynorthstars.com/page/show/9115515-12uaa",
+      "mhrUrl": "https://myhockeyrankings.com/team_info.php?y=2025&t=16649",
+      "note": "Added as tournament-only opponent.",
+      "rating": 0,
+      "updatedFromMHRAt": "2025-09-18T16:46:32.444Z",
+      "record": "1-4-0"
+    },
+    {
+      "name": "Troy Sting (MI) (Other Division)",
+      "website": "https://tyha.net/sting-2013/",
+      "mhrUrl": "https://myhockeyrankings.com/team_info.php?y=2025&t=4610",
+      "note": "Added as tournament-only opponent.",
+      "rating": 0,
+      "updatedFromMHRAt": "2025-09-18T16:46:32.591Z",
+      "record": "0-0-1"
+    },
+    {
+      "name": "Amherst Knights (NY) (Other Division)",
+      "website": "https://amherstyouthhockey.leagueapps.com/leagues/ice-hockey/4550976",
+      "mhrUrl": "https://myhockeyrankings.com/team_info.php?y=2025&t=2983",
+      "note": "Added as tournament-only opponent.",
+      "rating": 0,
+      "updatedFromMHRAt": "2025-09-18T16:46:32.806Z",
+      "record": "1-0-0"
     }
   ]
 }
