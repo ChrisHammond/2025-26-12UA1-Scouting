@@ -31,23 +31,43 @@
   },
   {
     "date": "2025-09-26",
-    "time": "00:00",
-    "opponent": "TBD",
+    "time": "12:00",
+    "opponent": "Windsor Jr. Spitfires 13A BWHL 25-26",
     "homeAway": "Neutral",
     "leagueGame": false,
-    "venue": "Cleveland  Cleveland OH ",
+    "venue": "Michael A Ries Ice Arena 5000 Forestwood Dr Parma OH 44134",
     "source": "ics",
     "sourceId": "7071561175963@www.accounts.crossbar.org"
   },
   {
+    "date": "2025-09-26",
+    "time": "17:10",
+    "opponent": "West Dundee Leafs 13-14 A1 Prospects CSDHL 25-26",
+    "homeAway": "Neutral",
+    "leagueGame": false,
+    "venue": "Brunswick Auto Mart Arena 15381 Royalton Rd Strongsville OH 44136",
+    "source": "ics",
+    "sourceId": "7249059175963@www.accounts.crossbar.org"
+  },
+  {
     "date": "2025-09-27",
-    "time": "00:00",
+    "time": "13:20",
+    "opponent": "West Seneca Wings 13AA I-90 25-26",
+    "homeAway": "Neutral",
+    "leagueGame": false,
+    "venue": "John M. Coyne Recreation Center 7600 Memphis Ave Brooklyn OH 44144",
+    "source": "ics",
+    "sourceId": "7071574175963@www.accounts.crossbar.org"
+  },
+  {
+    "date": "2025-09-27",
+    "time": "19:15",
     "opponent": "TBD",
     "homeAway": "Neutral",
     "leagueGame": false,
-    "venue": "Cleveland  Cleveland OH ",
+    "venue": "Gilmour Academy Ice Arena 2045 SOM Center Road Gates Mills OH 44040",
     "source": "ics",
-    "sourceId": "7071574175963@www.accounts.crossbar.org"
+    "sourceId": "7249098175963@www.accounts.crossbar.org"
   },
   {
     "date": "2025-09-28",
