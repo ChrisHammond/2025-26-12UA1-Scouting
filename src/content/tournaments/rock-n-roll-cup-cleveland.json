@@ -12,7 +12,7 @@
       "mhrUrl": "https://myhockeyrankings.com/team_info.php?y=2025&t=5034",
       "note": "Added as tournament-only opponent.",
       "rating": 0,
-      "updatedFromMHRAt": "2025-09-18T17:10:42.425Z",
+      "updatedFromMHRAt": "2025-09-22T04:18:49.759Z",
       "record": "0-0-0"
     },
     {
@@ -21,7 +21,7 @@
       "mhrUrl": "https://myhockeyrankings.com/team_info.php?y=2025&t=2434",
       "note": "Added as tournament-only opponent.",
       "rating": 0,
-      "updatedFromMHRAt": "2025-09-18T17:10:42.796Z",
+      "updatedFromMHRAt": "2025-09-22T04:18:50.013Z",
       "record": "0-0-0"
     },
     {
@@ -30,8 +30,8 @@
       "mhrUrl": "https://myhockeyrankings.com/team_info.php?y=2025&t=1169",
       "note": "Added as tournament-only opponent.",
       "rating": 0,
-      "updatedFromMHRAt": "2025-09-18T17:10:43.043Z",
-      "record": "0-0-0"
+      "updatedFromMHRAt": "2025-09-22T04:18:50.235Z",
+      "record": "1-0-0"
     },
     {
       "name": "McKinney North Stars (TX) (Other Division)",
@@ -39,8 +39,8 @@
       "mhrUrl": "https://myhockeyrankings.com/team_info.php?y=2025&t=16649",
       "note": "Added as tournament-only opponent.",
       "rating": 0,
-      "updatedFromMHRAt": "2025-09-18T17:10:43.263Z",
-      "record": "1-4-0"
+      "updatedFromMHRAt": "2025-09-22T04:18:50.378Z",
+      "record": "3-4-0"
     },
     {
       "name": "Troy Sting (MI) (Other Division)",
@@ -48,8 +48,8 @@
       "mhrUrl": "https://myhockeyrankings.com/team_info.php?y=2025&t=4610",
       "note": "Added as tournament-only opponent.",
       "rating": 0,
-      "updatedFromMHRAt": "2025-09-18T17:10:43.477Z",
-      "record": "0-0-1"
+      "updatedFromMHRAt": "2025-09-22T04:18:50.591Z",
+      "record": "0-1-1"
     },
     {
       "name": "Amherst Knights (NY) (Other Division)",
@@ -57,8 +57,8 @@
       "mhrUrl": "https://myhockeyrankings.com/team_info.php?y=2025&t=2983",
       "note": "Added as tournament-only opponent.",
       "rating": 0,
-      "updatedFromMHRAt": "2025-09-18T17:10:43.708Z",
-      "record": "1-0-0"
+      "updatedFromMHRAt": "2025-09-22T04:18:50.717Z",
+      "record": "1-1-0"
     },
     {
       "name": "Pittsburgh Aviators (Other Division)",
@@ -66,8 +66,8 @@
       "mhrUrl": "https://myhockeyrankings.com/team_info.php?y=2025&t=28561",
       "note": "Added as tournament-only opponent.",
       "rating": 0,
-      "updatedFromMHRAt": "2025-09-18T17:10:43.898Z",
-      "record": "5-3-1"
+      "updatedFromMHRAt": "2025-09-22T04:18:50.918Z",
+      "record": "6-5-1"
     }
   ]
 }
