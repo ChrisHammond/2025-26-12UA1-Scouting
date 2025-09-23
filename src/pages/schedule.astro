@@ -11,7 +11,7 @@ const teams = teamEntries.map((t) => t.data);
 const teamBySlug = new Map(teams.map((t) => [t.slug, t]));
 const myTeam = teamBySlug.get(settings.teamSlug);
 
-// Auto (generated) for your team)
+// Auto (generated) for your team
 const autoMods = import.meta.glob("../data/auto-schedule/*.json", { eager: true });
 const autoGames = (autoMods[`../data/auto-schedule/${settings.teamSlug}.json`]?.default ?? []);
 
@@ -21,26 +21,71 @@ const mergedMap = new Map();
 [...autoGames, ...manualGames].forEach((g) => mergedMap.set(key(g), g));
 const games = [...mergedMap.values()].sort((a, b) => (a.date + (a.time ?? "")).localeCompare(b.date + (b.time ?? "")));
 
-/** NEW: robust opponent resolution */
+/** Opponent resolution */
 function findOpponent(g: any) {
-  // 1) explicit opponentSlug wins
   if (g.opponentSlug && teamBySlug.has(g.opponentSlug)) return teamBySlug.get(g.opponentSlug);
-
-  // 2) if opponent string equals a slug
   const raw = (g.opponent || "").trim();
   if (teamBySlug.has(raw)) return teamBySlug.get(raw);
-
-  // 3) slugify guess
   const guess = raw.toLowerCase().replace(/[^a-z0-9]+/g, "-").replace(/(^-|-$)/g, "");
   if (teamBySlug.has(guess)) return teamBySlug.get(guess);
-
-  // 4) fuzzy by name
   const n = raw.toLowerCase().replace(/[^a-z0-9]/g, "");
   for (const t of teams) {
     const tn = t.name.toLowerCase().replace(/[^a-z0-9]/g, "");
     if (tn.includes(n) || n.includes(tn)) return t;
   }
   return null;
+}
+
+/** Time-zone aware display helpers */
+const TZ = settings.timeZone || "America/Chicago";
+
+function fmtDate(d: string | number | Date) {
+  return new Date(d).toLocaleDateString("en-US", { timeZone: TZ });
+}
+function fmtTime(d: string | number | Date) {
+  return new Date(d).toLocaleTimeString("en-US", {
+    timeZone: TZ,
+    hour: "2-digit",
+    minute: "2-digit",
+  });
+}
+
+/** Build a Date assuming incoming date+time are in UTC (common from ICS-derived flat fields) */
+function dateFromUtcParts(dateStr?: string, timeStr?: string) {
+  if (!dateStr || !timeStr) return null;
+  // Ensure HH:mm:ss
+  const hhmm = /^\d{2}:\d{2}$/.test(timeStr) ? `${timeStr}:00` : timeStr;
+  const iso = `${dateStr}T${hhmm}Z`;
+  const d = new Date(iso);
+  return isNaN(d.getTime()) ? null : d;
+}
+
+/** All-day-ish check for ICS rows with midnight times */
+function isAllDay(g: any) {
+  if (g.source !== "ics") return false;
+  // If ICS supplies midnight AND no explicit duration, treat as all-day for display
+  return (g.time === "00:00" || g.time === "00:00:00") && !g.start;
+}
+
+/** Prefer ISO start; else convert UTC clock to local for ICS rows; else show raw */
+function displayDate(g: any) {
+  if (g.start) return fmtDate(g.start);
+  if (g.source === "ics") {
+    const d = dateFromUtcParts(g.date, g.time);
+    if (d) return fmtDate(d);
+  }
+  return g.date;
+}
+function displayTime(g: any) {
+  if (g.start) return fmtTime(g.start);
+  if (g.source === "ics") {
+    if (isAllDay(g)) return "—";
+    const d = dateFromUtcParts(g.date, g.time);
+    if (d) return fmtTime(d);
+  }
+  // Manual or unknown: show provided string (hide blank/00:00 nicely)
+  if (!g.time || g.time === "00:00" || g.time === "00:00:00") return "—";
+  return g.time;
 }
 ---
 
@@ -75,8 +120,8 @@ function findOpponent(g: any) {
 
             return (
               <tr class="hover:bg-gray-800">
-                <td class="px-3 py-2">{g.date}</td>
-                <td class="px-3 py-2">{g.time ?? "—"}</td>
+                <td class="px-3 py-2">{displayDate(g)}</td>
+                <td class="px-3 py-2">{displayTime(g)}</td>
                 <td class="px-3 py-2">
                   {opp ? (
                     <a class="underline hover:text-red-400" href={`/teams/${opp.slug}/`}>{opp.name}</a>

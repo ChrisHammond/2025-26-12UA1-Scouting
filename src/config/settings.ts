@@ -8,6 +8,7 @@ export type PortalSettings = {
   leagueName: string;
   divisionName: string;
   companyName: string;
+  timeZone: string;
 };
 
 // Prefer PUBLIC_ env vars (work locally & on Netlify) and fall back to sensible defaults.
@@ -18,6 +19,9 @@ const settings: PortalSettings = {
   leagueName: import.meta.env.PUBLIC_LEAGUE_NAME ?? "MO Hockey",
   divisionName: import.meta.env.PUBLIC_DIVISION_NAME ?? "12U A1",
   companyName: import.meta.env.PUBLIC_COMPANY_NAME ?? "Christoc.com",
+
+    /** Always format dates/times in this zone */
+  timeZone: "America/Chicago",
 };
 
 export default settings;
