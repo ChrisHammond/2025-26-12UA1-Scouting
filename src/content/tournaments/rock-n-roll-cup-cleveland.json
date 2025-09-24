@@ -7,30 +7,30 @@
   "opponents": [
     "chesterfield-a1",
     {
-      "name": "Windsor Jr Spitfires (ON)",
+      "name": "Windsor Jr. Spitfires 13A BWHL 25-26",
       "website": "https://wmha.net/Teams/2662/",
       "mhrUrl": "https://myhockeyrankings.com/team_info.php?y=2025&t=5034",
       "note": "Added as tournament-only opponent.",
       "rating": 0,
-      "updatedFromMHRAt": "2025-09-24T11:07:47.257Z",
+      "updatedFromMHRAt": "2025-09-24T18:15:58.628Z",
       "record": "0-1-0"
     },
     {
-      "name": "West Dundee Leafs (IL)",
+      "name": "West Dundee Leafs 13-14 A1 Prospects CSDHL 25-26",
       "website": "https://www.leafshockeyclub.com/",
       "mhrUrl": "https://myhockeyrankings.com/team_info.php?y=2025&t=2434",
       "note": "Added as tournament-only opponent.",
       "rating": 0,
-      "updatedFromMHRAt": "2025-09-24T11:07:47.507Z",
+      "updatedFromMHRAt": "2025-09-24T18:15:59.437Z",
       "record": "0-0-0"
     },
     {
-      "name": "West Seneca Wings (NY)",
+      "name": "West Seneca Wings 13AA I-90 25-26",
       "website": "https://westsenecayouthhockey.com/team/peewee-minor-blue/",
       "mhrUrl": "https://myhockeyrankings.com/team_info.php?y=2025&t=1169",
       "note": "Added as tournament-only opponent.",
       "rating": 79.03,
-      "updatedFromMHRAt": "2025-09-24T11:07:47.654Z",
+      "updatedFromMHRAt": "2025-09-24T18:15:59.682Z",
       "record": "1-0-1"
     },
     {
@@ -39,7 +39,7 @@
       "mhrUrl": "https://myhockeyrankings.com/team_info.php?y=2025&t=16649",
       "note": "Added as tournament-only opponent.",
       "rating": 83.35,
-      "updatedFromMHRAt": "2025-09-24T11:07:47.793Z",
+      "updatedFromMHRAt": "2025-09-24T18:15:59.814Z",
       "record": "3-4-0"
     },
     {
@@ -48,7 +48,7 @@
       "mhrUrl": "https://myhockeyrankings.com/team_info.php?y=2025&t=4610",
       "note": "Added as tournament-only opponent.",
       "rating": 85.47,
-      "updatedFromMHRAt": "2025-09-24T11:07:47.928Z",
+      "updatedFromMHRAt": "2025-09-24T18:16:00.039Z",
       "record": "0-1-1"
     },
     {
@@ -57,7 +57,7 @@
       "mhrUrl": "https://myhockeyrankings.com/team_info.php?y=2025&t=2983",
       "note": "Added as tournament-only opponent.",
       "rating": 78.74,
-      "updatedFromMHRAt": "2025-09-24T11:07:48.054Z",
+      "updatedFromMHRAt": "2025-09-24T18:16:00.278Z",
       "record": "1-1-0"
     },
     {
@@ -66,7 +66,7 @@
       "mhrUrl": "https://myhockeyrankings.com/team_info.php?y=2025&t=28561",
       "note": "Added as tournament-only opponent.",
       "rating": 83.26,
-      "updatedFromMHRAt": "2025-09-24T11:07:48.192Z",
+      "updatedFromMHRAt": "2025-09-24T18:16:00.549Z",
       "record": "6-5-1"
     }
   ]
