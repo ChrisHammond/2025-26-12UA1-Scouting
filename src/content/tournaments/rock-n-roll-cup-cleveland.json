@@ -12,8 +12,8 @@
       "mhrUrl": "https://myhockeyrankings.com/team_info.php?y=2025&t=5034",
       "note": "Added as tournament-only opponent.",
       "rating": 0,
-      "updatedFromMHRAt": "2025-09-22T04:18:49.759Z",
-      "record": "0-0-0"
+      "updatedFromMHRAt": "2025-09-24T11:07:47.257Z",
+      "record": "0-1-0"
     },
     {
       "name": "West Dundee Leafs (IL)",
@@ -21,7 +21,7 @@
       "mhrUrl": "https://myhockeyrankings.com/team_info.php?y=2025&t=2434",
       "note": "Added as tournament-only opponent.",
       "rating": 0,
-      "updatedFromMHRAt": "2025-09-22T04:18:50.013Z",
+      "updatedFromMHRAt": "2025-09-24T11:07:47.507Z",
       "record": "0-0-0"
     },
     {
@@ -29,17 +29,17 @@
       "website": "https://westsenecayouthhockey.com/team/peewee-minor-blue/",
       "mhrUrl": "https://myhockeyrankings.com/team_info.php?y=2025&t=1169",
       "note": "Added as tournament-only opponent.",
-      "rating": 0,
-      "updatedFromMHRAt": "2025-09-22T04:18:50.235Z",
-      "record": "1-0-0"
+      "rating": 79.03,
+      "updatedFromMHRAt": "2025-09-24T11:07:47.654Z",
+      "record": "1-0-1"
     },
     {
       "name": "McKinney North Stars (TX) (Other Division)",
       "website": "https://www.mckinneynorthstars.com/page/show/9115515-12uaa",
       "mhrUrl": "https://myhockeyrankings.com/team_info.php?y=2025&t=16649",
       "note": "Added as tournament-only opponent.",
-      "rating": 0,
-      "updatedFromMHRAt": "2025-09-22T04:18:50.378Z",
+      "rating": 83.35,
+      "updatedFromMHRAt": "2025-09-24T11:07:47.793Z",
       "record": "3-4-0"
     },
     {
@@ -47,8 +47,8 @@
       "website": "https://tyha.net/sting-2013/",
       "mhrUrl": "https://myhockeyrankings.com/team_info.php?y=2025&t=4610",
       "note": "Added as tournament-only opponent.",
-      "rating": 0,
-      "updatedFromMHRAt": "2025-09-22T04:18:50.591Z",
+      "rating": 85.47,
+      "updatedFromMHRAt": "2025-09-24T11:07:47.928Z",
       "record": "0-1-1"
     },
     {
@@ -56,8 +56,8 @@
       "website": "https://amherstyouthhockey.leagueapps.com/leagues/ice-hockey/4550976",
       "mhrUrl": "https://myhockeyrankings.com/team_info.php?y=2025&t=2983",
       "note": "Added as tournament-only opponent.",
-      "rating": 0,
-      "updatedFromMHRAt": "2025-09-22T04:18:50.717Z",
+      "rating": 78.74,
+      "updatedFromMHRAt": "2025-09-24T11:07:48.054Z",
       "record": "1-1-0"
     },
     {
@@ -65,8 +65,8 @@
       "website": "https://www.pghaviators.com/team/119493",
       "mhrUrl": "https://myhockeyrankings.com/team_info.php?y=2025&t=28561",
       "note": "Added as tournament-only opponent.",
-      "rating": 0,
-      "updatedFromMHRAt": "2025-09-22T04:18:50.918Z",
+      "rating": 83.26,
+      "updatedFromMHRAt": "2025-09-24T11:07:48.192Z",
       "record": "6-5-1"
     }
   ]
