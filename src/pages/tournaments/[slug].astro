@@ -69,8 +69,7 @@ const opponentTeams = opponentsRaw
 
 // Rank helpers
 const hasAnyRank = opponentTeams.some(
-  (t: any) =>
-    Number.isFinite(t?.mhrStateRank) || Number.isFinite(t?.mhrNationalRank)
+  (t: any) => Number.isFinite(t?.mhrStateRank) || Number.isFinite(t?.mhrNationalRank)
 );
 
 function formatRankPair(t: any) {
@@ -92,10 +91,36 @@ function getTeam(slug: string) {
   <p class="text-gray-300">
     {tournament.location} • {new Date(tournament.startDate).toLocaleDateString()} – {new Date(tournament.endDate).toLocaleDateString()}
   </p>
+
   {tournament.website && (
     <p class="mt-1 text-gray-300">
       Website: <a class="underline hover:text-red-400" href={tournament.website} target="_blank" rel="noopener">{tournament.website}</a>
     </p>
+  )}
+
+  {(tournament.infoUrl || tournament.website || tournament.standingsUrl) && (
+    <div class="mt-3 flex flex-wrap gap-2">
+      {(tournament.infoUrl || tournament.website) && (
+        <a
+          href={tournament.infoUrl ?? tournament.website}
+          target="_blank"
+          rel="noopener"
+          class="inline-block rounded-lg border border-red-600 bg-red-600/20 px-3 py-1.5 text-sm text-red-200 hover:bg-red-600/30"
+        >
+          Tournament Information
+        </a>
+      )}
+      {tournament.standingsUrl && (
+        <a
+          href={tournament.standingsUrl}
+          target="_blank"
+          rel="noopener"
+          class="inline-block rounded-lg border border-red-600 bg-red-600/20 px-3 py-1.5 text-sm text-red-200 hover:bg-red-600/30"
+        >
+          Standings / Schedule
+        </a>
+      )}
+    </div>
   )}
 
   <!-- Teams & MHR Ranks -->

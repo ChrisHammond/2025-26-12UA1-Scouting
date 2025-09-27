@@ -28,27 +28,32 @@ const tournaments = defineCollection({
     startDate: z.string(),
     endDate: z.string(),
     website: z.string().url().optional(),
-    opponents: z.array(
-      z.union([
-        z.string(),
-        z
-          .object({
-            slug: z.string().optional(),
-            name: z.string(),
-            website: z.string().url().optional(),
-            mhrUrl: z.string().url().optional(),
-            rating: z.number().optional(),
-            mhrStateRank: z.number().int().optional(),
-            mhrNationalRank: z.number().int().optional(),
-            record: z.string().optional(),
-            note: z.string().optional(),
-            // include both to be flexible with scripts/UI
-            lastUpdated: z.string().optional(),
-            updatedFromMHRAt: z.string().optional(),
-          })
-          .passthrough(), // keep any extra fields we might add later
-      ])
-    ).default([]),
+    /** NEW: explicit links for the tournament page */
+    infoUrl: z.string().url().optional(),
+    standingsUrl: z.string().url().optional(),
+    opponents: z
+      .array(
+        z.union([
+          z.string(),
+          z
+            .object({
+              slug: z.string().optional(),
+              name: z.string(),
+              website: z.string().url().optional(),
+              mhrUrl: z.string().url().optional(),
+              rating: z.number().optional(),
+              mhrStateRank: z.number().int().optional(),
+              mhrNationalRank: z.number().int().optional(),
+              record: z.string().optional(),
+              note: z.string().optional(),
+              // allow either field name for updated timestamp
+              lastUpdated: z.string().optional(),
+              updatedFromMHRAt: z.string().optional(),
+            })
+            .passthrough(), // keep any extra fields we might add later
+        ])
+      )
+      .default([]),
   }),
 });
 
