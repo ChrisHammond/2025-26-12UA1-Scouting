@@ -2,31 +2,37 @@
 
 An almost-maybe-ready-to-use Astro site for youth hockey scouting: teams, tournaments, games, plus **MyHockeyRankings (MHR)** rating/record/ranks and a rating-history chart.
 
-I dev/build this repo on a local linux machine that has Astro and Node installed. You may be able to run it 100% from Netlify without having a local build, but debugging any issues may become difficult. 
+I dev/build this repo on a local Linux machine that has Astro and Node installed. You *might* run it 100% from Netlify, but debugging issues is much easier locally.
 
-You can view what this looks like on our [LIVE PRODUCTION](https://hockey.chrishammond.com/) site.
+**Live example:** https://hockey.chrishammond.com/
+
+---
 
 ## Features
+
 - **Opponent scouting portal** built with Astro 5 + Tailwind (dark, Falcons-themed).
-- **Teams directory** from `src/content/teams/*.json` with detail pages, records, MHR links, and optional **team notes** (e.g., tryout status).
-- **League table** filtered by league/division with **MHR Rating**, **State/National ranks**, and trend **arrows** (▲/▼/■) from recent rank history.
-- **Tournaments** index + detail pages showing participating teams and their **current MHR ranks**.
+- **Teams directory** from `src/content/teams/*.json` with detail pages, records, MHR links, and optional team **note** (e.g., tryout status).
+- **League table** filtered by league/division with **MHR Rating** and a combined **Rank (ST/NAT)** column  
+  _(auto-hides if no teams have ranks yet to keep mobile narrow)_.
+- **Tournaments** index + detail pages with participating teams and their **current MHR record/rating/ranks**.  
+  Supports *inline “tournament-only” opponents* (no file in `/teams` required).
+- **Tournament page links**: shows Website, and can also render **“Tournament Information”** and **“Standings/Schedule”** links if you add them (optional) in the tournament JSON.
 - **Schedule** combines **manual games** and **auto-imported ICS** (webcal) games with de-duplication and source labeling.
-- **Win probability** badge on schedule and matchup pages using a simple logistic model based on rating difference.
-- **Matchup pages** (`/matchups/<opponent>/`) with two-team **rating trend chart**, quick compare chips, and head-to-head preview.
+- **Win probability** badge on schedule and matchup pages using a logistic model based on rating difference.
+- **Matchup pages** (`/matchups/<opponent>/`) with a two-team **rating trend chart**, quick compare chips, and head-to-head preview.
 - **Rating history charts** (Chart.js) per team with time-series of MHR rating.
-- **Multi-team rating comparison** chart (homepage widget) for top or selected teams.
+- **Multi-team rating comparison** chart (homepage widget) for top/selected teams.
 - **“Last built”** timestamp in the footer (America/Chicago) for freshness.
 - **Content-first architecture** using `astro:content` schemas (Teams, Tournaments, Games) with strong typing.
-- **Configurable settings** (portal name, your team slug/name, league, division) consumed across pages/layouts.
 - **MyHockeyRankings fields** per team: rating, state rank, national rank, URLs, and **history tracking** JSONs.
 - **Automation**: GitHub Actions cron (daily) runs update scripts, commits changes, and can **trigger Netlify** via a build hook.
-- **ICS updater script** normalizes webcal → https, parses `.ics`, and maps events into uniform game objects.
+- **ICS updater** normalizes webcal → https, parses `.ics`, and maps events into uniform game objects.
 - **Static prerendering** via `getStaticPaths()` for teams, tournaments, and matchups.
 - **Responsive UI** with semantic tables/cards, hover states, and accessible link styles.
-- **Branding assets** including favicon to match team identity.
 - **Graceful fallbacks** when data is incomplete (e.g., missing ratings/history show em dashes).
 - **Developer ergonomics**: small utilities for probability, schedule normalization, and history updates; clear folder structure.
+
+> **MHR timing:** Ratings/ranks often don’t populate until a team has ~10 games and after weekly tabulations. Early in the season you may see records only. The UI hides the combined rank column if nobody has ranks yet.
 
 ---
 
@@ -48,7 +54,7 @@ npx astro sync
 # 4) Run the dev server
 npm run dev    # http://localhost:4321
 
-# 5) Build static site
+# 5) Build the site
 npm run build  # output in /dist
 ```
 
@@ -56,7 +62,7 @@ npm run build  # output in /dist
 
 ## Configure Your Portal (branding & defaults)
 
-Edit **src/config/settings.ts** and update these values:
+Edit **`src/config/settings.ts`**:
 
 - `portalName` – Site title in the header/footer and default `<title>`.
 - `teamName` – Your team’s display name.
@@ -64,16 +70,18 @@ Edit **src/config/settings.ts** and update these values:
 - `leagueName` – Default league shown on the homepage table.
 - `divisionName` – Default division/level on the homepage table.
 
-> The homepage league table reads these settings by default. You can still override props directly where `<LeagueTable />` is used if you want.
+The homepage league table reads these settings by default.
 
 ---
 
 ## Add Your Data (content files)
 
-All season data lives in **/src/content**. You’ll mainly add/edit JSON files.
+All season data lives in **`/src/content`**. You’ll mainly add/edit JSON files.
 
 ### Teams
-Create one file per team in **src/content/teams/**:
+
+Create one file per team in **`src/content/teams/`**:
+
 ```json
 {
   "name": "YOUR TEAM NAME",
@@ -87,13 +95,16 @@ Create one file per team in **src/content/teams/**:
   "mhrStateRank": 0,
   "mhrNationalRank": 0,
   "lastUpdated": "YYYY-MM-DD",
-  "notes": "Text based notes to be displayed on a team page"
+  "note": "Text-based note shown on the team page"
 }
 ```
-> Only `name` and `slug` are required to start. The updater fills `rating`, `record`, ranks, and `lastUpdated` if `mhrUrl` is present.
+
+> Only `name` and `slug` are required. The updater fills `rating`, `record`, ranks, and `lastUpdated` if `mhrUrl` is present.
 
 ### Tournaments
-Create files in **src/content/tournaments/**:
+
+Create files in **`src/content/tournaments/`**:
+
 ```json
 {
   "name": "River City Classic",
@@ -102,12 +113,39 @@ Create files in **src/content/tournaments/**:
   "startDate": "2025-10-10",
   "endDate": "2025-10-12",
   "website": "https://tournament-site.example.com",
-  "opponents": ["your-team-slug", "opponent-slug-2"]
+
+  "opponents": [
+    "your-team-slug",
+
+    // You can also add "inline" opponents that do NOT exist in /teams:
+    {
+      "name": "Pittsburgh Aviators (2013)",
+      "mhrUrl": "https://myhockeyrankings.com/team_info.php?y=2025&t=28561",
+      "website": "https://www.pghaviators.com/team/119493",
+      "note": "Tournament-only opponent"
+      // The updater will fill these:
+      // "record": "5-3-1",
+      // "rating": 0,
+      // "mhrStateRank": 12,
+      // "mhrNationalRank": 255,
+      // "updatedFromMHRAt": "2025-09-16T05:17:32.877Z"
+    }
+  ]
+
+  /* Optional: include direct links shown on the tournament page
+  "infoUrl": "https://event-host.example.com/this-tournament/info",
+  "standingsUrl": "https://event-host.example.com/this-tournament/standings"
+  */
 }
 ```
 
+Supported inline opponent fields:  
+`name`, `slug?`, `website?`, `mhrUrl?`, `rating?`, `mhrStateRank?`, `mhrNationalRank?`, `record?`, `note?`, `lastUpdated?`, `updatedFromMHRAt?`.
+
 ### Games
-Create files in **src/content/games/**:
+
+Create files in **`src/content/games/`**:
+
 ```json
 {
   "date": "2025-09-20",
@@ -121,75 +159,100 @@ Create files in **src/content/games/**:
   "scoreAgainst": 2
 }
 ```
+
 > After adding a lot of new content files or changing the schema in `src/content/config.ts`, run `npx astro sync` once.
 
 ---
 
-## Updates for Various Software Bits
-This repo includes scripts that update various data points. You can run them manually or set up a cron job (e.g., GitHub Actions) to run them daily and commit changes.
+## CLI & Scripts
 
+### Astro
 
-### CLI Scripts - Astro build commands
-
-- `npm run dev` — start Astro dev server.
-- `npm run build` — build the static site.
-- `npm run preview` — preview the production build locally.
-- `npm run astro -- <args>` — pass-through to the Astro CLI (e.g., `npm run astro -- sync`).
+- `npm run dev` — start Astro dev server  
+- `npm run build` — build the static site  
+- `npm run preview` — preview the production build locally  
+- `npm run astro -- <args>` — pass-through to Astro CLI (e.g., `npm run astro -- sync`)
 
 ### Data Updaters
 
-- `npm run update:schedules` — fetch calendars (ICS) and write auto games to `src/data/auto-schedule/<team>.json`.
-  - Examples:
-    - `npm run update:schedules`
-    - `npm run update:schedules -- --team=chesterfield-a1`
+- `npm run update:schedules` — fetch calendars (ICS) and write auto games to `src/data/auto-schedule/<team>.json`  
+  **Examples**
+  - `npm run update:schedules`
+  - `npm run update:schedules -- --team=chesterfield-a1`
 
-- `npm run update:teams` — scrape MHR for teams in `src/content/teams/` (when `mhrUrl` is set); update `record`, `rating`, ranks, and append to `src/data/mhr-history/<slug>.json`.
-  - Examples:
-    - `npm run update:teams`
-    - `npm run update:teams -- --slug=rockets-a1`
-    - `npm run update:teams -- --dry-run`
+- `npm run update:teams` — scrape MHR for teams in `src/content/teams/` (when `mhrUrl` is set); update `record`, `rating`, ranks, and append to `src/data/mhr-history/<slug>.json`  
+  **Examples**
+  - `npm run update:teams`
+  - `npm run update:teams -- --slug=rockets-a1`
+  - `npm run update:teams -- --dry-run`
 
-- `npm run update:tournaments:inline` — update **inline** tournament opponents (objects inside each tournament’s `opponents` array) from MHR; fills `record`, `rating`, ranks, and `updatedFromMHRAt`.
-  - Examples:
-    - `npm run update:tournaments:inline`
-    - `npm run update:tournaments:inline -- --tournament=rock-n-roll-cup-cleveland`
-    - `npm run update:tournaments:inline -- --force`
-    - `npm run update:tournaments:inline -- --debug`
-    - `npm run update:tournaments:inline -- --dump-html`
+- `npm run update:tournaments:inline` — update **inline** tournament opponents (objects inside each tournament’s `opponents` array) from MHR; fills `record`, `rating`, ranks, and `updatedFromMHRAt`  
+  **Examples**
+  - `npm run update:tournaments:inline`
+  - `npm run update:tournaments:inline -- --tournament=river-city-classic`
+  - `npm run update:tournaments:inline -- --force`
+  - `npm run update:tournaments:inline -- --debug`
+  - `npm run update:tournaments:inline -- --dump-html`
 
-- `npm run update:all` — run all data refreshers in sequence:
-  - `update:schedules` → `update:teams` → `update:tournaments:inline`.
-  - Example: `npm run update:all`
-
-
-
----
-
-## Deploy on Netlify
-
-1. Push your repo to GitHub/GitLab/Bitbucket.  
-2. In Netlify, **Add new site → Import from Git** and select your repo.  
-3. **Build command:** `npm run build`  
-4. **Publish directory:** `dist`
-
-> Optional: set `site` in `astro.config.mjs` for canonical URLs/sitemap once you have a permanent domain.
+- `npm run update:all` — run all data refreshers in sequence:  
+  `update:schedules` → `update:teams` → `update:tournaments:inline`  
+  **Example**
+  - `npm run update:all`
 
 ---
 
-## Notes
+## Schedule & Time Zones
 
-- The team page’s rating-history chart uses `src/data/mhr-history/<slug>.json`. You’ll see a line once there are at least two entries (run the updater on different days).
-- The footer shows a “Last built” timestamp automatically.
+- Schedule times display in **America/Chicago**.
+- ICS events with explicit time zones are **converted to Central Time** for display.
+- If an event time looks off, check the source feed’s local time zone/DST rules.
+
+---
+
+## Automated Daily Refresh (GitHub Actions)
+
+A workflow in `.github/workflows/daily-refresh.yml`:
+
+1. Installs dependencies  
+2. Runs `astro sync`  
+3. Runs data updaters (`update:schedules`, `update:teams`, `update:tournaments:inline`)  
+4. Commits & pushes changes (if any)  
+5. Optionally triggers Netlify via a build hook
+
+**Setup**
+
+- Ensure GitHub Actions are enabled for the repo.
+- (Optional) Add a secret **`NETLIFY_BUILD_HOOK`** (Settings → Secrets and variables → Actions).
+- Cron is specified in UTC; adjust as needed.
+
+---
+
+## Troubleshooting
+
+**I removed a manual game but it still shows up.**  
+The schedule merges manual `src/content/games/*.json` with auto ICS (`src/data/auto-schedule/<team>.json`) and de-duplicates by `(date|time|opponent)`. If the ICS still has the event, it will remain. Remove/update the event at the source (or delete the matching entry in `src/data/auto-schedule/…` and re-run `update:schedules`).
+
+**Why did the rank column disappear?**  
+If no teams have `mhrStateRank` or `mhrNationalRank`, the UI hides the combined **Rank (ST/NAT)** column (common early season).
+
+**A tournament opponent’s record/rating didn’t update.**  
+Run `npm run update:tournaments:inline` (optionally with `--tournament=<slug>`). Ensure each inline opponent has a valid `mhrUrl`.
+
+**Times look wrong on the Schedule page.**  
+Everything is displayed in America/Chicago. ICS events with explicit time zones are converted; if an event is incorrectly defined in the feed, it will display shifted. Verify the ICS entry’s time zone.
+
+**MHR numbers look stale.**  
+Re-run `npm run update:teams` (for teams) and/or `npm run update:tournaments:inline` (for inline opponents). Remember MHR ratings/ranks typically update weekly and often after ~10 games.
 
 ---
 
 ## License
 
-[This project is licensed under a very broad MIT license](https://github.com/ChrisHammond/2025-26-12UA1-Scouting?tab=MIT-1-ov-file#readme).
+MIT — see `LICENSE`.
 
 ---
 
 ## Credits
 
-Originally built for the 2025-26 Chesterfield Falcons 12U A1 scouting portal. 🏒🟥⬛️  
+Originally built for the 2025–26 Chesterfield Falcons 12U A1 scouting portal. 🏒🟥⬛️  
 Powered by Astro + Tailwind.

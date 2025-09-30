@@ -9,24 +9,44 @@ const teams = await getCollection("teams");
 const tournaments = await getCollection("tournaments");
 ---
 
-<BaseLayout title={`Home – ${settings.portalName}`}>
+<BaseLayout
+  title={`Home – ${settings.portalName}`}
+  description={`${settings.portalName}: ${settings.teamName} ${settings.leagueName} ${settings.divisionName} scouting hub — Teams, Tournaments, Schedule, MHR ratings, ranks & charts.`}
+>
   <div class="mb-4 rounded-md border border-red-600/50 bg-gray-900 p-4 text-gray-200">
     <p>
-      Last week was the first round of rankings, rankings should update again on Wednesday morning and we'll see how data tracks. You should bookmark <a href="https://hockey.chrishammond.com/">https://hockey.chrishammond.com/</a>.
+      Last week was the first round of rankings, rankings should update again on
+      Wednesday morning and we'll see how data tracks. You should bookmark
+      <a href="https://hockey.chrishammond.com/">
+        https://hockey.chrishammond.com/
+      </a>.
     </p>
   </div>
 
   <h2 class="text-2xl font-semibold mb-6 text-red-500">Quick Links</h2>
   <div class="grid md:grid-cols-3 gap-6">
-    <a href="/teams/" class="block bg-gray-900 p-4 rounded-lg shadow hover:shadow-lg transition">
-      <h3 class="text-lg font-bold mb-2 text-red-400">Teams ({teams.length})</h3>
+    <a
+      href="/teams/"
+      class="block bg-gray-900 p-4 rounded-lg shadow hover:shadow-lg transition"
+    >
+      <h3 class="text-lg font-bold mb-2 text-red-400">
+        Teams ({teams.length})
+      </h3>
       <p class="text-gray-300">Opponents &amp; details</p>
     </a>
-    <a href="/tournaments/" class="block bg-gray-900 p-4 rounded-lg shadow hover:shadow-lg transition">
-      <h3 class="text-lg font-bold mb-2 text-red-400">Tournaments ({tournaments.length})</h3>
+    <a
+      href="/tournaments/"
+      class="block bg-gray-900 p-4 rounded-lg shadow hover:shadow-lg transition"
+    >
+      <h3 class="text-lg font-bold mb-2 text-red-400">
+        Tournaments ({tournaments.length})
+      </h3>
       <p class="text-gray-300">Upcoming &amp; past events</p>
     </a>
-    <a href="/schedule/" class="block bg-gray-900 p-4 rounded-lg shadow hover:shadow-lg transition">
+    <a
+      href="/schedule/"
+      class="block bg-gray-900 p-4 rounded-lg shadow hover:shadow-lg transition"
+    >
       <h3 class="text-lg font-bold mb-2 text-red-400">Schedule</h3>
       <p class="text-gray-300">All games at a glance</p>
     </a>

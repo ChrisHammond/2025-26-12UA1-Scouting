@@ -3,7 +3,22 @@ import "../styles/global.css";
 import { buildTimestampISO } from "../lib/build-info";
 import settings from "../config/settings";
 
-const { title = settings.portalName } = Astro.props;
+interface Props {
+  title?: string;
+  description?: string;
+  noIndex?: boolean;
+}
+
+const {
+  title = settings.portalName,
+  description,
+  noIndex = false,
+} = Astro.props as Props;
+
+// Fallback description if a page doesn't pass one
+const metaDescription =
+  description ??
+  `${settings.portalName} youth hockey scouting portal with Teams, Tournaments, Games, MHR ratings/ranks, and schedule.`;
 
 // Build timestamp (frozen on build, live in dev)
 const isDev = import.meta.env.DEV;
@@ -19,6 +34,11 @@ const builtAtDisplay = builtAt.toLocaleString("en-US", {
   hour12: true,
   timeZoneName: "short",
 });
+
+// Canonical URL if `site` is configured in astro.config.*
+const canonical = Astro.site
+  ? new URL(Astro.url.pathname, Astro.site).toString()
+  : null;
 ---
 
 <html lang="en" class="bg-black text-white">
@@ -26,10 +46,25 @@ const builtAtDisplay = builtAt.toLocaleString("en-US", {
     <meta charset="utf-8" />
     <title>{title}</title>
     <meta name="viewport" content="width=device-width, initial-scale=1" />
+    <meta name="description" content={metaDescription} />
+    {noIndex && <meta name="robots" content="noindex, nofollow" />}
+    {canonical && <link rel="canonical" href={canonical} />}
+
+    <!-- Open Graph -->
+    <meta property="og:title" content={title} />
+    <meta property="og:description" content={metaDescription} />
+    <meta property="og:type" content="website" />
+    {canonical && <meta property="og:url" content={canonical} />}
+
+    <!-- Twitter -->
+    <meta name="twitter:card" content="summary" />
+    <meta name="twitter:title" content={title} />
+    <meta name="twitter:description" content={metaDescription} />
+
     <link rel="icon" href="/favicon.svg" type="image/svg+xml" />
   </head>
 
-  <body class="min-h-screen flex flex-col font-sans">
+  <body class="min-h-screen flex flex-col font-sans bg-black text-white">
     <!-- Header (NAV) -->
     <header class="bg-black border-b border-red-600">
       <div class="max-w-6xl mx-auto px-4 py-3 flex justify-between items-center">
@@ -55,8 +90,11 @@ const builtAtDisplay = builtAt.toLocaleString("en-US", {
       © {new Date().getFullYear()} {settings.companyName}
       <div class="mt-1 text-xs text-gray-500">
         <div>Last built: {builtAtDisplay}</div>
-        <p class="mt-1">This page is for entertainment purposes only and is not officially affiliated with anyone.</p>
-        Interested in running your own scouting site? Check out our <a href="https://github.com/ChrisHammond/2025-26-12UA1-Scouting">GitHub Repository</a>
+        <p class="mt-1">
+          This page is for entertainment purposes only and is not officially affiliated with anyone.
+        </p>
+        Interested in running your own scouting site? Check out our
+        <a class="text-red-400 hover:text-red-300 underline" href="https://github.com/ChrisHammond/2025-26-12UA1-Scouting">GitHub Repository</a>
       </div>
     </footer>
   </body>
