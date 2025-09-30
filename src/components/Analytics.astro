@@ -1,0 +1,21 @@
+---
+const GA_ID = import.meta.env.PUBLIC_GA_ID as string | undefined;
+
+// Don't render anything if no GA ID (keeps dev clean)
+if (!GA_ID) {
+  return null;
+}
+---
+
+<!-- Google tag (gtag.js) -->
+<script async src={`https://www.googletagmanager.com/gtag/js?id=${GA_ID}`}></script>
+<script>
+  window.dataLayer = window.dataLayer || [];
+  function gtag(){dataLayer.push(arguments);}
+  gtag('js', new Date());
+  // GA4 auto-anonymizes IP; config still fine to keep explicit options here
+  gtag('config', '{GA_ID}', {
+    page_title: document.title,
+    // page_path is auto on navigation in MPA; add manual calls if you later add client-side routing
+  });
+</script>

@@ -1,6 +1,7 @@
 ---
 import "../styles/global.css";
 import { buildTimestampISO } from "../lib/build-info";
+import Analytics from "../components/Analytics.astro";
 import settings from "../config/settings";
 
 interface Props {
@@ -62,6 +63,7 @@ const canonical = Astro.site
     <meta name="twitter:description" content={metaDescription} />
 
     <link rel="icon" href="/favicon.svg" type="image/svg+xml" />
+    <Analytics />
   </head>
 
   <body class="min-h-screen flex flex-col font-sans bg-black text-white">
