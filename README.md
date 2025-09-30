@@ -227,6 +227,23 @@ A workflow in `.github/workflows/daily-refresh.yml`:
 
 ---
 
+## Environment Variables
+
+The site relies on a few environment variables for external integrations:
+
+- `PUBLIC_GA_ID` – **optional**. If set, Google Analytics 4 tracking will be injected into the site.
+  - Value: Your GA4 Measurement ID (e.g., `G-XXXXXXXXXX`)
+  - Scope: Public (safe to expose in client code)
+  - Example:
+    ```bash
+    PUBLIC_GA_ID=G-ABC123XYZ
+    ```
+
+When `PUBLIC_GA_ID` is not defined (e.g., during local dev), analytics code will not be rendered.
+Set this in your Netlify environment variables for production builds.
+
+---
+
 ## Troubleshooting
 
 **I removed a manual game but it still shows up.**  
