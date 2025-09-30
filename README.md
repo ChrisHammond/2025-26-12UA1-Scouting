@@ -125,26 +125,43 @@ Create files in **src/content/games/**:
 
 ---
 
-## Update MHR Data (ratings, record, ranks, history)
+## Updates for Various Software Bits
+This repo includes scripts that update various data points. You can run them manually or set up a cron job (e.g., GitHub Actions) to run them daily and commit changes.
 
-This repo includes a script that reads each team’s `mhrUrl`, updates the team JSON, and appends rating history used by the chart.
 
-```bash
-# Update all teams that have "mhrUrl"
-node scripts/update-teams-from-mhr.mjs
+### CLI Scripts - Astro build commands
 
-# Update a single team
-node scripts/update-teams-from-mhr.mjs --slug=your-team-slug
+- `npm run dev` — start Astro dev server.
+- `npm run build` — build the static site.
+- `npm run preview` — preview the production build locally.
+- `npm run astro -- <args>` — pass-through to the Astro CLI (e.g., `npm run astro -- sync`).
 
-# Dry run (no writes)
-node scripts/update-teams-from-mhr.mjs --dry-run
-```
+### Data Updaters
 
-It updates:
-- `rating` (number), `record` (e.g., `10-4-2`)
-- `mhrStateRank`, `mhrNationalRank`
-- `lastUpdated` (ISO date)
-- Appends `{ "date": "YYYY-MM-DD", "rating": 86.42 }` to `src/data/mhr-history/<slug>.json`
+- `npm run update:schedules` — fetch calendars (ICS) and write auto games to `src/data/auto-schedule/<team>.json`.
+  - Examples:
+    - `npm run update:schedules`
+    - `npm run update:schedules -- --team=chesterfield-a1`
+
+- `npm run update:teams` — scrape MHR for teams in `src/content/teams/` (when `mhrUrl` is set); update `record`, `rating`, ranks, and append to `src/data/mhr-history/<slug>.json`.
+  - Examples:
+    - `npm run update:teams`
+    - `npm run update:teams -- --slug=rockets-a1`
+    - `npm run update:teams -- --dry-run`
+
+- `npm run update:tournaments:inline` — update **inline** tournament opponents (objects inside each tournament’s `opponents` array) from MHR; fills `record`, `rating`, ranks, and `updatedFromMHRAt`.
+  - Examples:
+    - `npm run update:tournaments:inline`
+    - `npm run update:tournaments:inline -- --tournament=rock-n-roll-cup-cleveland`
+    - `npm run update:tournaments:inline -- --force`
+    - `npm run update:tournaments:inline -- --debug`
+    - `npm run update:tournaments:inline -- --dump-html`
+
+- `npm run update:all` — run all data refreshers in sequence:
+  - `update:schedules` → `update:teams` → `update:tournaments:inline`.
+  - Example: `npm run update:all`
+
+
 
 ---
 
@@ -174,5 +191,5 @@ It updates:
 
 ## Credits
 
-Originally built for a Chesterfield Falcons 12U A1 scouting portal. 🏒🟥⬛️  
+Originally built for the 2025-26 Chesterfield Falcons 12U A1 scouting portal. 🏒🟥⬛️  
 Powered by Astro + Tailwind.
