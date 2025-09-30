@@ -13,20 +13,27 @@ const myTeam = teamBySlug.get(settings.teamSlug);
 
 // Auto (generated) for your team
 const autoMods = import.meta.glob("../data/auto-schedule/*.json", { eager: true });
-const autoGames = (autoMods[`../data/auto-schedule/${settings.teamSlug}.json`]?.default ?? []);
+const autoGames =
+  autoMods[`../data/auto-schedule/${settings.teamSlug}.json`]?.default ?? [];
 
 // Merge & de-duplicate
-const key = (g) => [g.date, g.time ?? "", (g.opponent ?? g.opponentSlug ?? "").toLowerCase()].join("|");
+const key = (g) =>
+  [g.date, g.time ?? "", (g.opponent ?? g.opponentSlug ?? "").toLowerCase()].join("|");
 const mergedMap = new Map();
 [...autoGames, ...manualGames].forEach((g) => mergedMap.set(key(g), g));
-const games = [...mergedMap.values()].sort((a, b) => (a.date + (a.time ?? "")).localeCompare(b.date + (b.time ?? "")));
+const games = [...mergedMap.values()].sort((a, b) =>
+  (a.date + (a.time ?? "")).localeCompare(b.date + (b.time ?? ""))
+);
 
 /** Opponent resolution */
 function findOpponent(g: any) {
   if (g.opponentSlug && teamBySlug.has(g.opponentSlug)) return teamBySlug.get(g.opponentSlug);
   const raw = (g.opponent || "").trim();
   if (teamBySlug.has(raw)) return teamBySlug.get(raw);
-  const guess = raw.toLowerCase().replace(/[^a-z0-9]+/g, "-").replace(/(^-|-$)/g, "");
+  const guess = raw
+    .toLowerCase()
+    .replace(/[^a-z0-9]+/g, "-")
+    .replace(/(^-|-$)/g, "");
   if (teamBySlug.has(guess)) return teamBySlug.get(guess);
   const n = raw.toLowerCase().replace(/[^a-z0-9]/g, "");
   for (const t of teams) {
@@ -89,7 +96,10 @@ function displayTime(g: any) {
 }
 ---
 
-<BaseLayout title="Schedule">
+<BaseLayout
+  title={`Schedule – ${settings.portalName}`}
+  description={`Merged schedule for ${settings.teamName}: manual games + ICS imports, de-duplicated and shown in ${settings.timeZone || "America/Chicago"}. Includes opponent links and win probability when ratings exist.`}
+>
   <h1 class="text-2xl font-bold text-red-500 mb-4">Schedule</h1>
   {games.length === 0 ? (
     <p class="text-gray-300">No games found.</p>
@@ -112,9 +122,10 @@ function displayTime(g: any) {
           {games.map((g) => {
             const opp = findOpponent(g);
             const p =
-              (myTeam && opp &&
-                typeof myTeam.rating === "number" &&
-                typeof opp.rating === "number")
+              myTeam &&
+              opp &&
+              typeof myTeam.rating === "number" &&
+              typeof opp.rating === "number"
                 ? winProb(myTeam.rating, opp.rating)
                 : undefined;
 
@@ -124,20 +135,36 @@ function displayTime(g: any) {
                 <td class="px-3 py-2">{displayTime(g)}</td>
                 <td class="px-3 py-2">
                   {opp ? (
-                    <a class="underline hover:text-red-400" href={`/teams/${opp.slug}/`}>{opp.name}</a>
+                    <a
+                      class="underline hover:text-red-400"
+                      href={`/teams/${opp.slug}/`}
+                    >
+                      {opp.name}
+                    </a>
                   ) : (
                     g.opponent ?? g.opponentSlug ?? "TBD"
                   )}
                 </td>
                 <td class="px-3 py-2">{g.homeAway ?? "Neutral"}</td>
                 <td class="px-3 py-2">{g.venue ?? "—"}</td>
-                <td class="px-3 py-2"><WinProbBadge p={p} /></td>
+                <td class="px-3 py-2">
+                  <WinProbBadge p={p} />
+                </td>
                 <td class="px-3 py-2">
                   {opp ? (
-                    <a class="underline hover:text-red-400" href={`/matchups/${opp.slug}/`}>Matchup</a>
-                  ) : "—"}
+                    <a
+                      class="underline hover:text-red-400"
+                      href={`/matchups/${opp.slug}/`}
+                    >
+                      Matchup
+                    </a>
+                  ) : (
+                    "—"
+                  )}
                 </td>
-                <td class="px-3 py-2 uppercase text-xs text-gray-400">{g.source ?? "manual"}</td>
+                <td class="px-3 py-2 uppercase text-xs text-gray-400">
+                  {g.source ?? "manual"}
+                </td>
               </tr>
             );
           })}
