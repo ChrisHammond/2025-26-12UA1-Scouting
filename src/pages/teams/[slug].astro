@@ -138,6 +138,37 @@ if (import.meta.env.DEV) {
   }
 }
 
+/** -------------------------
+ * Rank coercion (handles "7th Missouri 12U", "209th USA 12U - All", numeric strings, or numbers)
+ * ------------------------- */
+function coerceRank(val: unknown): number | undefined {
+  if (typeof val === "number" && Number.isFinite(val)) return val;
+  if (typeof val === "string") {
+    const m = val.match(/\d+/);
+    if (m) return Number(m[0]);
+  }
+  return undefined;
+}
+
+// Try several possible fields (frontmatter flexibility)
+const stateRank =
+  coerceRank(team.mhrStateRank) ??
+  coerceRank(team.stateRank) ??
+  coerceRank(team.mhr?.stateRank) ??
+  coerceRank(team.mhrStateRankText) ??
+  coerceRank(team.mhr?.ranks?.state);
+
+const nationalRank =
+  coerceRank(team.mhrNationalRank) ??
+  coerceRank(team.nationalRank) ??
+  coerceRank(team.mhr?.nationalRank) ??
+  coerceRank(team.mhrNationalRankText) ??
+  coerceRank(team.mhr?.ranks?.national);
+
+if (import.meta.env.DEV) {
+  console.info(`[team page] Ranks resolved → state=${stateRank ?? "—"}, national=${nationalRank ?? "—"}`);
+}
+
 // --- Matchup preview helpers ---
 const isSelf = team.slug === settings.teamSlug;
 const SCALE = 6;
@@ -191,11 +222,11 @@ const pageDescription = `${team.name} overview: record, MHR rating/ranks, rating
   <div class="mt-3 flex flex-wrap gap-2">
     <span class="inline-flex items-center gap-2 px-3 py-1 rounded-full border border-red-600 bg-red-600/20 text-red-300">
       <span class="text-xs uppercase tracking-wide">State Rank</span>
-      <span class="font-semibold text-white">{typeof team.mhrStateRank === "number" ? `#${team.mhrStateRank}` : "—"}</span>
+      <span class="font-semibold text-white">{stateRank != null ? `#${stateRank}` : "—"}</span>
     </span>
     <span class="inline-flex items-center gap-2 px-3 py-1 rounded-full border border-red-600 bg-red-600/20 text-red-300">
       <span class="text-xs uppercase tracking-wide">National Rank</span>
-      <span class="font-semibold text-white">{typeof team.mhrNationalRank === "number" ? `#${team.mhrNationalRank}` : "—"}</span>
+      <span class="font-semibold text-white">{nationalRank != null ? `#${nationalRank}` : "—"}</span>
     </span>
     {team.lastUpdated && (
       <span class="inline-flex items-center gap-2 px-3 py-1 rounded-full border border-gray-700 bg-gray-800 text-gray-300">
@@ -220,9 +251,9 @@ const pageDescription = `${team.name} overview: record, MHR rating/ranks, rating
               Rating Δ (us - them): <strong class="ml-1">{ratingDiff}</strong>
             </span>
           )}
-          {typeof myTeam.mhrNationalRank === "number" && typeof team.mhrNationalRank === "number" && (
+          {typeof myTeam.mhrNationalRank === "number" && nationalRank != null && (
             <span class="inline-block rounded px-2 py-0.5 bg-gray-800 text-gray-300">
-              Nat Rank: <strong class="ml-1">#{myTeam.mhrNationalRank}</strong> vs <strong class="ml-1">#{team.mhrNationalRank}</strong>
+              Nat Rank: <strong class="ml-1">#{myTeam.mhrNationalRank}</strong> vs <strong class="ml-1">#{nationalRank}</strong>
             </span>
           )}
         </div>

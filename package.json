@@ -19,5 +19,8 @@
     "chart.js": "^4.5.0",
     "node-ical": "^0.21.0",
     "tailwindcss": "^4.1.13"
+  },
+  "devDependencies": {
+    "playwright-chromium": "^1.55.1"
   }
 }

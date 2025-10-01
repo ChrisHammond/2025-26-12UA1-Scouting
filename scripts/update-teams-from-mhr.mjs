@@ -1,211 +1,210 @@
 #!/usr/bin/env node
-// scripts/update-teams-from-mhr.mjs
-// Update teams from MyHockeyRankings: fetch rating + record, append rating history.
-//
-// Usage:
-//   node scripts/update-teams-from-mhr.mjs                # update all teams with mhrUrl
-//   node scripts/update-teams-from-mhr.mjs --slug=chesterfield-a1
-//   node scripts/update-teams-from-mhr.mjs --dry-run
-//
-// Notes:
-// - Uses shared HTML parsers in ./lib/mhr-parse.mjs
-// - Rating is only written when meaningful; early-season 0.00 (or < MIN_GAMES_FOR_RATING games) won’t overwrite.
-// - History appends only when a meaningful rating is present.
-//
-// Env:
-//   MIN_GAMES_FOR_RATING (default 10)
-
+/**
+ * Refresh mhrStateRank / mhrNationalRank for each team from MyHockeyRankings.
+ * Now renders the page (Playwright Chromium) so we can see client-side content.
+ *
+ * Requirements:
+ *   npm i -D playwright-chromium
+ * In CI:
+ *   npx playwright install --with-deps chromium
+ *
+ * Run:
+ *   node scripts/update-teams-from-mhr.mjs
+ *   node scripts/update-teams-from-mhr.mjs --debug
+ */
 import fs from "node:fs/promises";
 import path from "node:path";
-import {
-  fetchHtml,
-  findRating,
-  findRecord,
-  findNationalRank,
-  findStateRank,
-} from "./lib/mhr-parse.mjs";
+import { chromium } from "playwright-chromium";
 
-const PROJECT_ROOT = process.cwd();
-const TEAMS_DIR = path.join(PROJECT_ROOT, "src", "content", "teams");
-const HISTORY_DIR = path.join(PROJECT_ROOT, "src", "data", "mhr-history");
+const TEAMS_DIR = "src/content/teams";
+const DEFAULT_YEAR = new Date().getUTCFullYear();
+const DEBUG = process.argv.includes("--debug");
 
-const MIN_GAMES_FOR_RATING = Number(process.env.MIN_GAMES_FOR_RATING || 10);
+const STATES = {
+  AL:"Alabama", AK:"Alaska", AZ:"Arizona", AR:"Arkansas", CA:"California", CO:"Colorado",
+  CT:"Connecticut", DE:"Delaware", FL:"Florida", GA:"Georgia", HI:"Hawaii", ID:"Idaho",
+  IL:"Illinois", IN:"Indiana", IA:"Iowa", KS:"Kansas", KY:"Kentucky", LA:"Louisiana",
+  ME:"Maine", MD:"Maryland", MA:"Massachusetts", MI:"Michigan", MN:"Minnesota",
+  MS:"Mississippi", MO:"Missouri", MT:"Montana", NE:"Nebraska", NV:"Nevada",
+  NH:"New Hampshire", NJ:"New Jersey", NM:"New Mexico", NY:"New York",
+  NC:"North Carolina", ND:"North Dakota", OH:"Ohio", OK:"Oklahoma", OR:"Oregon",
+  PA:"Pennsylvania", RI:"Rhode Island", SC:"South Carolina", SD:"South Dakota",
+  TN:"Tennessee", TX:"Texas", UT:"Utah", VT:"Vermont", VA:"Virginia",
+  WA:"Washington", WV:"West Virginia", WI:"Wisconsin", WY:"Wyoming", DC:"District of Columbia"
+};
+const STATE_NAMES = new Set(Object.values(STATES).map(s => s.toLowerCase()));
+const STATE_ABBRS = new Set(Object.keys(STATES));
 
-const sleep = (ms) => new Promise((r) => setTimeout(r, ms));
+function todayISO() { return new Date().toISOString().slice(0, 10); }
+function escapeRegExp(s) { return String(s).replace(/[.*+?^${}()|[\]\\]/g, "\\$&"); }
+async function readJson(p, fallback = null) { try { return JSON.parse(await fs.readFile(p, "utf8")); } catch { return fallback; } }
+async function writeJson(p, data) { await fs.mkdir(path.dirname(p), { recursive: true }); await fs.writeFile(p, JSON.stringify(data, null, 2) + "\n", "utf8"); }
 
-function getArg(name, defVal = undefined) {
-  const pref = `--${name}=`;
-  for (const a of process.argv.slice(2)) {
-    if (a.startsWith(pref)) return a.substring(pref.length);
-    if (a === `--${name}`) return true;
+function buildMhrUrl(team) {
+  if (team?.mhrUrl) return String(team.mhrUrl);
+  const id = team?.mhrTeamId ?? team?.mhrId;
+  if (!id) return null;
+  const y = team?.mhrYear ?? DEFAULT_YEAR;
+  return `https://myhockeyrankings.com/team_info.php?y=${encodeURIComponent(y)}&t=${encodeURIComponent(id)}`;
+}
+
+// --- tolerant text parsers (work on full page text) ---
+function parseNationalRank(text) {
+  const m = text.match(/(\d+)(?:st|nd|rd|th)\s+(?:USA|United\s+States)\s+12U\b(?:\s*[-–]\s*[\w ]+)?/i);
+  return m ? Number(m[1]) : undefined;
+}
+function parseStateRank(text, team) {
+  // Try full names
+  for (const nm of STATE_NAMES) {
+    const rx = new RegExp(String.raw`(\d+)(?:st|nd|rd|th)\s+${escapeRegExp(nm)}\s+12U\b(?:\s*[-–]\s*[\w ]+)?`, "i");
+    const m = text.match(rx); if (m) return Number(m[1]);
   }
-  return defVal;
-}
-
-const DRY_RUN = !!getArg("dry-run");
-const ONLY_SLUG = getArg("slug", null);
-
-async function readJson(file) {
-  const data = await fs.readFile(file, "utf8");
-  return JSON.parse(data);
-}
-async function writeJson(file, data) {
-  const content = JSON.stringify(data, null, 2) + "\n";
-  if (DRY_RUN) {
-    console.log("[dry-run] would write", file);
-    return;
+  // Try abbreviations
+  for (const abbr of STATE_ABBRS) {
+    const rx = new RegExp(String.raw`(\d+)(?:st|nd|rd|th)\s+${abbr}\s+12U\b(?:\s*[-–]\s*[\w ]+)?`, "i");
+    const m = text.match(rx); if (m) return Number(m[1]);
   }
-  await fs.mkdir(path.dirname(file), { recursive: true });
-  await fs.writeFile(file, content, "utf8");
+  // Hints
+  const hints = [team?.state, team?.mhrState, team?.region, team?.division].filter(Boolean);
+  for (const hint of hints) {
+    const rx = new RegExp(String.raw`(\d+)(?:st|nd|rd|th)\s+${escapeRegExp(String(hint))}\s+12U\b(?:\s*[-–]\s*[\w ]+)?`, "i");
+    const m = text.match(rx); if (m) return Number(m[1]);
+  }
+  // First non-USA fallback
+  const rxLoose = /(\d+)(?:st|nd|rd|th)\s+([A-Za-z .'\-()]+?)\s+12U\b(?:\s*[-–]\s*[\w ]+)?/gi;
+  let match; while ((match = rxLoose.exec(text))) {
+    const label = match[2].trim();
+    if (!/^USA\b/i.test(label) && !/United\s+States/i.test(label)) return Number(match[1]);
+  }
+  return undefined;
 }
 
-async function listTeamFiles() {
-  let files = [];
+// Extract text optimistically from rendered DOM.
+async function extractRanksWithBrowser(url, team) {
+  const browser = await chromium.launch({ headless: true });
   try {
-    const entries = await fs.readdir(TEAMS_DIR, { withFileTypes: true });
-    for (const e of entries) {
-      if (e.isFile() && e.name.endsWith(".json")) {
-        files.push(path.join(TEAMS_DIR, e.name));
+    const page = await browser.newPage({
+      userAgent: "Mozilla/5.0 (X11; Linux x86_64) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/122 Safari/537.36"
+    });
+    const resp = await page.goto(url, { waitUntil: "domcontentloaded", timeout: 60000 });
+    if (!resp || !resp.ok()) throw new Error(`HTTP ${resp ? resp.status() : "?"}`);
+
+    // Wait a little for client-side modules/XHR to populate rank widgets
+    await page.waitForTimeout(1200);
+
+    // Try to find obvious rank nodes first (cheap/precise). If they’re present, great.
+    // Otherwise fall back to all visible text.
+    const textCandidates = await page.$$eval("*", (els) => {
+      const ok = (s) => s && s.trim().length > 0;
+      const take = [];
+      for (const el of els) {
+        const style = el.ownerDocument.defaultView?.getComputedStyle?.(el);
+        if (!style || style.display === "none" || style.visibility === "hidden") continue;
+        const t = el.textContent || "";
+        if (!ok(t)) continue;
+        // keep small blocks that likely contain “USA 12U” or “12U - All” or state
+        if (/\b12U\b/i.test(t) || /\bUSA\b/i.test(t) || /\bUnited States\b/i.test(t)) {
+          take.push(t.replace(/\s+/g, " ").trim());
+        }
       }
+      return take.slice(0, 200);
+    });
+
+    const bigText = (textCandidates.join("\n") || await page.content().then(h => h.replace(/<[^>]+>/g, " ")))
+      .replace(/\s+/g, " ")
+      .trim();
+
+    if (DEBUG) {
+      console.log("— normalized text length:", bigText.length);
+      await writeJson(`.debug/${(team.slug || "team")}-mhr-text.json`, { url, snippet: bigText.slice(0, 1200) });
     }
-  } catch (e) {
-    console.error("Cannot read teams dir", TEAMS_DIR, e.message);
+
+    const nationalRank = parseNationalRank(bigText);
+    const stateRank = parseStateRank(bigText, team);
+
+    return { nationalRank, stateRank, text: bigText };
+  } finally {
+    await browser.close();
   }
-  return files;
 }
 
-function totalGamesFromRecord(record) {
-  if (!record) return null;
-  const parts = record.split("-").map((n) => parseInt(n, 10));
-  if (parts.some((n) => Number.isNaN(n))) return null;
-  // W-L-[T?]
-  return parts.slice(0, 3).reduce((a, b) => a + (Number.isFinite(b) ? b : 0), 0);
+// Last-resort legacy: fetch raw HTML (usually won’t have ranks)
+async function extractRanksLegacy(url, team) {
+  const res = await fetch(url, { headers: { "User-Agent": "RankUpdater/1.1" } });
+  if (!res.ok) return {};
+  const html = await res.text();
+  const text = html.replace(/<script[\s\S]*?<\/script>/gi, " ")
+                   .replace(/<style[\s\S]*?<\/style>/gi, " ")
+                   .replace(/<[^>]*>/g, " ")
+                   .replace(/\s+/g, " ")
+                   .trim();
+  const nationalRank = parseNationalRank(text);
+  const stateRank = parseStateRank(text, team);
+  if (DEBUG) {
+    console.log("— normalized text length:", text.length);
+    await writeJson(`.debug/${(team.slug || "team")}-mhr-text.html.json`, { url, snippet: text.slice(0, 1200) });
+  }
+  return { nationalRank, stateRank, text };
 }
 
-async function updateTeam(teamPath) {
-  const team = await readJson(teamPath);
-  const slug = team.slug || path.basename(teamPath, ".json");
-  if (!team.mhrUrl) {
-    console.log(`- ${slug}: no mhrUrl, skipping.`);
-    return;
+async function updateOneTeam(fp) {
+  const team = await readJson(fp, null);
+  if (!team) return { file: fp, skipped: true, reason: "invalid JSON" };
+
+  const url = buildMhrUrl(team);
+  if (!url) return { file: fp, skipped: true, reason: "no mhrUrl or id" };
+
+  let ranks = await extractRanksWithBrowser(url, team).catch(() => ({}));
+  if ((ranks.nationalRank == null && ranks.stateRank == null)) {
+    // fallback to legacy just in case
+    ranks = await extractRanksLegacy(url, team);
   }
 
-  console.log(`- ${slug}: fetching ${team.mhrUrl}`);
-
-  let html;
-  try {
-    html = await fetchHtml(team.mhrUrl);
-  } catch (err) {
-    console.warn(`  ! fetch error: ${err.message}`);
-    return;
+  const { nationalRank, stateRank } = ranks;
+  if (nationalRank == null && stateRank == null) {
+    return { file: fp, skipped: true, reason: "ranks not found" };
   }
 
-  // Parse fields
-  const parsedRecord = findRecord(html);
-  const parsedRating = findRating(html); // may be 0.00 early season
-  const natRank = findNationalRank(html);
-  const stRank = findStateRank(html);
-
-  // Business rule: ratings are not meaningful until ~10 games played
-  const gamesPlayed = totalGamesFromRecord(parsedRecord);
-  const hasEnoughGames = gamesPlayed != null ? gamesPlayed >= MIN_GAMES_FOR_RATING : false;
-
-  // Accept rating only if (a) found and (b) either enough games OR rating looks truly positive
-  let ratingToWrite = null;
-  if (parsedRating != null) {
-    if (hasEnoughGames && parsedRating > 0) {
-      ratingToWrite = parsedRating;
-    } else if (parsedRating > 0) {
-      // Some teams might show a >0 number earlier; if so, allow it
-      ratingToWrite = parsedRating;
-    } else {
-      // Suppress 0.00/undefined when games < threshold—don’t overwrite existing rating
-      console.log(
-        `  rating suppressed (${parsedRating} with ${gamesPlayed ?? "?"} GP; min ${MIN_GAMES_FOR_RATING})`
-      );
-    }
-  }
-
+  const next = { ...team };
   let changed = false;
-  const today = new Date().toISOString().slice(0, 10);
-
-  // Update record (safe to update even if rating is suppressed)
-  if (parsedRecord && parsedRecord !== team.record) {
-    console.log(`  record: ${team.record ?? "—"} -> ${parsedRecord}`);
-    team.record = parsedRecord;
-    changed = true;
+  if (stateRank != null && Number(next.mhrStateRank) !== Number(stateRank)) {
+    next.mhrStateRank = stateRank; changed = true;
   }
-
-  // Update rating only when meaningful
-  if (ratingToWrite != null && ratingToWrite !== team.rating) {
-    console.log(`  rating: ${team.rating ?? "—"} -> ${ratingToWrite}`);
-    team.rating = ratingToWrite;
-    changed = true;
+  if (nationalRank != null && Number(next.mhrNationalRank) !== Number(nationalRank)) {
+    next.mhrNationalRank = nationalRank; changed = true;
   }
-
-  // Update ranks (optional; may be null early)
-  if (natRank != null && natRank !== team.mhrNationalRank) {
-    console.log(`  national rank: ${team.mhrNationalRank ?? "—"} -> ${natRank}`);
-    team.mhrNationalRank = natRank;
-    changed = true;
-  }
-  if (stRank != null && stRank !== team.mhrStateRank) {
-    console.log(`  state rank: ${team.mhrStateRank ?? "—"} -> ${stRank}`);
-    team.mhrStateRank = stRank;
-    changed = true;
-  }
-
-  team.lastUpdated = today;
-
-  // Append to rating history only when rating is meaningful (ratingToWrite != null)
-  if (ratingToWrite != null) {
-    const historyFile = path.join(HISTORY_DIR, `${slug}.json`);
-    let history = [];
-    try {
-      history = JSON.parse(await fs.readFile(historyFile, "utf8"));
-      if (!Array.isArray(history)) history = [];
-    } catch {}
-    const last = history[history.length - 1];
-    if (!last || last.date !== today || last.rating !== ratingToWrite) {
-      history.push({ date: today, rating: ratingToWrite });
-      await writeJson(historyFile, history);
-      console.log(`  history: appended rating ${ratingToWrite} for ${today}`);
-    }
-  } else {
-    // No rating written; do not modify history
-  }
+  if (changed) next.lastUpdated = todayISO();
 
   if (changed) {
-    await writeJson(teamPath, team);
-    console.log(`  saved ${teamPath}`);
-  } else {
-    console.log(`  no changes.`);
+    await writeJson(fp, next);
+    return { file: fp, changed: true, stateRank: next.mhrStateRank, nationalRank: next.mhrNationalRank };
   }
+  return { file: fp, changed: false, reason: "no change" };
 }
 
 async function main() {
-  const files = await listTeamFiles();
-  if (files.length === 0) {
-    console.error("No team JSON files found in", TEAMS_DIR);
-    process.exit(1);
+  const files = (await fs.readdir(TEAMS_DIR))
+    .filter((f) => f.endsWith(".json"))
+    .map((f) => path.join(TEAMS_DIR, f));
+
+  let changed = 0;
+  for (const fp of files) {
+    try {
+      const res = await updateOneTeam(fp);
+      const name = path.basename(fp, ".json");
+      if (res.changed) {
+        changed++;
+        console.log(`✓ updated ${name}: state #${res.stateRank ?? "—"}, national #${res.nationalRank ?? "—"}`);
+      } else if (res.skipped) {
+        console.log(`⏭  ${name}: ${res.reason}`);
+      } else {
+        console.log(`• ${name}: ${res.reason}`);
+      }
+      await new Promise((r) => setTimeout(r, 300)); // gentle throttle
+    } catch (e) {
+      console.warn(`! ${path.basename(fp)}: ${e?.message ?? e}`);
+    }
   }
-
-  const targetFiles = ONLY_SLUG
-    ? files.filter((f) => path.basename(f, ".json") === ONLY_SLUG)
-    : files;
-
-  console.log(`Updating ${targetFiles.length} team(s)...`);
-  await fs.mkdir(HISTORY_DIR, { recursive: true });
-
-  for (const f of targetFiles) {
-    await updateTeam(f);
-    await sleep(1200); // politeness delay
-  }
-
-  console.log("Done.");
+  if (changed === 0) console.log("No team files changed.");
 }
-
-main().catch((e) => {
-  console.error(e);
-  process.exit(1);
-});
+main().catch((e) => { console.error(e); process.exit(1); });
