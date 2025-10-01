@@ -1,61 +1,110 @@
 ---
-/* RatingHistoryChart.astro
-   Props:
-     - points: Array<{ date: string; rating: number }>
-     - title?: string
-*/
-const { points = [], title = "MHR Rating Trend" } = Astro.props;
-// Ensure chronological order (YYYY-MM-DD strings sort lexicographically)
-const data = [...points].sort((a, b) => a.date.localeCompare(b.date));
-// Generate a stable id for the canvas
-const id = `mhr-chart-${Math.random().toString(36).slice(2)}`;
+export interface Props {
+  title?: string
+  series: Array<{ date: string; rating: number }>
+  canvasId?: string
+}
+
+const { title = "MHR Rating Trend", series = [], canvasId } = Astro.props
+const id = canvasId ?? `mhr-chart-${Math.random().toString(36).slice(2, 12)}`
+const dataId = `${id}-data`
+const seriesJson = JSON.stringify(series)
 ---
 
 <div class="bg-gray-900 rounded-lg p-4 border border-red-600">
   <h3 class="text-lg font-bold text-red-400 mb-2">{title}</h3>
-  {data.length > 1 ? (
-    <>
-      <canvas id={id} height="140"></canvas>
-      <script type="application/json" id={`${id}-data`}>{JSON.stringify(data)}</script>
-      <script type="module">
-        import Chart from "chart.js/auto";
-        const el = document.getElementById("{id}");
-        const raw = document.getElementById("{id}-data").textContent;
-        const series = JSON.parse(raw);
+  <canvas id={id} height="140"></canvas>
 
-        const labels = series.map(p => p.date);
-        const ratings = series.map(p => p.rating);
+  <!-- Inline the data so it exists at runtime -->
+  <script
+    type="application/json"
+    id={dataId}
+    data-chart="mhr"
+    data-target={id}
+    set:html={seriesJson}
+  ></script>
 
-        // Create chart
-        const ctx = el.getContext("2d");
-        new Chart(ctx, {
-          type: "line",
-          data: {
-            labels,
-            datasets: [{
-              label: "MHR Rating",
-              data: ratings,
-              borderWidth: 2,
-              tension: 0.3,
-              pointRadius: 2
-            }]
-          },
-          options: {
-            responsive: true,
-            interaction: { mode: "index", intersect: false },
-            plugins: {
-              legend: { labels: { color: "#ffffff" } },
-              tooltip: { enabled: true }
-            },
-            scales: {
-              x: { ticks: { color: "#d1d5db" }, grid: { color: "rgba(255,255,255,0.08)" } },
-              y: { ticks: { color: "#d1d5db" }, grid: { color: "rgba(255,255,255,0.08)" } }
-            }
-          }
+  <!-- Load Chart.js once globally -->
+  <script is:inline>
+    (function () {
+      if (window.Chart || document.querySelector('script[data-chartjs-cdn="1"]')) return;
+      var s = document.createElement("script");
+      s.src = "https://cdn.jsdelivr.net/npm/chart.js@4.4.7/dist/chart.umd.min.js";
+      s.async = true;
+      s.setAttribute("data-chartjs-cdn", "1");
+      s.onload = function () { if (!window.__chartReady) window.__chartReady = Promise.resolve(); };
+      if (!window.__chartReady) {
+        window.__chartReady = new Promise(function (res) {
+          s.addEventListener("load", res, { once: true });
         });
-      </script>
-    </>
-  ) : (
-    <p class="text-gray-300">Not enough history yet. Run your MHR updater a few times to build trend data.</p>
-  )}
+      }
+      document.head.appendChild(s);
+    })();
+  </script>
+
+  <!-- Render THIS chart instance (IDs passed via data-attrs so they interpolate) -->
+  <script is:inline data-node-id={dataId}>
+    (function () {
+      var dataNodeId = document.currentScript && document.currentScript.getAttribute("data-node-id");
+
+      function ensureChart() {
+        if (window.Chart) return Promise.resolve();
+        if (window.__chartReady) return window.__chartReady;
+        return new Promise(function (res) {
+          var i = setInterval(function () {
+            if (window.Chart) { clearInterval(i); res(); }
+          }, 20);
+        });
+      }
+
+      function render(node) {
+        try {
+          var targetId = node.getAttribute("data-target");
+          var canvas = targetId ? document.getElementById(targetId) : null;
+          if (!canvas) return;
+
+          var raw = node.textContent || "[]";
+          var series = JSON.parse(raw);
+          if (!Array.isArray(series) || series.length < 1) return;
+
+          var labels = series.map(function (p) { return p.date; });
+          var ratings = series.map(function (p) { return p.rating; });
+
+          var ctx = canvas.getContext("2d");
+          // eslint-disable-next-line no-undef
+          new Chart(ctx, {
+            type: "line",
+            data: {
+              labels: labels,
+              datasets: [{
+                label: "MHR Rating",
+                data: ratings,
+                borderWidth: 2,
+                tension: 0.3,
+                pointRadius: 2,
+                borderColor: "#ef4444",
+                backgroundColor: "rgba(239,68,68,0.25)"
+              }]
+            },
+            options: {
+              responsive: true,
+              interaction: { mode: "index", intersect: false },
+              plugins: { legend: { labels: { color: "#ffffff" } }, tooltip: { enabled: true } },
+              scales: {
+                x: { ticks: { color: "#d1d5db" }, grid: { color: "rgba(255,255,255,0.08)" } },
+                y: { ticks: { color: "#d1d5db" }, grid: { color: "rgba(255,255,255,0.08)" } }
+              }
+            }
+          });
+        } catch (err) {
+          console.warn("[RatingHistoryChart] render error:", err);
+        }
+      }
+
+      ensureChart().then(function () {
+        var node = dataNodeId && document.getElementById(dataNodeId);
+        if (node) render(node);
+      });
+    })();
+  </script>
 </div>

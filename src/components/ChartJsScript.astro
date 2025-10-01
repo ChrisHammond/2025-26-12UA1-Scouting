@@ -1,0 +1,28 @@
+---
+/**
+ * Injects Chart.js UMD (global `window.Chart`) exactly once.
+ * Safe to include multiple times; only the first call loads the CDN script.
+ */
+---
+<script is:inline>
+  (function () {
+    if (window.Chart || document.querySelector('script[data-chartjs-cdn="1"]')) return;
+    var s = document.createElement("script");
+    s.src = "https://cdn.jsdelivr.net/npm/chart.js@4.4.7/dist/chart.umd.min.js";
+    s.async = true;
+    s.setAttribute("data-chartjs-cdn", "1");
+    // A tiny ready signal other scripts can await
+    s.onload = function () {
+      if (!window.__chartReady) {
+        window.__chartReady = Promise.resolve();
+      }
+    };
+    // If someone awaited before load, create the promise now
+    if (!window.__chartReady) {
+      window.__chartReady = new Promise(function (res) {
+        s.addEventListener("load", res, { once: true });
+      });
+    }
+    document.head.appendChild(s);
+  })();
+</script>

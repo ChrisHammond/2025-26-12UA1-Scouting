@@ -12,7 +12,7 @@ export async function getStaticPaths() {
   }));
 }
 
-const { team } = Astro.props;
+const { team } = Astro.props as { team: any };
 
 // Load all teams so we can find "our" team for matchup preview
 const allTeams = (await getCollection("teams")).map((t) => t.data);
@@ -30,12 +30,113 @@ function getTournament(slug: string) {
   return tournaments.find((t) => t.slug === slug);
 }
 
-// Load rating history from src/data/mhr-history/<slug>.json
-const histMods = import.meta.glob("../../data/mhr-history/*.json", { eager: true });
-const histKey = `../../data/mhr-history/${team.slug}.json`;
-const ratingHistory = (histMods[histKey]?.default ?? [])
-  .filter((p: any) => p && p.date && typeof p.rating === "number")
-  .sort((a: any, b: any) => a.date.localeCompare(b.date));
+/** -------------------------
+ * Robust MHR history loader
+ * ------------------------- */
+function slugifyName(n: string) {
+  return String(n).toLowerCase().trim().replace(/[^a-z0-9]+/g, "-").replace(/(^-|-$)/g, "");
+}
+
+const wantSlug = String(team.slug ?? "").toLowerCase();
+const wantNameSlug = slugifyName(team.name ?? "");
+
+// Accept optional alternates in the team frontmatter
+const altSlugs: string[] = Array.isArray(team.altSlugs) ? team.altSlugs : [];
+const mhrSlug = team.mhrSlug ? String(team.mhrSlug).toLowerCase() : undefined;
+// Sometimes people name files with the numeric MHR id
+const idCandidates = [
+  team.mhrTeamId && String(team.mhrTeamId),
+  team.mhrId && String(team.mhrId),
+].filter(Boolean) as string[];
+
+// Candidates we’ll try in order
+const desiredKeys = [
+  wantSlug,
+  wantNameSlug,
+  ...altSlugs.map((s) => String(s).toLowerCase()),
+  ...(mhrSlug ? [mhrSlug] : []),
+  ...idCandidates,
+].filter(Boolean);
+
+// Support flat **and** nested dirs under /src/data/mhr-history
+const histMods = import.meta.glob(
+  [
+    "/src/data/mhr-history/*.json",
+    "/src/data/mhr-history/*/*.json",
+  ],
+  { eager: true }
+);
+
+// Normalize modules to { slugLower, fileBase, data[] }
+function normalizeModule(path: string, mod: any) {
+  const file = path.split("/").pop() || "";
+  const base = file.replace(/\.json$/i, "");
+  const slugLower = base.toLowerCase();
+
+  // Vite JSON can surface as { default: <parsed> } or just <parsed>
+  const val = (mod && typeof mod === "object" && "default" in mod) ? mod.default : mod;
+  // Accept arrays or {history: []}
+  const arr = Array.isArray(val) ? val : Array.isArray(val?.history) ? val.history : [];
+
+  return { slugLower, fileBase: base, data: arr as any[] };
+}
+
+const files = Object.entries(histMods).map(([p, m]) => normalizeModule(p, m));
+
+// Find best file by: exact ===, startsWith, includes (in both directions)
+function pickFile() {
+  // try each desired key in order with multiple matching strategies
+  for (const key of desiredKeys) {
+    const k = key.toLowerCase();
+
+    const exact = files.find(f => f.slugLower === k);
+    if (exact) return exact;
+
+    const startsA = files.find(f => f.slugLower.startsWith(k));
+    if (startsA) return startsA;
+
+    const startsB = files.find(f => k.startsWith(f.slugLower));
+    if (startsB) return startsB;
+
+    const includesA = files.find(f => f.slugLower.includes(k));
+    if (includesA) return includesA;
+
+    const includesB = files.find(f => k.includes(f.slugLower));
+    if (includesB) return includesB;
+  }
+  return null;
+}
+
+let picked = pickFile();
+
+// If no file matched, also accept inline history attached to the team frontmatter (team.history)
+let ratingHistory: Array<{ date: string; rating: number }> = [];
+
+if (picked?.data?.length) {
+  ratingHistory = picked.data
+    .filter((p: any) => p && p.date && typeof p.rating === "number")
+    .map((p: any) => ({ date: String(p.date), rating: Number(p.rating) }));
+} else if (Array.isArray(team.history) && team.history.length) {
+  ratingHistory = team.history
+    .filter((p: any) => p && p.date && typeof p.rating === "number")
+    .map((p: any) => ({ date: String(p.date), rating: Number(p.rating) }));
+}
+
+// Sort ascending by date (ISO YYYY-MM-DD recommended)
+ratingHistory.sort((a, b) => String(a.date).localeCompare(String(b.date)));
+
+if (import.meta.env.DEV) {
+  const available = files.map(f => f.fileBase).join(", ");
+  if (!picked && ratingHistory.length === 0) {
+    console.warn(`[team page] No mhr-history JSON matched for "${team.slug}" (${team.name}). Candidates tried: ${JSON.stringify(desiredKeys)}. Available files: ${available}`);
+  } else if (picked && ratingHistory.length === 0) {
+    console.warn(`[team page] History file "${picked.fileBase}.json" matched but no valid (date + numeric rating) points were found.`);
+  } else if (picked) {
+    console.info(`[team page] Using history "${picked.fileBase}.json" → ${ratingHistory.length} points.`);
+  } else {
+    console.info(`[team page] Using inline team.history → ${ratingHistory.length} points.`);
+  }
+}
 
 // --- Matchup preview helpers ---
 const isSelf = team.slug === settings.teamSlug;
@@ -46,15 +147,17 @@ function winProb(rA?: number, rB?: number) {
 }
 const prob =
   !isSelf && myTeam ? winProb(myTeam?.rating as number, team?.rating as number) : undefined;
-const probLabel =
-  typeof prob === "number" ? `${Math.round(prob * 100)}%` : "—";
+const probLabel = typeof prob === "number" ? `${Math.round(prob * 100)}%` : "—";
 const ratingDiff =
   typeof myTeam?.rating === "number" && typeof team?.rating === "number"
     ? (myTeam.rating - team.rating).toFixed(2)
     : null;
+
+// Meta description
+const pageDescription = `${team.name} overview: record, MHR rating/ranks, rating trend, and game history in ${settings.leagueName} ${settings.divisionName}.`;
 ---
 
-<BaseLayout title={`${team.name} – ${settings.portalName}`}>
+<BaseLayout title={`${team.name} – ${settings.portalName}`} description={pageDescription}>
   <a href="/teams/" class="text-white hover:text-red-400">← Back to Teams</a>
   <h1 class="text-2xl font-bold text-red-500 mt-2">{team.name}</h1>
 
@@ -135,7 +238,11 @@ const ratingDiff =
 
   <!-- Rating trend -->
   <section class="mt-6">
-    <RatingHistoryChart points={ratingHistory} title="MHR Rating Trend" />
+    <RatingHistoryChart
+      title="MHR Rating Trend"
+      series={ratingHistory}
+      canvasId={`mhr-chart-${team.slug}`}
+    />
   </section>
 
   <!-- Games table -->

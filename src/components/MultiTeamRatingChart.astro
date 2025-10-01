@@ -1,13 +1,18 @@
 ---
 // src/components/MultiTeamRatingChart.astro
+/* MultiTeamRatingChart.astro
+   Props:
+     - slugs?: string[]  // optional explicit team slugs to compare
+*/
 import { getCollection } from "astro:content";
 import settings from "../config/settings";
+import ChartJsScript from "./ChartJsScript.astro";
 
 const { slugs = [] } = Astro.props as { slugs?: string[] };
 
 const norm = (s?: string) => (s ?? "").toLowerCase().replace(/[^a-z0-9]/g, "");
 
-// pick teams (explicit slugs or top 4 in your league/division)
+// Pick teams (explicit slugs or top 4 in your league/division by rating)
 const teamEntries = await getCollection("teams");
 const teams = teamEntries.map((t) => t.data);
 
@@ -19,10 +24,10 @@ let chosen = slugs.length
       .sort((a, b) => (b.rating ?? -1) - (a.rating ?? -1))
       .slice(0, 4);
 
-// load rating histories
+// Load rating histories (eager, from ./src/data/mhr-history)
 const mods = import.meta.glob("../data/mhr-history/*.json", { eager: true });
 
-// build shared label axis
+// Build shared label axis (union of all dates)
 const labelSet = new Set<string>();
 for (const t of chosen) {
   const hist = (mods[`../data/mhr-history/${t.slug}.json`]?.default ?? []) as any[];
@@ -30,7 +35,7 @@ for (const t of chosen) {
 }
 const labels: string[] = Array.from(labelSet).sort();
 
-// datasets per team (align to labels)
+// Datasets per team (aligned to labels; null when no reading for that day)
 const datasets = chosen.map((t) => {
   const hist = (mods[`../data/mhr-history/${t.slug}.json`]?.default ?? []) as any[];
   const data = labels.map((d) => {
@@ -39,27 +44,108 @@ const datasets = chosen.map((t) => {
   });
   return { label: t.name, data };
 });
+
+// Unique ids to support multiple charts on one page
+const chartId = `multi-team-${Math.random().toString(36).slice(2)}`;
+const dataId = `${chartId}-data`;
 ---
 
 <div class="bg-gray-900 rounded-lg p-4 border border-red-600">
   <h2 class="text-lg font-semibold text-red-400 mb-2">Rating Comparison</h2>
-  <canvas id="multiTeamChart" height="140"></canvas>
+  <canvas id={chartId} height="140"></canvas>
+
+  <!-- JSON payload for the renderer -->
+  <script
+    id={dataId}
+    type="application/json"
+    data-chart="multi"
+    data-target={chartId}
+    set:html={JSON.stringify({ labels, datasets })}
+  />
 </div>
 
-<script type="module" define:vars={{ labels, datasets }}>
-  import {
-    Chart, LineController, LineElement, PointElement, LinearScale, CategoryScale, Title, Tooltip, Legend
-  } from "chart.js";
-  Chart.register(LineController, LineElement, PointElement, LinearScale, CategoryScale, Title, Tooltip, Legend);
-  const ctx = document.getElementById("multiTeamChart");
-  new Chart(ctx, {
-    type: "line",
-    data: { labels, datasets: datasets.map(d => ({ ...d, spanGaps: true })) },
-    options: {
-      responsive: true,
-      interaction: { mode: "nearest", intersect: false },
-      plugins: { legend: { display: true }, title: { display: false } },
-      scales: { x: { ticks: { autoSkip: true, maxTicksLimit: 10 } } }
+<!-- Ensure Chart.js (UMD) is available once globally -->
+<ChartJsScript />
+
+<!-- Render when Chart.js is ready -->
+<script define:vars={{ dataId, chartId }}>
+  (function () {
+    const __DATA_ID__ = dataId;     // <-- now real strings, not {JSON.stringify(...)}
+    const __CANVAS_ID__ = chartId;
+
+    function ensureChart() {
+      if (window.Chart) return Promise.resolve();
+      if (window.__chartReady) return window.__chartReady;
+      return new Promise(function (res) {
+        var i = setInterval(function () {
+          if (window.Chart) { clearInterval(i); res(); }
+        }, 20);
+      });
     }
-  });
+
+    function palette(i, a) {
+      var hues = [0, 18, 200, 145, 260, 35, 310, 90];
+      var h = hues[i % hues.length];
+      return "hsla(" + h + ", 85%, 60%, " + a + ")";
+    }
+
+    function renderOne(node) {
+      try {
+        var canvas = document.getElementById(__CANVAS_ID__);
+        if (!canvas) return;
+
+        var raw = node.textContent || "{}";
+        var payload = JSON.parse(raw);
+        var labels = payload.labels || [];
+        var datasets = (payload.datasets || []).map(function (d, idx) {
+          var stroke = idx === 0 ? "#ef4444" : palette(idx, 1);
+          var fill   = idx === 0 ? "rgba(239,68,68,0.25)" : palette(idx, 0.2);
+          var allZeroOrNull = Array.isArray(d.data) && d.data.every(function (v) { return v === 0 || v == null; });
+          return Object.assign({}, d, {
+            spanGaps: true,
+            borderWidth: 2,
+            tension: 0.3,
+            pointRadius: 2,
+            borderColor: allZeroOrNull ? "rgba(239,68,68,0.35)" : stroke,
+            backgroundColor: allZeroOrNull ? "rgba(239,68,68,0.08)" : fill,
+            borderDash: allZeroOrNull ? [4,4] : undefined
+          });
+        });
+
+        var ctx = canvas.getContext("2d");
+        // eslint-disable-next-line no-undef, no-new
+        new Chart(ctx, {
+          type: "line",
+          data: { labels: labels, datasets: datasets },
+          options: {
+            responsive: true,
+            interaction: { mode: "nearest", intersect: false },
+            plugins: {
+              legend: { labels: { color: "#ffffff" } },
+              title: { display: false },
+              tooltip: { enabled: true }
+            },
+            scales: {
+              x: {
+                ticks: { color: "#d1d5db", autoSkip: true, maxTicksLimit: 10 },
+                grid: { color: "rgba(255,255,255,0.08)" }
+              },
+              y: {
+                ticks: { color: "#d1d5db" },
+                grid: { color: "rgba(255,255,255,0.08)" }
+              }
+            }
+          }
+        });
+      } catch (err) {
+        console.warn("[MultiTeamRatingChart] render error:", err);
+      }
+    }
+
+    ensureChart().then(function () {
+      var node = document.getElementById(__DATA_ID__);
+      if (node) renderOne(node);
+    });
+  })();
 </script>
+
