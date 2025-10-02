@@ -1,156 +1,131 @@
 #!/usr/bin/env node
-// Append today's state/national ranks into mhr-history alongside rating,
-// and also emit a small snapshot file with ranks for page fallbacks.
-// Works without scraping: relies on team content having rating/rank fields.
+/**
+ * Append today's rating / stateRank / nationalRank into mhr-history.
+ *
+ * Policy:
+ * - On WEDNESDAY (America/Chicago): always write today's snapshot (dedup by date).
+ * - Other days: only write if any value actually changed vs the last history point.
+ *
+ * This keeps history aligned with MHR's weekly refresh while still capturing
+ * unexpected changes on other days.
+ */
 import fs from "node:fs/promises";
 import path from "node:path";
 
 const TEAMS_DIR = "src/content/teams";
-const HIST_DIR = "src/data/mhr-history";
-const SNAP_DIR = "src/data/mhr-snapshot";
+const HIST_DIR  = "src/data/mhr-history";
 
-function dateISO() {
-  return new Date().toISOString().slice(0, 10);
+// ---- time helpers (America/Chicago) ----
+const TZ = "America/Chicago";
+function nowInTZ() {
+  const fmt = new Intl.DateTimeFormat("en-CA", {
+    timeZone: TZ, year: "numeric", month: "2-digit", day: "2-digit",
+    hour: "2-digit", minute: "2-digit", second: "2-digit",
+    hour12: false,
+  });
+  // Build a Date from parts to avoid DST edge issues; but we only need date+weekday.
+  const d = new Date();
+  const str = fmt.format(d); // yyyy-mm-dd, HH:MM:SS (locale "en-CA" -> date ISO-ish)
+  // We can re-use the same Date object for weekday via toLocaleString
+  return { dateISO: str.slice(0, 10), weekday: new Date().toLocaleString("en-US", { weekday: "short", timeZone: TZ }) };
+}
+function isWednesday(weekday) {
+  // "Wed" from en-US short weekday names
+  return /^Wed/i.test(weekday);
 }
 
+// ---- fs helpers ----
 async function readJson(p, fallback = null) {
-  try {
-    return JSON.parse(await fs.readFile(p, "utf8"));
-  } catch {
-    return fallback;
-  }
+  try { return JSON.parse(await fs.readFile(p, "utf8")); } catch { return fallback; }
 }
 async function writeJson(p, data) {
   await fs.mkdir(path.dirname(p), { recursive: true });
-  const text = JSON.stringify(data, null, 2) + "\n";
-  await fs.writeFile(p, text, "utf8");
+  await fs.writeFile(p, JSON.stringify(data, null, 2) + "\n", "utf8");
 }
 
-function coerceRank(value) {
-  if (typeof value === "number" && Number.isFinite(value)) return value;
-  if (typeof value === "string") {
-    const m = value.match(/\d+/); // first number in the string
-    if (m) return Number(m[0]);
+// ---- compare helpers ----
+function numOrUndef(v) {
+  return (typeof v === "number" && Number.isFinite(v)) ? v : undefined;
+}
+function lastEntry(arr) {
+  return Array.isArray(arr) && arr.length ? arr[arr.length - 1] : undefined;
+}
+function shallowEqual(a, b) {
+  const ka = Object.keys(a || {}).sort();
+  const kb = Object.keys(b || {}).sort();
+  if (ka.length !== kb.length) return false;
+  for (let i = 0; i < ka.length; i++) {
+    if (ka[i] !== kb[i]) return false;
+    if (a[ka[i]] !== b[kb[i]]) return false;
   }
-  return undefined;
-}
-
-function stableMergeEntry(existing = {}, next = {}) {
-  // Keep existing fields if next doesn't provide them; overwrite if next does.
-  // Also keep key order somewhat stable for cleaner diffs.
-  const keys = new Set([...Object.keys(existing), ...Object.keys(next)]);
-  const merged = {};
-  for (const k of keys) merged[k] = next[k] !== undefined ? next[k] : existing[k];
-  return merged;
+  return true;
 }
 
 async function main() {
-  const files = await fs.readdir(TEAMS_DIR);
-  const today = dateISO();
+  const { dateISO: today, weekday } = nowInTZ();
+  const wed = isWednesday(weekday);
 
-  for (const f of files) {
-    if (!f.endsWith(".json")) continue; // this script expects JSON content entries
+  const teamFiles = (await fs.readdir(TEAMS_DIR)).filter(f => f.endsWith(".json"));
+  let wroteAny = false;
+
+  for (const f of teamFiles) {
     const teamPath = path.join(TEAMS_DIR, f);
-    const team = await readJson(teamPath);
+    const team = await readJson(teamPath, null);
     if (!team || !team.slug) {
-      console.warn(`Skipping ${f}: no team or slug.`);
+      console.warn(`⏭  ${f}: invalid team JSON (missing slug)`);
       continue;
     }
 
-    const slug = String(team.slug);
-    const histPath = path.join(HIST_DIR, `${slug}.json`);
-    const hist = (await readJson(histPath, [])) || [];
+    const histPath = path.join(HIST_DIR, `${team.slug}.json`);
+    const hist = await readJson(histPath, []) || [];
 
-    // Determine rating we should store today
-    const last = hist[hist.length - 1] || {};
-    const rating =
-      typeof team.rating === "number"
-        ? team.rating
-        : typeof last.rating === "number"
-        ? last.rating
-        : undefined;
+    // Current values (prefer team fields; fallback to last history point if needed)
+    const last = lastEntry(hist) || {};
+    const rating       = numOrUndef(team.rating)         ?? numOrUndef(last.rating);
+    const stateRank    = numOrUndef(team.mhrStateRank)   ?? numOrUndef(last.stateRank);
+    const nationalRank = numOrUndef(team.mhrNationalRank)?? numOrUndef(last.nationalRank);
 
-    // Coerce ranks from various possible fields (numbers or strings)
-    const stateRank =
-      coerceRank(team.mhrStateRank) ??
-      coerceRank(team.stateRank) ??
-      coerceRank(team.mhrStateRankText) ??
-      coerceRank(team.mhr?.stateRank) ??
-      coerceRank(team.mhr?.ranks?.state);
+    // Proposed entry (omit undefineds)
+    const entry = { date: today };
+    if (rating       !== undefined) entry.rating = rating;
+    if (stateRank    !== undefined) entry.stateRank = stateRank;
+    if (nationalRank !== undefined) entry.nationalRank = nationalRank;
 
-    const nationalRank =
-      coerceRank(team.mhrNationalRank) ??
-      coerceRank(team.nationalRank) ??
-      coerceRank(team.mhrNationalRankText) ??
-      coerceRank(team.mhr?.nationalRank) ??
-      coerceRank(team.mhr?.ranks?.national);
+    // If history already has an entry for today, compare; otherwise compare to "last"
+    const withoutToday = hist.filter(h => h.date !== today);
+    const prev = hist.find(h => h.date === today) ?? last;
 
-    // Build the "today" entry (only include fields we actually have)
-    const nextEntry = {
-      date: today,
-      ...(typeof rating === "number" ? { rating } : {}),
-      ...(stateRank != null ? { stateRank } : {}),
-      ...(nationalRank != null ? { nationalRank } : {}),
-    };
+    const hasChange =
+      (prev?.rating       !== entry.rating) ||
+      (prev?.stateRank    !== entry.stateRank) ||
+      (prev?.nationalRank !== entry.nationalRank);
 
-    // If we already have an entry for today, merge it; otherwise append
-    let changed = false;
-    const idx = hist.findIndex((h) => h.date === today);
-    if (idx >= 0) {
-      const merged = stableMergeEntry(hist[idx], nextEntry);
-      // Only update if something actually changed
-      const before = JSON.stringify(hist[idx]);
-      const after = JSON.stringify(merged);
-      if (before !== after) {
-        hist[idx] = merged;
-        changed = true;
-      }
-    } else {
-      hist.push(nextEntry);
-      changed = true;
+    // Gate by day:
+    // - Wed: always record (dedup by date)
+    // - Other: only if changed
+    if (!wed && !hasChange) {
+      console.log(`• ${team.slug}: skip (no change, non-Wed)`);
+      continue;
     }
 
-    // Persist history if changed
-    if (changed) {
-      await writeJson(histPath, hist);
-      console.log(`✓ history updated: ${slug}`);
-    } else {
-      console.log(`• history unchanged: ${slug}`);
+    // Avoid rewriting if nothing changes after dedup
+    const next = [...withoutToday, entry];
+    if (JSON.stringify(next) === JSON.stringify(hist)) {
+      console.log(`• ${team.slug}: history unchanged`);
+      continue;
     }
 
-    // Write rank snapshot(s) for page fallback usage if we have ranks
-    if (stateRank != null || nationalRank != null) {
-      const snap = {
-        ...(stateRank != null ? { stateRank } : {}),
-        ...(nationalRank != null ? { nationalRank } : {}),
-      };
+    await writeJson(histPath, next);
+    wroteAny = true;
+    const badge =
+      (entry.stateRank != null ? `state #${entry.stateRank}` : "state —") + ", " +
+      (entry.nationalRank != null ? `national #${entry.nationalRank}` : "national —");
+    console.log(`✓ ${team.slug}: wrote ${today} (${badge}${entry.rating != null ? `, rating ${entry.rating}` : ""})`);
+  }
 
-      // by slug
-      const snapSlugPath = path.join(SNAP_DIR, `${slug}.json`);
-      const prevSnapSlug = await readJson(snapSlugPath, {});
-      if (JSON.stringify(prevSnapSlug) !== JSON.stringify(snap)) {
-        await writeJson(snapSlugPath, snap);
-        console.log(`✓ snapshot updated: ${path.basename(snapSlugPath)}`);
-      }
-
-      // by numeric id, if present
-      const idLike =
-        (team.mhrTeamId && String(team.mhrTeamId)) ||
-        (team.mhrId && String(team.mhrId)) ||
-        null;
-      if (idLike) {
-        const snapIdPath = path.join(SNAP_DIR, `${idLike}.json`);
-        const prevSnapId = await readJson(snapIdPath, {});
-        if (JSON.stringify(prevSnapId) !== JSON.stringify(snap)) {
-          await writeJson(snapIdPath, snap);
-          console.log(`✓ snapshot updated: ${path.basename(snapIdPath)}`);
-        }
-      }
-    }
+  if (!wroteAny) {
+    console.log(wed ? "No histories changed (Wednesday run)." : "No histories changed (non-Wed; no diffs).");
   }
 }
 
-main().catch((e) => {
-  console.error(e);
-  process.exit(1);
-});
+main().catch((e) => { console.error(e); process.exit(1); });
