@@ -2,25 +2,25 @@
 
 An almost-maybe-ready-to-use Astro site for youth hockey scouting: teams, tournaments, games, plus **MyHockeyRankings (MHR)** rating/record/ranks and a rating-history chart.
 
-I dev/build this repo on a local Linux machine that has Astro and Node installed. You *might* run it 100% from Netlify, but debugging issues is much easier locally.
+I run this (dev/build) repo on a local Linux machine that has Astro and Node installed. You *might* run it 100% from Netlify, but debugging issues is much easier locally.
 
-**Live example:** https://hockey.chrishammond.com/
+**See it in Action:** https://hockey.chrishammond.com/
 
 ---
 
 ## Features
 
-- **Opponent scouting portal** built with Astro 5 + Tailwind (dark, Falcons-themed).
+- **Opponent scouting portal** built with Astro 5 + Tailwind (dark, Falcons-themed red/black).
 - **Teams directory** from `src/content/teams/*.json` with detail pages, records, MHR links, and optional team **note** (e.g., tryout status).
 - **League table** filtered by league/division with **MHR Rating** and a combined **Rank (ST/NAT)** column  
   _(auto-hides if no teams have ranks yet to keep mobile narrow)_.
 - **Tournaments** index + detail pages with participating teams and their **current MHR record/rating/ranks**.  
   Supports *inline “tournament-only” opponents* (no file in `/teams` required).
 - **Tournament page links**: shows Website, and can also render **“Tournament Information”** and **“Standings/Schedule”** links if you add them (optional) in the tournament JSON.
-- **Schedule** combines **manual games** and **auto-imported ICS** (webcal) games with de-duplication and source labeling.
+- **Schedule** combines **manual games** and **auto-imported ICS** (webcal) games with de-duplication and source labeling. Currenty not rendering any manual games as we are assuming everything comes from CrossBar ICS.
 - **Win probability** badge on schedule and matchup pages using a logistic model based on rating difference.
-- **Matchup pages** (`/matchups/<opponent>/`) with a two-team **rating trend chart**, quick compare chips, and head-to-head preview.
-- **Rating history charts** (Chart.js) per team with time-series of MHR rating.
+- **Matchup pages** (`/matchups/<opponent>/`) with a two-team **rating trend chart**, quick compare chips, and head-to-head preview. Doesn't currently pull in history of games because that isn't coming over in ICS.
+- **Rating history charts** (Chart.js) per team with time-series of MHR rating. Only updates on Wednesdays.
 - **Multi-team rating comparison** chart (homepage widget) for top/selected teams.
 - **“Last built”** timestamp in the footer (America/Chicago) for freshness.
 - **Content-first architecture** using `astro:content` schemas (Teams, Tournaments, Games) with strong typing.
@@ -32,7 +32,7 @@ I dev/build this repo on a local Linux machine that has Astro and Node installed
 - **Graceful fallbacks** when data is incomplete (e.g., missing ratings/history show em dashes).
 - **Developer ergonomics**: small utilities for probability, schedule normalization, and history updates; clear folder structure.
 
-> **MHR timing:** Ratings/ranks often don’t populate until a team has ~10 games and after weekly tabulations. Early in the season you may see records only. The UI hides the combined rank column if nobody has ranks yet.
+> **MHR timing:** Ratings/ranks often don’t populate until a team has ~5 games and after weekly tabulations. Early in the season you may see records only. The UI hides the combined rank column if nobody has ranks yet.
 
 ---
 
@@ -259,7 +259,7 @@ Run `npm run update:tournaments:inline` (optionally with `--tournament=<slug>`).
 Everything is displayed in America/Chicago. ICS events with explicit time zones are converted; if an event is incorrectly defined in the feed, it will display shifted. Verify the ICS entry’s time zone.
 
 **MHR numbers look stale.**  
-Re-run `npm run update:teams` (for teams) and/or `npm run update:tournaments:inline` (for inline opponents). Remember MHR ratings/ranks typically update weekly and often after ~10 games.
+Re-run `npm run update:teams` (for teams) and/or `npm run update:tournaments:inline` (for inline opponents). Remember MHR ratings/ranks update Wednesdays, and most rankings require 5 games played.
 
 ---
 
