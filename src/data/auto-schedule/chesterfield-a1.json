@@ -91,6 +91,16 @@
   },
   {
     "date": "2025-10-18",
+    "time": "00:20",
+    "opponent": "FRIENDLY-AAA 2013 Lady Blues",
+    "homeAway": "Neutral",
+    "leagueGame": false,
+    "venue": "Centene Community Ice Center 750 Casino Center Dr Maryland Heights MO 63043",
+    "source": "ics",
+    "sourceId": "7359890175963@www.accounts.crossbar.org"
+  },
+  {
+    "date": "2025-10-18",
     "time": "22:45",
     "opponent": "Rockets 12U A1",
     "homeAway": "Neutral",
