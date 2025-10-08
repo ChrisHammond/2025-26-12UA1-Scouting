@@ -1,8 +1,7 @@
 ---
 // src/components/MultiTeamRatingChart.astro
-/* MultiTeamRatingChart.astro
-   Props:
-     - slugs?: string[]  // optional explicit team slugs to compare
+/* Props:
+   - slugs?: string[]  // optional explicit team slugs to compare
 */
 import { getCollection } from "astro:content";
 import settings from "../config/settings";
@@ -12,40 +11,89 @@ const { slugs = [] } = Astro.props as { slugs?: string[] };
 
 const norm = (s?: string) => (s ?? "").toLowerCase().replace(/[^a-z0-9]/g, "");
 
-// Pick teams (explicit slugs or top 4 in your league/division by rating)
+// Load all teams
 const teamEntries = await getCollection("teams");
 const teams = teamEntries.map((t) => t.data);
 
-let chosen = slugs.length
+// Load rating histories (support flat AND nested dirs)
+const mods = import.meta.glob(
+  ["../data/mhr-history/*.json", "../data/mhr-history/*/*.json"],
+  { eager: true }
+);
+
+// Helper: get history by slug from either flat or nested path
+function getHistForSlug(slug: string): any[] {
+  const flat = mods[`../data/mhr-history/${slug}.json`] as any;
+  if (flat?.default) return flat.default as any[];
+  if (Array.isArray(flat)) return flat as any[];
+
+  // try nested folders (find first key that ends with /<slug>.json)
+  for (const [k, v] of Object.entries(mods)) {
+    if (k.endsWith(`/${slug}.json`)) {
+      const arr = (v as any)?.default ?? v;
+      return Array.isArray(arr) ? arr as any[] : [];
+    }
+  }
+  return [];
+}
+
+function isGoodNum(n: unknown) {
+  return typeof n === "number" && Number.isFinite(n) && n > 0;
+}
+
+function latestNonZeroHistoryRating(hist: Array<{ date?: string; rating?: number }>) {
+  for (let i = hist.length - 1; i >= 0; i--) {
+    const r = hist[i]?.rating;
+    if (isGoodNum(r)) return r as number;
+  }
+  return undefined;
+}
+
+// Pick teams to include
+let picked = slugs.length
   ? teams.filter((t) => slugs.includes(t.slug))
-  : teams
-      .filter((t) => norm(t.league) === norm(settings.leagueName))
-      .filter((t) => norm(t.division) === norm(settings.divisionName))
-      .sort((a, b) => (b.rating ?? -1) - (a.rating ?? -1))
-      .slice(0, 4);
+  : teams.filter(
+      (t) => norm(t.league) === norm(settings.leagueName) &&
+             norm(t.division) === norm(settings.divisionName)
+    );
 
-// Load rating histories (eager, from ./src/data/mhr-history)
-const mods = import.meta.glob("../data/mhr-history/*.json", { eager: true });
+// Compute an effective rating for sorting/eligibility
+const withEff = picked.map((t) => {
+  const hist = getHistForSlug(t.slug);
+  const eff = latestNonZeroHistoryRating(hist) ?? (isGoodNum(t.rating) ? t.rating : undefined);
+  return { team: t, hist, eff };
+});
 
-// Build shared label axis (union of all dates)
+// Keep teams that actually have a usable rating
+const usable = withEff.filter((x) => isGoodNum(x.eff));
+
+// Sort by effective rating desc; include ALL (no .slice(0,4))
+usable.sort((a, b) => (b.eff! - a.eff!));
+
+// Build shared label axis (union of all dates that have any >0 rating)
 const labelSet = new Set<string>();
-for (const t of chosen) {
-  const hist = (mods[`../data/mhr-history/${t.slug}.json`]?.default ?? []) as any[];
-  hist.forEach((h) => h?.date && labelSet.add(h.date));
+for (const x of usable) {
+  for (const p of x.hist) {
+    if (p?.date && isGoodNum(p?.rating)) labelSet.add(String(p.date));
+  }
 }
 const labels: string[] = Array.from(labelSet).sort();
 
-// Datasets per team (aligned to labels; null when no reading for that day)
-const datasets = chosen.map((t) => {
-  const hist = (mods[`../data/mhr-history/${t.slug}.json`]?.default ?? []) as any[];
+// Build datasets aligned to labels; null where no point or <=0
+const datasets = usable.map(({ team, hist }) => {
   const data = labels.map((d) => {
     const hit = hist.find((h) => h.date === d);
-    return typeof hit?.rating === "number" ? hit.rating : null;
+    return isGoodNum(hit?.rating) ? Number(hit.rating) : null;
   });
-  return { label: t.name, data };
+  const allEmpty = data.every((v) => v == null);
+  return {
+    label: team.name,
+    data,
+    hidden: allEmpty, // hide if nothing to show
+  };
 });
 
-// Unique ids to support multiple charts on one page
+// Unique ids so multiple charts can coexist
 const chartId = `multi-team-${Math.random().toString(36).slice(2)}`;
 const dataId = `${chartId}-data`;
 ---
@@ -70,7 +118,7 @@ const dataId = `${chartId}-data`;
 <!-- Render when Chart.js is ready -->
 <script define:vars={{ dataId, chartId }}>
   (function () {
-    const __DATA_ID__ = dataId;     // <-- now real strings, not {JSON.stringify(...)}
+    const __DATA_ID__ = dataId;
     const __CANVAS_ID__ = chartId;
 
     function ensureChart() {
@@ -148,4 +196,3 @@ const dataId = `${chartId}-data`;
     });
   })();
 </script>
-
