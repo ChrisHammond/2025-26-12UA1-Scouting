@@ -1,6 +1,6 @@
 #!/usr/bin/env node
 /**
- * Refresh rating, mhrStateRank, mhrNationalRank for each team from MyHockeyRankings.
+ * Refresh rating, record, mhrStateRank, mhrNationalRank for each team from MyHockeyRankings.
  * Uses Playwright Chromium to render client-side content; falls back to legacy text parse.
  *
  * Requirements:
@@ -82,8 +82,7 @@ function parseStateRank(text, team) {
 }
 
 function parseRating(text) {
-  // Typical patterns seen on MHR pages:
-  // "Rating 86.07", "MHR Rating: 86.07", "Power Rating: 86.07"
+  // "MHR Rating: 86.07", "Power Rating: 86.07", "Rating 86.07"
   const rxes = [
     /\bMHR\s*Rating[:\s]+([0-9]+(?:\.[0-9]+)?)/i,
     /\bPower\s*Rating[:\s]+([0-9]+(?:\.[0-9]+)?)/i,
@@ -96,7 +95,47 @@ function parseRating(text) {
   return undefined;
 }
 
+function parseRecord(text) {
+  // Pass 1: look for explicit labels
+  const labeled =
+    text.match(/\b(?:Overall(?:\s+Record)?|Season(?:\s+Record)?|Record|W[-\s]*L[-\s]*T)\s*[:\s]+(\d{1,3})\s*-\s*(\d{1,3})\s*-\s*(\d{1,3})/i);
+  if (labeled) {
+    return `${labeled[1]}-${labeled[2]}-${labeled[3]}`;
+  }
+
+  // Pass 2: generic triplet like 10-4-1 that is NOT a date (YYYY-MM-DD)
+  // and not part of something like "2025-26 Rankings"
+  const triplets = [...text.matchAll(/\b(\d{1,3})-(\d{1,3})-(\d{1,3})\b/g)]
+    .map(m => ({ w:+m[1], l:+m[2], t:+m[3], raw:m[0], idx:m.index ?? 0 }));
+
+  const plausible = triplets.filter(({w,l,t,idx}) => {
+    // Skip if looks like a year-date pattern nearby (e.g., "2025-10-01")
+    const prefix = text.slice(Math.max(0, idx - 5), idx);
+    if (/\b20\d{2}$/.test(prefix)) return false;
+    // Some sanity: wins/losses/ties won't be crazy large; allow up to 200
+    if (w>200 || l>200 || t>200) return false;
+    // At least one game played
+    return (w + l + t) > 0;
+  });
+
+  if (plausible.length) {
+    // choose the one with the largest games played (usually the "overall" line)
+    plausible.sort((a,b) => (b.w+b.l+b.t) - (a.w+a.l+a.t));
+    const p = plausible[0];
+    return `${p.w}-${p.l}-${p.t}`;
+  }
+
+  return undefined;
+}
+
 /* -------------- extraction (browser / legacy) -------------- */
+
+function normalizeText(s) {
+  return String(s)
+    .replace(/\u00a0/g, " ")     // NBSP → space
+    .replace(/\s+/g, " ")
+    .trim();
+}
 
 async function extractWithBrowser(url, team) {
   const browser = await chromium.launch({ headless: true });
@@ -109,36 +148,23 @@ async function extractWithBrowser(url, team) {
 
     // small delay to let client-side populate
     await page.waitForTimeout(1200);
+    // Try to wait for something rank/rating-ish; ignore if it times out
+    try { await page.waitForFunction(() => /Rating|Record|USA\s+12U/i.test(document.body.innerText), { timeout: 2000 }); } catch {}
 
-    // Prefer visible text chunks that likely contain the info
-    const textCandidates = await page.$$eval("*", (els) => {
-      const ok = (s) => s && s.trim().length > 0;
-      const take = [];
-      for (const el of els) {
-        const style = el.ownerDocument.defaultView?.getComputedStyle?.(el);
-        if (!style || style.display === "none" || style.visibility === "hidden") continue;
-        const t = el.textContent || "";
-        if (!ok(t)) continue;
-        if (/\b12U\b/i.test(t) || /\bUSA\b/i.test(t) || /\bRating\b/i.test(t)) {
-          take.push(t.replace(/\s+/g, " ").trim());
-        }
-      }
-      return take.slice(0, 300);
-    });
-
-    const bigText = (textCandidates.join("\n") || await page.content().then(h => h.replace(/<[^>]+>/g, " ")))
-      .replace(/\s+/g, " ")
-      .trim();
+    // IMPORTANT: get the full visible text, not filtered snippets
+    const bodyText = await page.evaluate(() => document.body?.innerText || "");
+    const bigText = normalizeText(bodyText);
 
     if (DEBUG) {
       console.log("— normalized text length:", bigText.length);
-      await writeJson(`.debug/${(team.slug || "team")}-mhr-text.json`, { url, snippet: bigText.slice(0, 1400) });
+      await writeJson(`.debug/${(team.slug || "team")}-mhr-text.json`, { url, snippet: bigText.slice(0, 1600) });
     }
 
     return {
       nationalRank: parseNationalRank(bigText),
       stateRank: parseStateRank(bigText, team),
       rating: parseRating(bigText),
+      record: parseRecord(bigText),
       text: bigText,
     };
   } finally {
@@ -151,30 +177,31 @@ async function extractLegacy(url, team) {
   const res = await fetch(url, { headers: { "User-Agent": "RankUpdater/1.1" } });
   if (!res.ok) return {};
   const html = await res.text();
-  const text = html.replace(/<script[\s\S]*?<\/script>/gi, " ")
-                   .replace(/<style[\s\S]*?<\/style>/gi, " ")
-                   .replace(/<[^>]*>/g, " ")
-                   .replace(/\s+/g, " ")
-                   .trim();
+  const text = normalizeText(
+    html
+      .replace(/<script[\s\S]*?<\/script>/gi, " ")
+      .replace(/<style[\s\S]*?<\/style>/gi, " ")
+      .replace(/<[^>]*>/g, " ")
+  );
 
   if (DEBUG) {
     console.log("— normalized text length:", text.length);
-    await writeJson(`.debug/${(team.slug || "team")}-mhr-text.html.json`, { url, snippet: text.slice(0, 1400) });
+    await writeJson(`.debug/${(team.slug || "team")}-mhr-text.html.json`, { url, snippet: text.slice(0, 1600) });
   }
 
   return {
     nationalRank: parseNationalRank(text),
     stateRank: parseStateRank(text, team),
     rating: parseRating(text),
+    record: parseRecord(text),
     text
   };
 }
 
 /* ---------------- update wiring ---------------- */
 
-function numOrUndef(v) {
-  return (typeof v === "number" && Number.isFinite(v)) ? v : undefined;
-}
+const safeNumber = (n) =>
+  (typeof n === "number" && Number.isFinite(n) && n > 0) ? n : undefined;
 
 async function updateOneTeam(fp) {
   const team = await readJson(fp, null);
@@ -184,14 +211,17 @@ async function updateOneTeam(fp) {
   if (!url) return { file: fp, skipped: true, reason: "no mhrUrl or id" };
 
   let info = await extractWithBrowser(url, team).catch(() => ({}));
-  if (info.nationalRank == null && info.stateRank == null && info.rating == null) {
+  if (info.nationalRank == null && info.stateRank == null && info.rating == null && info.record == null) {
     info = await extractLegacy(url, team);
   }
 
-  const { nationalRank, stateRank, rating } = info;
+  const nationalRank = info.nationalRank;
+  const stateRank    = info.stateRank;
+  const rating       = safeNumber(info.rating); // guard against bogus 0
+  const record       = info.record && /^\d+-\d+-\d+$/.test(info.record) ? info.record : undefined;
 
-  if (nationalRank == null && stateRank == null && rating == null) {
-    return { file: fp, skipped: true, reason: "ranks/rating not found" };
+  if (nationalRank == null && stateRank == null && rating == null && record == null) {
+    return { file: fp, skipped: true, reason: "ranks/rating/record not found" };
   }
 
   const next = { ...team };
@@ -207,6 +237,9 @@ async function updateOneTeam(fp) {
   if (rating != null && Number(next.rating) !== Number(rating)) {
     next.rating = Number(rating); changed = true;
   }
+  if (record && String(next.record) !== String(record)) {
+    next.record = String(record); changed = true;
+  }
 
   if (changed) next.lastUpdated = todayISO();
 
@@ -217,7 +250,8 @@ async function updateOneTeam(fp) {
       changed: true,
       stateRank: next.mhrStateRank,
       nationalRank: next.mhrNationalRank,
-      rating: next.rating
+      rating: next.rating,
+      record: next.record
     };
   }
   return { file: fp, changed: false, reason: "no change" };
@@ -236,7 +270,7 @@ async function main() {
       if (res.changed) {
         changed++;
         console.log(
-          `✓ updated ${name}: state #${res.stateRank ?? "—"}, national #${res.nationalRank ?? "—"}${res.rating != null ? `, rating ${res.rating}` : ""}`
+          `✓ updated ${name}: state #${res.stateRank ?? "—"}, national #${res.nationalRank ?? "—"}${res.rating != null ? `, rating ${res.rating}` : ""}${res.record ? `, record ${res.record}` : ""}`
         );
       } else if (res.skipped) {
         console.log(`⏭  ${name}: ${res.reason}`);
