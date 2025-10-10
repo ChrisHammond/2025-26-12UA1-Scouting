@@ -12,7 +12,7 @@
     "update:tournaments:inline": "node scripts/update-tournaments-inline-from-mhr.mjs",
     "update:teams:from-mhr": "node scripts/update-teams-from-mhr.mjs",
     "update:teamsranks": "node scripts/append-ranks-to-history.mjs",
-    "update:all": "npm run update:teams:from-mhr && npm run update:schedules && npm run update:tournaments:inline && npm run update:teamsranks"
+    "update:all": "npm run update:teams:from-mhr && npm run update:schedules && npm run update:tournaments:inline --force && npm run update:teamsranks"
   },
   "dependencies": {
     "@tailwindcss/vite": "^4.1.13",

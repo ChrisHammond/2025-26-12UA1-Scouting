@@ -14,9 +14,18 @@
       "website": "https://www.tulsajroilers.com/page/show/9154808?subseason=950261&tab=content",
       "mhrUrl": "https://myhockeyrankings.com/team_info.php?y=2025&t=34768",
       "note": "Added as tournament-only opponent.",
-      "rating": 81.58,
-      "updatedFromMHRAt": "2025-09-27T01:22:26.497Z",
-      "record": "1-6-0"
+      "rating": 82.38,
+      "updatedFromMHRAt": "2025-10-10T16:18:58.442Z",
+      "record": "2-9-0"
+    },
+    {
+      "name": "KC Scouts 12UAA",
+      "website": "https://www.kcyouthhockey.com/page/show/9205854-kc-scouts-12u-aa-2025-2026-",
+      "mhrUrl": "https://myhockeyrankings.com/team_info.php?y=2025&t=15250",
+      "note": "Added as tournament-only opponent.",
+      "rating": 85.63,
+      "updatedFromMHRAt": "2025-10-10T16:18:58.585Z",
+      "record": "0-4-0"
     }
   ]
 }
