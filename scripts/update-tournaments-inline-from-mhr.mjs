@@ -25,6 +25,12 @@ const FORCE = !!getArg("force");
 const DEBUG = !!getArg("debug");
 const DUMP = !!getArg("dump-html");
 
+// Default to 7 days unless overridden
+const STALE_DAYS =
+  Number.isFinite(+getArg("stale-days")) && +getArg("stale-days") > 0
+    ? +getArg("stale-days")
+    : 7;
+
 async function readJson(file) {
   return JSON.parse(await fs.readFile(file, "utf8"));
 }
@@ -62,9 +68,21 @@ async function updateFile(file) {
     if (typeof opp === "string") continue;
     if (!opp || !opp.mhrUrl) continue;
 
+    // Skip cached opponents unless forced or stale
     if (!FORCE && opp.updatedFromMHRAt && typeof opp.rating === "number" && opp.record) {
-      if (DEBUG) console.log(`  • skip (cached) "${opp.name}"`);
-      continue;
+      let isFresh = true;
+      const ageMs = Date.now() - new Date(opp.updatedFromMHRAt).getTime();
+      const maxAgeMs = STALE_DAYS * 24 * 60 * 60 * 1000;
+      isFresh = ageMs < maxAgeMs;
+      if (DEBUG) {
+        const ageDays = (ageMs / 86400000).toFixed(1);
+        console.log(`  • cache age ${ageDays}d (limit ${STALE_DAYS}d) for "${opp.name}"`);
+      }
+      if (isFresh) {
+        if (DEBUG) console.log(`  • skip (cached) "${opp.name}"`);
+        continue;
+      }
+      if (DEBUG) console.log(`  • cache stale -> refreshing "${opp.name}"`);
     }
 
     if (DEBUG) console.log(`  • Fetching MHR for inline opponent "${opp.name}"`);
@@ -90,13 +108,14 @@ async function updateFile(file) {
     const nat = findNationalRank(html);
     const st = findStateRank(html);
 
-    if (DEBUG) console.log({
-      ratingStr: rating != null ? String(rating.toFixed?.(2) ?? rating) : undefined,
-      rating,
-      record,
-      mhrNationalRank: nat ?? undefined,
-      mhrStateRank: st ?? undefined,
-    });
+    if (DEBUG)
+      console.log({
+        ratingStr: rating != null ? String(rating.toFixed?.(2) ?? rating) : undefined,
+        rating,
+        record,
+        mhrNationalRank: nat ?? undefined,
+        mhrStateRank: st ?? undefined,
+      });
 
     const before = JSON.stringify(opp);
     if (rating != null) opp.rating = rating;
@@ -121,9 +140,11 @@ async function updateFile(file) {
 async function main() {
   const files = await listTournamentFiles();
   if (!files.length) {
-    console.log(ARG_TOURN
-      ? `No tournament JSON matched "${ARG_TOURN}" in ${TOURN_DIR}`
-      : `No tournament JSON found in ${TOURN_DIR}`);
+    console.log(
+      ARG_TOURN
+        ? `No tournament JSON matched "${ARG_TOURN}" in ${TOURN_DIR}`
+        : `No tournament JSON found in ${TOURN_DIR}`
+    );
     return;
   }
 
