@@ -14,7 +14,7 @@
       "mhrUrl": "https://myhockeyrankings.com/team_info.php?y=2025&t=5034",
       "note": "Added as tournament-only opponent.",
       "rating": 82.88,
-      "updatedFromMHRAt": "2025-10-17T03:34:01.243Z",
+      "updatedFromMHRAt": "2025-10-17T03:47:38.465Z",
       "record": "2-6-2"
     },
     {
@@ -23,8 +23,10 @@
       "mhrUrl": "https://myhockeyrankings.com/team_info.php?y=2025&t=2434",
       "note": "Added as tournament-only opponent.",
       "rating": 81.28,
-      "updatedFromMHRAt": "2025-10-17T03:34:01.504Z",
-      "record": "2-5-0"
+      "updatedFromMHRAt": "2025-10-17T03:47:41.482Z",
+      "record": "2-5-0",
+      "mhrNationalRank": 481,
+      "mhrStateRank": 47
     },
     {
       "name": "West Seneca Wings 13AA I-90 25-26",
@@ -32,8 +34,10 @@
       "mhrUrl": "https://myhockeyrankings.com/team-info?y=2025&t=1170",
       "note": "Added as tournament-only opponent.",
       "rating": 86.91,
-      "updatedFromMHRAt": "2025-10-17T03:34:01.649Z",
-      "record": "8-1-1"
+      "updatedFromMHRAt": "2025-10-17T03:47:45.720Z",
+      "record": "8-1-1",
+      "mhrNationalRank": 190,
+      "mhrStateRank": 21
     },
     {
       "name": "McKinney North Stars (TX) (Other Division)",
@@ -41,8 +45,10 @@
       "mhrUrl": "https://myhockeyrankings.com/team_info.php?y=2025&t=16649",
       "note": "Added as tournament-only opponent.",
       "rating": 86.23,
-      "updatedFromMHRAt": "2025-10-17T03:34:01.795Z",
-      "record": "9-7-2"
+      "updatedFromMHRAt": "2025-10-17T03:47:48.638Z",
+      "record": "9-7-2",
+      "mhrNationalRank": 209,
+      "mhrStateRank": 7
     },
     {
       "name": "Troy Sting (MI) (Other Division)",
@@ -50,8 +56,10 @@
       "mhrUrl": "https://myhockeyrankings.com/team_info.php?y=2025&t=4610",
       "note": "Added as tournament-only opponent.",
       "rating": 86.29,
-      "updatedFromMHRAt": "2025-10-17T03:34:01.972Z",
-      "record": "4-2-2"
+      "updatedFromMHRAt": "2025-10-17T03:47:53.021Z",
+      "record": "4-2-2",
+      "mhrNationalRank": 207,
+      "mhrStateRank": 22
     },
     {
       "name": "Amherst Knights (NY) (Other Division)",
@@ -59,8 +67,10 @@
       "mhrUrl": "https://myhockeyrankings.com/team_info.php?y=2025&t=2983",
       "note": "Added as tournament-only opponent.",
       "rating": 81.84,
-      "updatedFromMHRAt": "2025-10-17T03:34:02.121Z",
-      "record": "7-2-0"
+      "updatedFromMHRAt": "2025-10-17T03:47:57.460Z",
+      "record": "7-2-0",
+      "mhrNationalRank": 442,
+      "mhrStateRank": 59
     },
     {
       "name": "Pittsburgh Aviators (Other Division)",
@@ -68,8 +78,10 @@
       "mhrUrl": "https://myhockeyrankings.com/team_info.php?y=2025&t=28561",
       "note": "Added as tournament-only opponent.",
       "rating": 84.21,
-      "updatedFromMHRAt": "2025-10-17T03:34:02.271Z",
-      "record": "10-8-3"
+      "updatedFromMHRAt": "2025-10-17T03:48:00.374Z",
+      "record": "10-8-3",
+      "mhrNationalRank": 311,
+      "mhrStateRank": 30
     }
   ]
 }
