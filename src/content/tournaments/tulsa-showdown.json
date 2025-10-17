@@ -26,6 +26,15 @@
       "rating": 85.63,
       "updatedFromMHRAt": "2025-10-10T16:18:58.585Z",
       "record": "0-4-0"
+    },
+    {
+      "name": "NWA Jr. Ice Hogs 12U A3",
+      "website": "https://www.nwahockey.com/team/140092",
+      "mhrUrl": "https://myhockeyrankings.com/team-info?y=2025&t=5839",
+      "note": "Added as tournament-only opponent.",
+      "rating": 81.11,
+      "updatedFromMHRAt": "2025-10-16T20:28:58.585Z",
+      "record": "1-4-2"
     }
   ]
 }
