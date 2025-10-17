@@ -15,7 +15,7 @@
       "mhrUrl": "https://myhockeyrankings.com/team_info.php?y=2025&t=34768",
       "note": "Added as tournament-only opponent.",
       "rating": 83.19,
-      "updatedFromMHRAt": "2025-10-17T13:52:00.869Z",
+      "updatedFromMHRAt": "2025-10-17T13:53:47.615Z",
       "record": "2-9-0",
       "mhrNationalRank": 362,
       "mhrStateRank": 2
@@ -26,7 +26,7 @@
       "mhrUrl": "https://myhockeyrankings.com/team_info.php?y=2025&t=15250",
       "note": "Added as tournament-only opponent.",
       "rating": 85.96,
-      "updatedFromMHRAt": "2025-10-17T13:52:03.966Z",
+      "updatedFromMHRAt": "2025-10-17T13:53:50.786Z",
       "record": "2-4-0",
       "mhrNationalRank": 225,
       "mhrStateRank": 1
@@ -37,7 +37,7 @@
       "mhrUrl": "https://myhockeyrankings.com/team-info?y=2025&t=5839",
       "note": "Added as tournament-only opponent.",
       "rating": 81.11,
-      "updatedFromMHRAt": "2025-10-17T13:52:08.307Z",
+      "updatedFromMHRAt": "2025-10-17T13:53:53.716Z",
       "record": "1-4-2",
       "mhrNationalRank": 489,
       "mhrStateRank": 1
@@ -48,10 +48,21 @@
       "mhrUrl": "https://myhockeyrankings.com/team-info?y=2025&t=15676",
       "note": "Added as tournament-only opponent.",
       "rating": 86.95,
-      "updatedFromMHRAt": "2025-10-17T13:52:11.395Z",
+      "updatedFromMHRAt": "2025-10-17T13:53:58.189Z",
       "record": "6-10-1",
       "mhrNationalRank": 186,
       "mhrStateRank": 1
+    },
+    {
+      "name": "Texas Jr Brahmas 12U AA",
+      "website": "https://www.jrbrahmas.com/teams20242025",
+      "mhrUrl": "https://myhockeyrankings.com/team-info?y=2025&t=19762",
+      "note": "Added as tournament-only opponent.",
+      "rating": 83.92,
+      "updatedFromMHRAt": "2025-10-17T13:54:01.818Z",
+      "record": "3-8-0",
+      "mhrNationalRank": 328,
+      "mhrStateRank": 11
     }
   ]
 }
