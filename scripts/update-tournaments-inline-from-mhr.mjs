@@ -2,7 +2,7 @@
 import fs from "node:fs/promises";
 import path from "node:path";
 import {
-  // we keep using your existing fetch helper if available
+  // prefer your existing fetch for consistency (headers, etc.)
   fetchHtml as libFetchHtml,
 } from "./lib/mhr-parse.mjs";
 
@@ -23,6 +23,7 @@ const ARG_TOURN = getArg("tournament"); // substring match across filenames
 const FORCE = !!getArg("force");
 const DEBUG = !!getArg("debug");
 const DUMP = !!getArg("dump-html");
+const INCLUDE_PAST = !!getArg("include-past");
 
 // Default to 7 days unless overridden
 const STALE_DAYS =
@@ -30,7 +31,129 @@ const STALE_DAYS =
     ? +getArg("stale-days")
     : 7;
 
-/* ---------------- shared helpers (mirrors team script + upgrades) ---------------- */
+/* ---------------- date helpers to skip past tournaments ---------------- */
+
+const MONTHS = {
+  jan: 0, january: 0,
+  feb: 1, february: 1,
+  mar: 2, march: 2,
+  apr: 3, april: 3,
+  may: 4,
+  jun: 5, june: 5,
+  jul: 6, july: 6,
+  aug: 7, august: 7,
+  sep: 8, sept: 8, september: 8,
+  oct: 9, october: 9,
+  nov: 10, november: 10,
+  dec: 11, december: 11,
+};
+
+function makeDateUTC(y, m0, d) {
+  // Construct at local midnight for simple < comparison w.r.t. today local midnight.
+  const dt = new Date(Date.UTC(y, m0, d));
+  // Normalize to local midnight by building a Date with local TZ components
+  return new Date(dt.getUTCFullYear(), dt.getUTCMonth(), dt.getUTCDate());
+}
+function parseMonthToken(tok) {
+  if (!tok) return undefined;
+  const k = String(tok).trim().toLowerCase();
+  return MONTHS[k];
+}
+function parseIsoDate(s) {
+  const d = new Date(s);
+  return Number.isFinite(d.getTime()) ? new Date(d.getFullYear(), d.getMonth(), d.getDate()) : undefined;
+}
+
+/** Try to parse a human date range string and return an end Date (local midnight). */
+function parseEndDateFromString(str) {
+  if (!str) return undefined;
+  const s = String(str).trim();
+
+  // ISO range like "2025-10-18 to 2025-10-20" or "2025-10-18 - 2025-10-20"
+  {
+    const m = s.match(/(\d{4}-\d{2}-\d{2})\s*(?:to|[-–—])\s*(\d{4}-\d{2}-\d{2})/i);
+    if (m) {
+      const end = parseIsoDate(m[2]);
+      if (end) return end;
+    }
+  }
+
+  // "Oct 18–20, 2025"  (same month)
+  {
+    const m = s.match(/([A-Za-z]{3,9})\s+(\d{1,2})\s*[-–—]\s*(\d{1,2}),\s*(\d{4})/);
+    if (m) {
+      const mon = parseMonthToken(m[1]); const d2 = +m[3]; const y = +m[4];
+      if (mon != null && d2 >= 1 && y >= 1900) return makeDateUTC(y, mon, d2);
+    }
+  }
+
+  // "Oct 30–Nov 2, 2025" (month changes)
+  {
+    const m = s.match(/([A-Za-z]{3,9})\s+(\d{1,2})\s*[-–—]\s*([A-Za-z]{3,9})\s+(\d{1,2}),\s*(\d{4})/);
+    if (m) {
+      const mon2 = parseMonthToken(m[3]); const d2 = +m[4]; const y = +m[5];
+      if (mon2 != null && d2 >= 1 && y >= 1900) return makeDateUTC(y, mon2, d2);
+    }
+  }
+
+  // "Oct 21, 2025" (single day)
+  {
+    const m = s.match(/([A-Za-z]{3,9})\s+(\d{1,2}),\s*(\d{4})/);
+    if (m) {
+      const mon = parseMonthToken(m[1]); const d = +m[2]; const y = +m[3];
+      if (mon != null && d >= 1 && y >= 1900) return makeDateUTC(y, mon, d);
+    }
+  }
+
+  // plain ISO single date "2025-10-21"
+  {
+    const m = s.match(/^\d{4}-\d{2}-\d{2}$/);
+    if (m) {
+      const d = parseIsoDate(s);
+      if (d) return d;
+    }
+  }
+
+  return undefined;
+}
+
+/** Derive a tournament end date from common fields inside the JSON structure. */
+function getTournamentEndDate(t) {
+  // Direct fields that might exist
+  const cand = t?.endDate || t?.end || t?.dateEnd || t?.date_to || t?.to;
+  if (cand) {
+    const d = parseIsoDate(cand) || parseEndDateFromString(cand);
+    if (d) return d;
+  }
+
+  // Combined dates string fields
+  const dateStrings = [
+    t?.dates, t?.tournamentDates, t?.tournament?.dates, t?.dateRange, t?.when
+  ].filter(Boolean);
+
+  for (const ds of dateStrings) {
+    const d = parseIsoDate(ds) || parseEndDateFromString(ds);
+    if (d) return d;
+  }
+
+  // If we only have start-like fields, use them as end (1-day event)
+  const startCand = t?.startDate || t?.start || t?.dateStart || t?.date_from || t?.from;
+  if (startCand) {
+    const d = parseIsoDate(startCand) || parseEndDateFromString(startCand);
+    if (d) return d;
+  }
+
+  return undefined;
+}
+
+function isPast(endDate) {
+  if (!endDate) return false;
+  const today = new Date();
+  const todayMid = new Date(today.getFullYear(), today.getMonth(), today.getDate());
+  return endDate < todayMid;
+}
+
+/* ---------------- shared parsers (mirrors team script + upgrades) ---------------- */
 
 const STATES = {
   AL:"Alabama", AK:"Alaska", AZ:"Arizona", AR:"Arkansas", CA:"California", CO:"Colorado",
@@ -47,7 +170,7 @@ const STATES = {
 const STATE_NAMES = new Set(Object.values(STATES).map(s => s.toLowerCase()));
 const STATE_ABBRS = new Set(Object.keys(STATES));
 
-// Optional: Canada provinces so stateRank works for ON, QC, etc.
+// Canadian provinces (so "ON", "QC", etc. parse)
 const PROVINCES = {
   AB:"Alberta", BC:"British Columbia", MB:"Manitoba", NB:"New Brunswick",
   NL:"Newfoundland and Labrador", NS:"Nova Scotia", NT:"Northwest Territories",
@@ -62,10 +185,7 @@ const LEVEL_RX = String.raw`(?:\d{1,2}U)`;
 
 function escapeRegExp(s) { return String(s).replace(/[.*+?^${}()|[\]\\]/g, "\\$&"); }
 function normalizeText(s) {
-  return String(s)
-    .replace(/\u00a0/g, " ")   // NBSP → space
-    .replace(/\s+/g, " ")
-    .trim();
+  return String(s).replace(/\u00a0/g, " ").replace(/\s+/g, " ").trim();
 }
 
 function parseNationalRank(text) {
@@ -132,7 +252,7 @@ function parseRecord(text) {
 
   const plausible = triplets.filter(({w,l,t,idx}) => {
     const prefix = text.slice(Math.max(0, idx - 5), idx);
-    if (/\b20\d{2}$/.test(prefix)) return false; // avoid dates
+    if (/\b20\d{2}$/.test(prefix)) return false; // avoid dates like 2025-10-01
     if (w>200 || l>200 || t>200) return false;
     return (w + l + t) > 0;
   });
@@ -151,11 +271,9 @@ const safeNumber = (n) =>
 /* ---------------- fetching text (legacy first, then Playwright if ranks missing) ---------------- */
 
 async function fetchHtml(url) {
-  // prefer your lib fetch to keep headers consistent
   try {
     return await libFetchHtml(url);
   } catch {
-    // last resort: native fetch (Node 18+)
     const res = await fetch(url, { headers: { "User-Agent": "RankUpdater/1.2" } });
     if (!res.ok) throw new Error(`HTTP ${res.status}`);
     return await res.text();
@@ -165,21 +283,19 @@ async function fetchHtml(url) {
 async function extractTextLegacy(url) {
   const html = await fetchHtml(url);
   const text = normalizeText(
-    html
-      .replace(/<script[\s\S]*?<\/script>/gi, " ")
-      .replace(/<style[\s\S]*?<\/style>/gi, " ")
-      .replace(/<[^>]*>/g, " ")
+    html.replace(/<script[\s\S]*?<\/script>/gi, " ")
+        .replace(/<style[\s\S]*?<\/style>/gi, " ")
+        .replace(/<[^>]*>/g, " ")
   );
   return { mode: "legacy", text, rawHtml: html };
 }
 
 async function extractTextPlaywright(url, slug = "opponent") {
-  // Only try if playwright is installed
   let chromium;
   try {
     ({ chromium } = await import("playwright-chromium"));
   } catch {
-    return null; // not available
+    return null; // playwright not installed
   }
   const browser = await chromium.launch({ headless: true });
   try {
@@ -195,9 +311,7 @@ async function extractTextPlaywright(url, slug = "opponent") {
         () => /Rating|Record|USA\s+\d{1,2}U|\b\d{1,2}U\b/i.test(document.body.innerText),
         { timeout: 2000 }
       );
-    } catch {
-      // swallow timeout; we will still read body text
-    }
+    } catch { /* ignore */ }
 
     const bodyText = await page.evaluate(() => document.body?.innerText || "");
     const text = normalizeText(bodyText);
@@ -212,16 +326,13 @@ async function extractTextPlaywright(url, slug = "opponent") {
 }
 
 async function getMhrText(url, slugForDebug) {
-  // Try legacy first (fast)
   const legacy = await extractTextLegacy(url);
-
   // If legacy already exposes ranks, we're done.
   const legacyNat = parseNationalRank(legacy.text);
   const legacyState = parseStateRank(legacy.text);
   if (legacyNat != null || legacyState != null) {
     return legacy;
   }
-
   // Otherwise try Playwright even if rating/record are visible in legacy.
   const pw = await extractTextPlaywright(url, slugForDebug);
   return pw || legacy;
@@ -254,6 +365,17 @@ async function listTournamentFiles() {
 
 async function updateFile(file) {
   const data = await readJson(file);
+
+  // Skip past tournaments unless explicitly included
+  const endDate = getTournamentEndDate(data);
+  if (!INCLUDE_PAST && isPast(endDate)) {
+    if (DEBUG) {
+      const dd = endDate ? endDate.toISOString().slice(0,10) : "(unknown)";
+      console.log(`[${path.basename(file)}] skipped (past tournament, end ${dd})`);
+    }
+    return false;
+  }
+
   let changed = false;
 
   if (!Array.isArray(data.opponents)) {
@@ -362,7 +484,7 @@ async function updateFile(file) {
 }
 
 async function main() {
-  if (DEBUG) console.log({ ARG_TOURN, FORCE, DEBUG, DUMP, STALE_DAYS });
+  if (DEBUG) console.log({ ARG_TOURN, FORCE, DEBUG, DUMP, STALE_DAYS, INCLUDE_PAST });
 
   const files = await listTournamentFiles();
   if (!files.length) {
