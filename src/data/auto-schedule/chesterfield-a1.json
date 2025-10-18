@@ -121,33 +121,53 @@
   },
   {
     "date": "2025-10-24",
-    "time": "00:00",
-    "opponent": "TBD",
+    "time": "20:15",
+    "opponent": "TX Jr Brahmas",
     "homeAway": "Neutral",
     "leagueGame": false,
-    "venue": "Tulsa  Tulsa OK ",
+    "venue": "WeStreet Ice Center 4143 S Yale Ave Tulsa OK 74135",
     "source": "ics",
     "sourceId": "7071694175963@www.accounts.crossbar.org"
   },
   {
     "date": "2025-10-25",
-    "time": "00:00",
-    "opponent": "TBD",
+    "time": "15:15",
+    "opponent": "KC Scout PeeWee",
     "homeAway": "Neutral",
     "leagueGame": false,
-    "venue": "Tulsa  Tulsa OK ",
+    "venue": "WeStreet Ice Center 4143 S Yale Ave Tulsa OK 74135",
     "source": "ics",
     "sourceId": "7071698175963@www.accounts.crossbar.org"
   },
   {
-    "date": "2025-10-26",
-    "time": "00:00",
-    "opponent": "TBD",
+    "date": "2025-10-25",
+    "time": "22:30",
+    "opponent": "OKC Blazers",
     "homeAway": "Neutral",
     "leagueGame": false,
-    "venue": "Tulsa  Tulsa OK ",
+    "venue": "Oilers Ice Center 6413 S Mingo Rd Tulsa OK 74133",
+    "source": "ics",
+    "sourceId": "7482692175963@www.accounts.crossbar.org"
+  },
+  {
+    "date": "2025-10-26",
+    "time": "14:15",
+    "opponent": "TJO 12U-AA",
+    "homeAway": "Neutral",
+    "leagueGame": false,
+    "venue": "WeStreet Ice Center 4143 S Yale Ave Tulsa OK 74135",
     "source": "ics",
     "sourceId": "7071707175963@www.accounts.crossbar.org"
+  },
+  {
+    "date": "2025-10-26",
+    "time": "18:45",
+    "opponent": "CHAMPIONSHIP GAME",
+    "homeAway": "Neutral",
+    "leagueGame": false,
+    "venue": "WeStreet Ice Center 4143 S Yale Ave Tulsa OK 74135",
+    "source": "ics",
+    "sourceId": "7482702175963@www.accounts.crossbar.org"
   },
   {
     "date": "2025-11-07",
