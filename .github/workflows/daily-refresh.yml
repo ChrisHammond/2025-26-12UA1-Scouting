@@ -46,7 +46,6 @@ jobs:
           path: ~/.cache/ms-playwright
           key: ${{ runner.os }}-playwright-chromium
 
-
       - name: Generate content types (Astro)
         run: npx astro sync
 
@@ -56,9 +55,10 @@ jobs:
           set -e
           run_or_skip () {
             local script="$1"
+            shift || true
             if [ -f "$script" ]; then
-              echo "▶ Running $script"
-              node "$script"
+              echo "▶ Running $script $*"
+              node "$script" "$@"
             else
               echo "⏭  $script not found; skipping."
             fi
@@ -67,7 +67,7 @@ jobs:
           run_or_skip scripts/update-schedules.mjs
           run_or_skip scripts/update-teams-from-mhr.mjs
           run_or_skip scripts/append-ranks-to-history.mjs
-          run_or_skip scripts/update-tournaments-inline-from-mhr.mjs
+          run_or_skip scripts/update-tournaments-inline-from-mhr.mjs --force
 
       - name: Build (sanity check)
         run: npm run build
