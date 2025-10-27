@@ -31,6 +31,7 @@ const tournaments = defineCollection({
     /** NEW: explicit links for the tournament page */
     infoUrl: z.string().url().optional(),
     standingsUrl: z.string().url().optional(),
+    photosUrl: z.string().url().optional(),
     opponents: z
       .array(
         z.union([

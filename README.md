@@ -135,6 +135,7 @@ Create files in **`src/content/tournaments/`**:
   /* Optional: include direct links shown on the tournament page
   "infoUrl": "https://event-host.example.com/this-tournament/info",
   "standingsUrl": "https://event-host.example.com/this-tournament/standings"
+  "photosUrl": "https://photos.rainbowmarks.com/2025/Hockey/25-26-12UA1-Falcons/Tulsa-Showdown"
   */
 }
 ```

@@ -98,7 +98,7 @@ function getTeam(slug: string) {
     </p>
   )}
 
-  {(tournament.infoUrl || tournament.website || tournament.standingsUrl) && (
+  {(tournament.infoUrl || tournament.website || tournament.standingsUrl || tournament.photosUrl) && (
     <div class="mt-3 flex flex-wrap gap-2">
       {(tournament.infoUrl || tournament.website) && (
         <a
@@ -118,6 +118,16 @@ function getTeam(slug: string) {
           class="inline-block rounded-lg border border-red-600 bg-red-600/20 px-3 py-1.5 text-sm text-red-200 hover:bg-red-600/30"
         >
           Standings / Schedule
+        </a>
+      )}
+      {tournament.photosUrl && (
+        <a
+          href={tournament.photosUrl}
+          target="_blank"
+          rel="noopener"
+          class="inline-block rounded-lg border border-red-600 bg-red-600/20 px-3 py-1.5 text-sm text-red-200 hover:bg-red-600/30"
+        >
+          Tournament Photos
         </a>
       )}
     </div>
