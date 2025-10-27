@@ -1,25 +1,5 @@
 [
   {
-    "date": "2025-09-26",
-    "time": "12:00",
-    "opponent": "Windsor Jr. Spitfires 13A BWHL 25-26",
-    "homeAway": "Neutral",
-    "leagueGame": false,
-    "venue": "Michael A Ries Ice Arena 5000 Forestwood Dr Parma OH 44134",
-    "source": "ics",
-    "sourceId": "7071561175963@www.accounts.crossbar.org"
-  },
-  {
-    "date": "2025-09-26",
-    "time": "17:10",
-    "opponent": "West Dundee Leafs 13-14 A1 Prospects CSDHL 25-26",
-    "homeAway": "Neutral",
-    "leagueGame": false,
-    "venue": "C.E. Orr Ice Arena 22550 Milton Ave Euclid OH 44123",
-    "source": "ics",
-    "sourceId": "7249059175963@www.accounts.crossbar.org"
-  },
-  {
     "date": "2025-09-27",
     "time": "13:20",
     "opponent": "West Seneca Wings 13AA I-90 25-26",
