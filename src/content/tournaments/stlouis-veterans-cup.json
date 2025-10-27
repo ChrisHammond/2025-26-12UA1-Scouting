@@ -1,0 +1,25 @@
+{
+  "name": "St. Louis Veterans Cup",
+  "slug": "veterans-cup",
+  "location": "St. Louis, MO",
+  "startDate": "2025-11-7",
+  "endDate": "2025-11-9",
+  "infoUrl": "https://www.myhockeytournaments.com/locations/st-louis/st-louis-veterans-cup",
+  "standingsUrl": "https://www.myhockeytournaments.com/locations/st-louis/st-louis-veterans-cup",
+  "opponents": [
+    "chesterfield-a1",
+    "kirkwood-a1",
+    "st-peters-a1",
+    {
+      "name": "Bloomington Jr. Thunder AA",
+      "website": "https://www.bloomingtonyouthhockey.com/team/166215",
+      "mhrUrl": "https://myhockeyrankings.com/team_info.php?y=2025&t=2931",
+      "note": "Added as tournament-only opponent.",
+      "rating": 78.64,
+      "updatedFromMHRAt": "2025-10-27T15:16:50.268Z",
+      "record": "3-3-0",
+      "mhrNationalRank": 671,
+      "mhrStateRank": 61
+    }
+  ]
+}
