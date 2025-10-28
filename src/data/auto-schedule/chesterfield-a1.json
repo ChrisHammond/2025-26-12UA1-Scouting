@@ -1,25 +1,5 @@
 [
   {
-    "date": "2025-09-27",
-    "time": "13:20",
-    "opponent": "West Seneca Wings 13AA I-90 25-26",
-    "homeAway": "Neutral",
-    "leagueGame": false,
-    "venue": "Brooklyn Recreation Center 7600 Memphis Ave Brooklyn OH 44144",
-    "source": "ics",
-    "sourceId": "7071574175963@www.accounts.crossbar.org"
-  },
-  {
-    "date": "2025-09-27",
-    "time": "19:15",
-    "opponent": "TBD",
-    "homeAway": "Neutral",
-    "leagueGame": false,
-    "venue": "Gilmour Academy Ice Arena 2045 SOM Center Road Gates Mills OH 44040",
-    "source": "ics",
-    "sourceId": "7249098175963@www.accounts.crossbar.org"
-  },
-  {
     "date": "2025-09-28",
     "time": "00:00",
     "opponent": "TBD",
@@ -131,31 +111,41 @@
   },
   {
     "date": "2025-11-07",
-    "time": "00:00",
-    "opponent": "TBD",
+    "time": "22:50",
+    "opponent": "Kirkwood",
     "homeAway": "Neutral",
     "leagueGame": false,
-    "venue": "STL    ",
+    "venue": "Pacific Ice Rink 460 Indian Warpath Dr Pacific MO 63069",
     "source": "ics",
     "sourceId": "7071730175963@www.accounts.crossbar.org"
   },
   {
     "date": "2025-11-08",
-    "time": "00:00",
-    "opponent": "TBD",
+    "time": "16:30",
+    "opponent": "STP",
     "homeAway": "Neutral",
     "leagueGame": false,
-    "venue": "STL    ",
+    "venue": "MUHC - Hartwig Kaiman 18383 Chesterfield Airport Rd Chesterfield MO 63005",
     "source": "ics",
     "sourceId": "7071735175963@www.accounts.crossbar.org"
   },
   {
+    "date": "2025-11-08",
+    "time": "21:50",
+    "opponent": "Bloomington Thunder",
+    "homeAway": "Neutral",
+    "leagueGame": false,
+    "venue": "MUHC - Hartwig Kaiman 18383 Chesterfield Airport Rd Chesterfield MO 63005",
+    "source": "ics",
+    "sourceId": "7599166175963@www.accounts.crossbar.org"
+  },
+  {
     "date": "2025-11-09",
-    "time": "00:00",
+    "time": "15:40",
     "opponent": "TBD",
     "homeAway": "Neutral",
     "leagueGame": false,
-    "venue": "STL    ",
+    "venue": "TBD - Pacific or MUHC    ",
     "source": "ics",
     "sourceId": "7071737175963@www.accounts.crossbar.org"
   },
