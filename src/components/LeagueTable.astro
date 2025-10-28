@@ -8,6 +8,7 @@ const {
   hideSelf = false,
   selfSlug = "chesterfield-a1",
   combineRanks = false, // may be set true on homepage
+  leagueUrl = "https://www.mohockeyyd.org/division/19054?subseason_id=4479",            // NEW: Optional URL to the league home page
 } = Astro.props;
 
 const norm = (s?: string) => (s ?? "").replace(/[^a-z0-9]/gi, "").toLowerCase();
@@ -44,7 +45,21 @@ function fmtStNat(t: any) {
 
 <div class="mt-8">
   <h2 class="text-2xl font-semibold text-red-500 mb-3">
-    {league} — {division} Standings
+    {
+      leagueUrl ? (
+        <a
+          href={leagueUrl}
+          class="underline decoration-red-500/40 hover:text-red-400 hover:decoration-red-400"
+          target="_blank"
+          rel="noopener"
+          aria-label={`Open ${league} home page`}
+        >
+          {league}
+        </a>
+      ) : (
+        league
+      )
+    } — {division} Standings
   </h2>
 
   {rows.length === 0 ? (
@@ -97,8 +112,26 @@ function fmtStNat(t: any) {
               )}
 
               <td class="px-3 py-2 space-x-3">
-                {t.website && <a href={t.website} target="_blank" rel="noopener" class="underline hover:text-red-400">Site</a>}
-                {t.mhrUrl && <a href={t.mhrUrl} target="_blank" rel="noopener" class="underline hover:text-red-400">MHR</a>}
+                {t.website && (
+                  <a
+                    href={t.website}
+                    target="_blank"
+                    rel="noopener"
+                    class="underline hover:text-red-400"
+                  >
+                    Site
+                  </a>
+                )}
+                {t.mhrUrl && (
+                  <a
+                    href={t.mhrUrl}
+                    target="_blank"
+                    rel="noopener"
+                    class="underline hover:text-red-400"
+                  >
+                    MHR
+                  </a>
+                )}
               </td>
               <td class="px-3 py-2">{t.lastUpdated ?? "—"}</td>
             </tr>
