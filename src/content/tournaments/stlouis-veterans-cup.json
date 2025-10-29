@@ -8,14 +8,13 @@
   "standingsUrl": "https://www.myhockeytournaments.com/tournaments/standings/1565",
   "opponents": [
     "chesterfield-a1",
-    "st-peters-a1",
     {
       "name": "Bloomington Jr. Thunder 12U AA",
       "website": "https://www.bloomingtonyouthhockey.com/team/166215",
       "mhrUrl": "https://myhockeyrankings.com/team_info.php?y=2025&t=2931",
       "note": "Added as tournament-only opponent.",
       "rating": 79.18,
-      "updatedFromMHRAt": "2025-10-29T11:30:28.873Z",
+      "updatedFromMHRAt": "2025-10-29T11:33:38.809Z",
       "record": "3-3-0",
       "mhrNationalRank": 691,
       "mhrStateRank": 62
@@ -26,10 +25,21 @@
       "mhrUrl": "https://myhockeyrankings.com/team_info.php?y=2025&t=16039",
       "note": "Added as tournament-only opponent.",
       "rating": 85.18,
-      "updatedFromMHRAt": "2025-10-29T11:30:31.926Z",
+      "updatedFromMHRAt": "2025-10-29T11:33:43.729Z",
       "record": "6-0-0",
       "mhrNationalRank": 266,
       "mhrStateRank": 12
+    },
+    {
+      "name": "St Peters 12U A2",
+      "website": "https://www.stpetershockey.com/team/151675",
+      "mhrUrl": "https://myhockeyrankings.com/team_info.php?y=2025&t=14903",
+      "note": "Added as tournament-only opponent.",
+      "rating": 81.35,
+      "updatedFromMHRAt": "2025-10-29T11:33:48.398Z",
+      "record": "5-2-1",
+      "mhrNationalRank": 522,
+      "mhrStateRank": 23
     }
   ]
 }
