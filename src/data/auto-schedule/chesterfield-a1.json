@@ -1,15 +1,5 @@
 [
   {
-    "date": "2025-09-28",
-    "time": "00:00",
-    "opponent": "TBD",
-    "homeAway": "Neutral",
-    "leagueGame": false,
-    "venue": "Cleveland  Cleveland OH ",
-    "source": "ics",
-    "sourceId": "7071579175963@www.accounts.crossbar.org"
-  },
-  {
     "date": "2025-10-05",
     "time": "20:40",
     "opponent": "FRIENDLY-2014 Knights",
@@ -28,26 +18,6 @@
     "venue": "Centene Community Ice Center 750 Casino Center Dr Maryland Heights MO 63043",
     "source": "ics",
     "sourceId": "7359890175963@www.accounts.crossbar.org"
-  },
-  {
-    "date": "2025-10-18",
-    "time": "22:45",
-    "opponent": "Rockets 12U A1",
-    "homeAway": "Neutral",
-    "leagueGame": false,
-    "venue": "Brentwood 2505 S Brentwood Blvd Brentwood MO 63144",
-    "source": "ics",
-    "sourceId": "7156388175963@www.accounts.crossbar.org"
-  },
-  {
-    "date": "2025-10-19",
-    "time": "16:50",
-    "opponent": "STP 12U - A1 Heller",
-    "homeAway": "Neutral",
-    "leagueGame": false,
-    "venue": "Wentzville Ice Gray 910 Main Plaza Dr Wentzville MO 63385",
-    "source": "ics",
-    "sourceId": "7160007175963@www.accounts.crossbar.org"
   },
   {
     "date": "2025-10-23",
@@ -170,6 +140,16 @@
     "sourceId": "7157338175963@www.accounts.crossbar.org"
   },
   {
+    "date": "2025-12-07",
+    "time": "18:05",
+    "opponent": "Rockets 12U A1",
+    "homeAway": "Neutral",
+    "leagueGame": false,
+    "venue": "Creve Coeur 11400 Olde Cabin Rd Creve Coeur MO 63141",
+    "source": "ics",
+    "sourceId": "7615630175963@www.accounts.crossbar.org"
+  },
+  {
     "date": "2025-12-12",
     "time": "00:00",
     "opponent": "TBD",
@@ -198,6 +178,26 @@
     "venue": "STL    ",
     "source": "ics",
     "sourceId": "7071956175963@www.accounts.crossbar.org"
+  },
+  {
+    "date": "2025-12-14",
+    "time": "17:25",
+    "opponent": "Meramec 12U A1 Miller",
+    "homeAway": "Neutral",
+    "leagueGame": false,
+    "venue": "FSI Shark Tank 6297 Lemay Ferry Rd St. Louis MO 63129",
+    "source": "ics",
+    "sourceId": "7623006175963@www.accounts.crossbar.org"
+  },
+  {
+    "date": "2026-01-10",
+    "time": "01:20",
+    "opponent": "Kirkwood 12U A1",
+    "homeAway": "Neutral",
+    "leagueGame": false,
+    "venue": "Pacific 460 Indian Warpath Dr Pacific MO 63069",
+    "source": "ics",
+    "sourceId": "7623007175963@www.accounts.crossbar.org"
   },
   {
     "date": "2026-01-15",

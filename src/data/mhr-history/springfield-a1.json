@@ -14,5 +14,11 @@
   {
     "date": "2025-10-22",
     "rating": 81.86
+  },
+  {
+    "date": "2025-10-29",
+    "rating": 81.73,
+    "stateRank": 21,
+    "nationalRank": 487
   }
 ]
