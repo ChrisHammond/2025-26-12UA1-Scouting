@@ -8,7 +8,6 @@
   "standingsUrl": "https://www.myhockeytournaments.com/tournaments/standings/1565",
   "opponents": [
     "chesterfield-a1",
-    "kirkwood-a1",
     "st-peters-a1",
     {
       "name": "Bloomington Jr. Thunder 12U AA",
@@ -16,10 +15,21 @@
       "mhrUrl": "https://myhockeyrankings.com/team_info.php?y=2025&t=2931",
       "note": "Added as tournament-only opponent.",
       "rating": 79.18,
-      "updatedFromMHRAt": "2025-10-29T11:22:03.181Z",
+      "updatedFromMHRAt": "2025-10-29T11:30:28.873Z",
       "record": "3-3-0",
       "mhrNationalRank": 691,
       "mhrStateRank": 62
+    },
+    {
+      "name": "Kirkwood Stars 12U A2",
+      "website": "https://www.kyha.org/page/show/9021309-12u-a2-2025-26-?subseason=944997",
+      "mhrUrl": "https://myhockeyrankings.com/team_info.php?y=2025&t=16039",
+      "note": "Added as tournament-only opponent.",
+      "rating": 85.18,
+      "updatedFromMHRAt": "2025-10-29T11:30:31.926Z",
+      "record": "6-0-0",
+      "mhrNationalRank": 266,
+      "mhrStateRank": 12
     }
   ]
 }
