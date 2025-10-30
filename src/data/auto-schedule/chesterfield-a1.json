@@ -171,16 +171,6 @@
   },
   {
     "date": "2025-12-14",
-    "time": "00:00",
-    "opponent": "TBD",
-    "homeAway": "Neutral",
-    "leagueGame": false,
-    "venue": "STL    ",
-    "source": "ics",
-    "sourceId": "7071956175963@www.accounts.crossbar.org"
-  },
-  {
-    "date": "2025-12-14",
     "time": "17:25",
     "opponent": "Meramec 12U A1 Miller",
     "homeAway": "Neutral",
@@ -198,6 +188,16 @@
     "venue": "Pacific 460 Indian Warpath Dr Pacific MO 63069",
     "source": "ics",
     "sourceId": "7623007175963@www.accounts.crossbar.org"
+  },
+  {
+    "date": "2026-01-10",
+    "time": "18:15",
+    "opponent": "SpringIL 12U A1 Hautala",
+    "homeAway": "Neutral",
+    "leagueGame": false,
+    "venue": "Springfield IL 1 Ice Rink 1601 N 5th St Springfield IL 62702",
+    "source": "ics",
+    "sourceId": "7637440175963@www.accounts.crossbar.org"
   },
   {
     "date": "2026-01-15",
