@@ -140,6 +140,26 @@
     "sourceId": "7157338175963@www.accounts.crossbar.org"
   },
   {
+    "date": "2025-11-29",
+    "time": "14:10",
+    "opponent": "STP 12U - A1 Heller",
+    "homeAway": "Neutral",
+    "leagueGame": false,
+    "venue": "Ice Zone 5555 St.Louis Mills Blvd Hazelwood MO 63042",
+    "source": "ics",
+    "sourceId": "7652656175963@www.accounts.crossbar.org"
+  },
+  {
+    "date": "2025-12-06",
+    "time": "14:20",
+    "opponent": "Affton 12U - A1 Freeman",
+    "homeAway": "Neutral",
+    "leagueGame": false,
+    "venue": "MUHC Shanahan 18383 Chesterfield Airport Rd Chesterfield MO 63005",
+    "source": "ics",
+    "sourceId": "7076926175963@www.accounts.crossbar.org"
+  },
+  {
     "date": "2025-12-07",
     "time": "18:05",
     "opponent": "Rockets 12U A1",
@@ -171,6 +191,16 @@
   },
   {
     "date": "2025-12-14",
+    "time": "00:40",
+    "opponent": "SpringIL 12U A1 Hautala",
+    "homeAway": "Neutral",
+    "leagueGame": false,
+    "venue": "MUHC Hartwig Kaiman 18383 Chesterfield Airport Rd Chesterfield MO 63005",
+    "source": "ics",
+    "sourceId": "7612006175963@www.accounts.crossbar.org"
+  },
+  {
+    "date": "2025-12-14",
     "time": "17:25",
     "opponent": "Meramec 12U A1 Miller",
     "homeAway": "Neutral",
@@ -178,6 +208,36 @@
     "venue": "FSI Shark Tank 6297 Lemay Ferry Rd St. Louis MO 63129",
     "source": "ics",
     "sourceId": "7623006175963@www.accounts.crossbar.org"
+  },
+  {
+    "date": "2025-12-20",
+    "time": "18:20",
+    "opponent": "Kirkwood 12U A1",
+    "homeAway": "Neutral",
+    "leagueGame": false,
+    "venue": "MUHC Shanahan 18383 Chesterfield Airport Rd Chesterfield MO 63005",
+    "source": "ics",
+    "sourceId": "7077116175963@www.accounts.crossbar.org"
+  },
+  {
+    "date": "2025-12-21",
+    "time": "13:20",
+    "opponent": "STP 12U - A1 Heller",
+    "homeAway": "Neutral",
+    "leagueGame": false,
+    "venue": "MUHC Shanahan 18383 Chesterfield Airport Rd Chesterfield MO 63005",
+    "source": "ics",
+    "sourceId": "7077142175963@www.accounts.crossbar.org"
+  },
+  {
+    "date": "2026-01-03",
+    "time": "14:30",
+    "opponent": "Meramec 12U A1 Miller",
+    "homeAway": "Neutral",
+    "leagueGame": false,
+    "venue": "MUHC Shanahan 18383 Chesterfield Airport Rd Chesterfield MO 63005",
+    "source": "ics",
+    "sourceId": "7628313175963@www.accounts.crossbar.org"
   },
   {
     "date": "2026-01-10",
@@ -198,6 +258,16 @@
     "venue": "Springfield IL 1 Ice Rink 1601 N 5th St Springfield IL 62702",
     "source": "ics",
     "sourceId": "7637440175963@www.accounts.crossbar.org"
+  },
+  {
+    "date": "2026-01-11",
+    "time": "18:50",
+    "opponent": "Rockets 12U A1",
+    "homeAway": "Neutral",
+    "leagueGame": false,
+    "venue": "MUHC Shanahan 18383 Chesterfield Airport Rd Chesterfield MO 63005",
+    "source": "ics",
+    "sourceId": "7101560175963@www.accounts.crossbar.org"
   },
   {
     "date": "2026-01-15",
@@ -258,6 +328,26 @@
     "venue": "Fenton 1771 Gilsinn Ln Fenton MO 63026",
     "source": "ics",
     "sourceId": "7646091175963@www.accounts.crossbar.org"
+  },
+  {
+    "date": "2026-02-07",
+    "time": "20:30",
+    "opponent": "KC Outlaws 12U - A1 Brown",
+    "homeAway": "Neutral",
+    "leagueGame": false,
+    "venue": "Pacific Rink 460 Indian Warpath Dr Pacific MO 63069",
+    "source": "ics",
+    "sourceId": "7646858175963@www.accounts.crossbar.org"
+  },
+  {
+    "date": "2026-02-08",
+    "time": "13:40",
+    "opponent": "KC Outlaws 12U - A1 Brown",
+    "homeAway": "Neutral",
+    "leagueGame": false,
+    "venue": "MUHC Shanahan 18383 Chesterfield Airport Rd Chesterfield MO 63005",
+    "source": "ics",
+    "sourceId": "7101834175963@www.accounts.crossbar.org"
   },
   {
     "date": "2026-02-12",
