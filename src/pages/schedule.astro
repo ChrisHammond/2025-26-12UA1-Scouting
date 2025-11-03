@@ -22,12 +22,11 @@ const autoGames =
   autoMods[`../data/auto-schedule/${settings.teamSlug}.json`]?.default ?? [];
 
 // Optional overrides map: { [sourceId]: "opponent-slug" }
+// Use import.meta.glob so the file is optional without breaking the build.
 let opponentOverrides: Record<string, string> = {};
-try {
-  // Create this file if you need hard mappings; safe if missing.
-  opponentOverrides = (await import("../data/opponent-overrides.json")).default ?? {};
-} catch {
-  opponentOverrides = {};
+{
+  const overrideMods = import.meta.glob("../data/opponent-overrides.json", { eager: true });
+  opponentOverrides = (overrideMods["../data/opponent-overrides.json"] as any)?.default ?? {};
 }
 
 /* ---------------------------------------------
@@ -59,7 +58,7 @@ function slugify(s = "") {
 function normalizeNamesForTokens(s = "") {
   let txt = norm(s);
 
-  // St./STP → "saint peters" (Crossbar often uses STP)
+  // STP → "saint peters", and "St." → "saint"
   txt = txt.replace(/\bstp\b/g, "saint peters");
   txt = txt.replace(/\bst\.?\b/g, "saint ");
 
@@ -161,7 +160,6 @@ function scoreTeamMatch(raw: string) {
     else if (q.level && level && q.level !== level) s -= 40;
     if (q.level && !level) s -= 15;
 
-    // Keep best
     if (s > best.score) best = { score: s, hit: t };
   }
 
