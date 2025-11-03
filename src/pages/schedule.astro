@@ -5,9 +5,14 @@ import settings from "../config/settings";
 import { winProb } from "../lib/probability";
 import WinProbBadge from "../components/WinProbBadge.astro";
 
+/* ---------------------------------------------
+   Load data: manual games + auto-generated JSON
+---------------------------------------------- */
 const manualGames = (await getCollection("games")).map((g) => g.data);
 const teamEntries = await getCollection("teams");
 const teams = teamEntries.map((t) => t.data);
+
+// Teams by slug for O(1) lookups
 const teamBySlug = new Map(teams.map((t) => [t.slug, t]));
 const myTeam = teamBySlug.get(settings.teamSlug);
 
@@ -16,34 +21,181 @@ const autoMods = import.meta.glob("../data/auto-schedule/*.json", { eager: true 
 const autoGames =
   autoMods[`../data/auto-schedule/${settings.teamSlug}.json`]?.default ?? [];
 
-// Merge & de-duplicate
-const key = (g) =>
+// Optional overrides map: { [sourceId]: "opponent-slug" }
+let opponentOverrides: Record<string, string> = {};
+try {
+  // Create this file if you need hard mappings; safe if missing.
+  opponentOverrides = (await import("../data/opponent-overrides.json")).default ?? {};
+} catch {
+  opponentOverrides = {};
+}
+
+/* ---------------------------------------------
+   Merge & de-duplicate
+---------------------------------------------- */
+const key = (g: any) =>
   [g.date, g.time ?? "", (g.opponent ?? g.opponentSlug ?? "").toLowerCase()].join("|");
-const mergedMap = new Map();
+
+const mergedMap = new Map<string, any>();
 [...autoGames, ...manualGames].forEach((g) => mergedMap.set(key(g), g));
 const games = [...mergedMap.values()].sort((a, b) =>
   (a.date + (a.time ?? "")).localeCompare(b.date + (b.time ?? ""))
 );
 
-/** Opponent resolution */
-function findOpponent(g: any) {
-  if (g.opponentSlug && teamBySlug.has(g.opponentSlug)) return teamBySlug.get(g.opponentSlug);
-  const raw = (g.opponent || "").trim();
-  if (teamBySlug.has(raw)) return teamBySlug.get(raw);
-  const guess = raw
-    .toLowerCase()
-    .replace(/[^a-z0-9]+/g, "-")
-    .replace(/(^-|-$)/g, "");
-  if (teamBySlug.has(guess)) return teamBySlug.get(guess);
-  const n = raw.toLowerCase().replace(/[^a-z0-9]/g, "");
-  for (const t of teams) {
-    const tn = t.name.toLowerCase().replace(/[^a-z0-9]/g, "");
-    if (tn.includes(n) || n.includes(tn)) return t;
-  }
-  return null;
+/* ---------------------------------------------
+   Opponent resolution helpers
+---------------------------------------------- */
+function norm(s = "") {
+  return s.toLowerCase().trim();
+}
+function normAlnum(s = "") {
+  return norm(s).replace(/[^a-z0-9]/g, "");
+}
+function slugify(s = "") {
+  return norm(s).replace(/[^a-z0-9]+/g, "-").replace(/(^-|-$)/g, "");
 }
 
-/** Time-zone aware display helpers */
+/** Normalize common abbreviations / spelling variants */
+function normalizeNamesForTokens(s = "") {
+  let txt = norm(s);
+
+  // St./STP → "saint peters" (Crossbar often uses STP)
+  txt = txt.replace(/\bstp\b/g, "saint peters");
+  txt = txt.replace(/\bst\.?\b/g, "saint ");
+
+  // "u 12" / "12 u" → "12u"
+  txt = txt.replace(/\b(\d+)\s*u\b/g, "$1u");
+  txt = txt.replace(/\bu\s*(\d+)\b/g, "$1u");
+  txt = txt.replace(/\b(\d+)\s*under\b/g, "$1u");
+
+  // Collapse extra spaces
+  txt = txt.replace(/\s+/g, " ").trim();
+
+  return txt;
+}
+
+function extractTokens(s = "") {
+  const cleaned = normalizeNamesForTokens(s);
+
+  // Pull useful bits
+  const age = (cleaned.match(/\b(\d{1,2})u\b/) || [])[1] || null;
+  const levelToken =
+    (cleaned.match(/\b(a|b|c)\s*([123])\b/) ||
+      cleaned.match(/\b(a|b|c)([123])\b/) ||
+      (cleaned.match(/\b(house|rec)\b/) as any) ||
+      [])[0] || null;
+
+  // Tokenize on non-alnum
+  const tokens = cleaned
+    .split(/[^a-z0-9]+/g)
+    .filter(Boolean)
+    .filter((w) => w.length > 1);
+
+  return {
+    raw: s,
+    cleaned,
+    age, // "12"
+    level: levelToken ? levelToken.replace(/\s+/g, "") : null, // "a2" / "b1" / "house"
+    alnum: normAlnum(s),
+    slug: slugify(s),
+    tokens: new Set(tokens),
+  };
+}
+
+function teamIndex(t: any) {
+  const nameTok = extractTokens(t.name || "");
+  const slugTok = extractTokens(t.slug || "");
+  const aliases = Array.isArray(t.aliases) ? t.aliases : [];
+  const aliasToks = aliases.map(extractTokens);
+
+  // Try to infer age/level from either name or slug
+  const age = nameTok.age || slugTok.age || null;
+  const level = nameTok.level || slugTok.level || null;
+
+  // Org tokens (e.g., "kirkwood", "saint", "peters")
+  const orgTokens = new Set(
+    [...nameTok.tokens, ...slugTok.tokens].filter(
+      (w) => !/^(12u|10u|14u|a1|a2|a3|b1|b2|b3|house|rec)$/.test(w)
+    )
+  );
+
+  return { t, nameTok, slugTok, aliasToks, age, level, orgTokens };
+}
+
+const indexedTeams = teams.map(teamIndex);
+
+/** Score a team against a raw opponent string */
+function scoreTeamMatch(raw: string) {
+  const q = extractTokens(raw);
+  let best = { score: -Infinity, hit: null as any };
+
+  for (const entry of indexedTeams) {
+    const { t, nameTok, slugTok, aliasToks, age, level, orgTokens } = entry;
+
+    let s = 0;
+
+    // Strong exact-ish signals
+    if (q.slug && q.slug === slugTok.slug) s += 100;
+    if (t.slug && q.cleaned === slugify(t.slug)) s += 95;
+    if (q.alnum && q.alnum === nameTok.alnum) s += 92;
+    if (q.alnum && q.alnum === slugTok.alnum) s += 90;
+
+    // Alias exacts
+    for (const a of aliasToks) {
+      if (q.alnum && q.alnum === a.alnum) s += 88;
+      if (q.slug && q.slug === a.slug) s += 88;
+    }
+
+    // Token overlap (org/city/nickname words)
+    const overlap = [...q.tokens].filter(
+      (w) => nameTok.tokens.has(w) || slugTok.tokens.has(w) || orgTokens.has(w)
+    ).length;
+    s += Math.min(30, overlap * 6); // up to +30
+
+    // Age weight
+    if (q.age && age && q.age === age) s += 20;
+    else if (q.age && age && q.age !== age) s -= 25;
+
+    // Level/flight weight (A1/A2/B/C/House/etc.)
+    if (q.level && level && q.level === level) s += 35;
+    else if (q.level && level && q.level !== level) s -= 40;
+    if (q.level && !level) s -= 15;
+
+    // Keep best
+    if (s > best.score) best = { score: s, hit: t };
+  }
+
+  // Only accept confident matches; adjust as needed
+  return best.score >= 60 ? best.hit : null;
+}
+
+/** Main opponent resolver */
+function findOpponent(g: any) {
+  // 0) SourceID → override slug (for Crossbar ICS ambiguity like "Kirkwood"/"STP")
+  if (g.sourceId) {
+    const forcedSlug = opponentOverrides[g.sourceId];
+    if (forcedSlug && teamBySlug.has(forcedSlug)) return teamBySlug.get(forcedSlug);
+  }
+
+  // 1) Explicit slug on the row
+  if (g.opponentSlug && teamBySlug.has(g.opponentSlug)) return teamBySlug.get(g.opponentSlug);
+
+  // 2) Literal lookup vs team slugs
+  const raw = (g.opponent || "").trim();
+  if (!raw) return null;
+  if (teamBySlug.has(raw)) return teamBySlug.get(raw);
+
+  // 3) Slugify the raw label
+  const guess = slugify(raw);
+  if (teamBySlug.has(guess)) return teamBySlug.get(guess);
+
+  // 4) Token/age/level-aware best-effort match
+  return scoreTeamMatch(raw);
+}
+
+/* ---------------------------------------------
+   Time-zone aware display helpers
+---------------------------------------------- */
 const TZ = settings.timeZone || "America/Chicago";
 
 function fmtDate(d: string | number | Date) {
@@ -57,10 +209,9 @@ function fmtTime(d: string | number | Date) {
   });
 }
 
-/** Build a Date assuming incoming date+time are in UTC (common from ICS-derived flat fields) */
+/** Build a Date assuming incoming date+time are in UTC (ICS-derived flat fields) */
 function dateFromUtcParts(dateStr?: string, timeStr?: string) {
   if (!dateStr || !timeStr) return null;
-  // Ensure HH:mm:ss
   const hhmm = /^\d{2}:\d{2}$/.test(timeStr) ? `${timeStr}:00` : timeStr;
   const iso = `${dateStr}T${hhmm}Z`;
   const d = new Date(iso);
@@ -70,7 +221,6 @@ function dateFromUtcParts(dateStr?: string, timeStr?: string) {
 /** All-day-ish check for ICS rows with midnight times */
 function isAllDay(g: any) {
   if (g.source !== "ics") return false;
-  // If ICS supplies midnight AND no explicit duration, treat as all-day for display
   return (g.time === "00:00" || g.time === "00:00:00") && !g.start;
 }
 
@@ -90,7 +240,6 @@ function displayTime(g: any) {
     const d = dateFromUtcParts(g.date, g.time);
     if (d) return fmtTime(d);
   }
-  // Manual or unknown: show provided string (hide blank/00:00 nicely)
   if (!g.time || g.time === "00:00" || g.time === "00:00:00") return "—";
   return g.time;
 }
@@ -135,10 +284,7 @@ function displayTime(g: any) {
                 <td class="px-3 py-2">{displayTime(g)}</td>
                 <td class="px-3 py-2">
                   {opp ? (
-                    <a
-                      class="underline hover:text-red-400"
-                      href={`/teams/${opp.slug}/`}
-                    >
+                    <a class="underline hover:text-red-400" href={`/teams/${opp.slug}/`}>
                       {opp.name}
                     </a>
                   ) : (
@@ -152,10 +298,7 @@ function displayTime(g: any) {
                 </td>
                 <td class="px-3 py-2">
                   {opp ? (
-                    <a
-                      class="underline hover:text-red-400"
-                      href={`/matchups/${opp.slug}/`}
-                    >
+                    <a class="underline hover:text-red-400" href={`/matchups/${opp.slug}/`}>
                       Matchup
                     </a>
                   ) : (
