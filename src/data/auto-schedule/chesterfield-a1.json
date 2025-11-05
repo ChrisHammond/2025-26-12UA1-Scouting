@@ -1,15 +1,5 @@
 [
   {
-    "date": "2025-10-05",
-    "time": "20:40",
-    "opponent": "FRIENDLY-2014 Knights",
-    "homeAway": "Neutral",
-    "leagueGame": false,
-    "venue": "MUHC Hartwig Kaiman 18383 Chesterfield Airport Rd Chesterfield MO 63005",
-    "source": "ics",
-    "sourceId": "7029362175963@www.accounts.crossbar.org"
-  },
-  {
     "date": "2025-10-18",
     "time": "00:20",
     "opponent": "FRIENDLY-AAA 2013 Lady Blues",
@@ -178,16 +168,6 @@
     "venue": "STL    ",
     "source": "ics",
     "sourceId": "7071882175963@www.accounts.crossbar.org"
-  },
-  {
-    "date": "2025-12-13",
-    "time": "00:00",
-    "opponent": "TBD",
-    "homeAway": "Neutral",
-    "leagueGame": false,
-    "venue": "    ",
-    "source": "ics",
-    "sourceId": "7071919175963@www.accounts.crossbar.org"
   },
   {
     "date": "2025-12-14",
