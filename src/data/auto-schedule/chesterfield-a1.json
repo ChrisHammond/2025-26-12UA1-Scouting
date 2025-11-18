@@ -1,15 +1,5 @@
 [
   {
-    "date": "2025-10-18",
-    "time": "22:45",
-    "opponent": "Rockets 12U A1",
-    "homeAway": "Neutral",
-    "leagueGame": false,
-    "venue": "Brentwood 2505 S Brentwood Blvd Brentwood MO 63144",
-    "source": "ics",
-    "sourceId": "7767099175963@www.accounts.crossbar.org"
-  },
-  {
     "date": "2025-10-19",
     "time": "16:50",
     "opponent": "STP 12U - A1 Heller",
@@ -17,7 +7,7 @@
     "leagueGame": false,
     "venue": "Wentzville Ice Gray 910 Main Plaza Dr Wentzville MO 63385",
     "source": "ics",
-    "sourceId": "7767100175963@www.accounts.crossbar.org"
+    "sourceId": "7777080175963@www.accounts.crossbar.org"
   },
   {
     "date": "2025-10-23",
