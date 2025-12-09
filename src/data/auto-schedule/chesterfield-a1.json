@@ -1,25 +1,5 @@
 [
   {
-    "date": "2025-11-08",
-    "time": "16:30",
-    "opponent": "STP",
-    "homeAway": "Neutral",
-    "leagueGame": false,
-    "venue": "MUHC - Hartwig Kaiman 18383 Chesterfield Airport Rd Chesterfield MO 63005",
-    "source": "ics",
-    "sourceId": "7071735175963@www.accounts.crossbar.org"
-  },
-  {
-    "date": "2025-11-08",
-    "time": "21:50",
-    "opponent": "Bloomington Thunder",
-    "homeAway": "Neutral",
-    "leagueGame": false,
-    "venue": "MUHC - Hartwig Kaiman 18383 Chesterfield Airport Rd Chesterfield MO 63005",
-    "source": "ics",
-    "sourceId": "7599166175963@www.accounts.crossbar.org"
-  },
-  {
     "date": "2025-11-09",
     "time": "15:40",
     "opponent": "Kirkwood",
