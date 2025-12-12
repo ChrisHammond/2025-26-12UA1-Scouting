@@ -1,0 +1,12 @@
+{
+  "name": "Pittsburgh Three Rivers Cup",
+  "slug": "three-rivers-cup",
+  "location": "Pittsburgh, PA",
+  "startDate": "2026-1-16",
+  "endDate": "2026-1-19",
+  "infoUrl": "https://www.itshockeytime.com/tournamentdetails3.asp?tournyid=2084",
+  "standingsUrl": "https://www.itshockeytime.com/tournamentdetails3.asp?tournyid=2084",
+  "opponents": [
+    "chesterfield-a1"
+  ]
+}
