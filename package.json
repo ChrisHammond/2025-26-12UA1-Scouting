@@ -16,7 +16,7 @@
   },
   "dependencies": {
     "@tailwindcss/vite": "^4.1.13",
-    "astro": "^5.16.5",
+    "astro": "^5.16.6",
     "chart.js": "^4.5.1",
     "node-ical": "^0.22.0",
     "tailwindcss": "^4.1.13"
