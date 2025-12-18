@@ -3,12 +3,12 @@ $id    = 12700
 $maxId = 13200
 
 # ---- What you're looking for ----
-$targetCity      = "Pittsburgh"
+$targetCity      = "Detroit"
 $targetStartDate = [datetime]"2026-01-16"
 $targetEndDate   = [datetime]"2026-01-19"
 
 # Keywords that often work even when associationTitle varies
-$titleKeywords = @("Three Rivers", "Pittsburgh")
+$titleKeywords = @("Motown", "Detroit")
 $assocKeywords = @("Hockey Time", "Hockey Time Productions")
 
 # Output containers
@@ -80,7 +80,7 @@ for ($i = $id; $i -le $maxId; $i++) {
     $matches.Add($row)
     Write-Host "MATCH: [$i] $title | Assoc='$assoc' | $url"
   }
-  elseif ($title -like "*Pittsburgh*" -or $cityHit) {
+  elseif ($title -like "*Detroit*" -or $cityHit) {
     # Helpful logging for "why didn't it match?"
     $nearMisses.Add($row)
     Write-Host "Near miss: [$i] $title | Assoc='$assoc'"
