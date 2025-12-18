@@ -1,6 +1,6 @@
 # ---- Search range ----
-$id    = 12700
-$maxId = 13550
+$id    = 12800
+$maxId = 13350
 
 # Output container
 $rows = New-Object System.Collections.Generic.List[object]
