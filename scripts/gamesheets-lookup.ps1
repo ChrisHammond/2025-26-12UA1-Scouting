@@ -1,6 +1,6 @@
 # ---- Search range ----
-$id    = 12800
-$maxId = 13500
+$id    = 12700
+$maxId = 13200
 
 # ---- What you're looking for ----
 $targetCity      = "Pittsburgh"
