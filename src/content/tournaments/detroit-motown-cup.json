@@ -14,7 +14,7 @@
       "mhrUrl": "https://myhockeyrankings.com/team-info?t=2315&y=2025",
       "note": "Added as tournament-only opponent.",
       "rating": 82.45,
-      "updatedFromMHRAt": "2025-12-29T19:50:34.039Z",
+      "updatedFromMHRAt": "2025-12-29T20:27:47.732Z",
       "record": "17-11-1",
       "mhrNationalRank": 528,
       "mhrStateRank": 56
@@ -25,10 +25,32 @@
       "mhrUrl": "https://myhockeyrankings.com/team_info.php?y=2024&t=1813",
       "note": "Added as tournament-only opponent.",
       "rating": 86.26,
-      "updatedFromMHRAt": "2025-12-29T19:50:37.061Z",
+      "updatedFromMHRAt": "2025-12-29T20:27:52.121Z",
       "record": "20-23-5",
       "mhrNationalRank": 83,
       "mhrStateRank": 37
+    },
+    {
+      "name": "Canton Wolves 12U AA",
+      "website": "https://www.cantonhockey.org/2013",
+      "mhrUrl": "https://myhockeyrankings.com/team-info?t=30275&y=2025",
+      "note": "Added as tournament-only opponent.",
+      "rating": 83.57,
+      "updatedFromMHRAt": "2025-12-29T20:27:56.304Z",
+      "record": "23-5-5",
+      "mhrNationalRank": 431,
+      "mhrStateRank": 50
+    },
+    {
+      "name": "California Heat ",
+      "website": "https://caheathockey.com/",
+      "mhrUrl": "https://myhockeyrankings.com/team-info?t=5000&y=2025",
+      "note": "Added as tournament-only opponent.",
+      "rating": 81.45,
+      "updatedFromMHRAt": "2025-12-29T20:28:00.815Z",
+      "record": "14-6-2",
+      "mhrNationalRank": 622,
+      "mhrStateRank": 34
     }
   ]
 }
