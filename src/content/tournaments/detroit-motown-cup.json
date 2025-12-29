@@ -6,6 +6,14 @@
   "endDate": "2026-1-19",
   "infoUrl": "https://www.itshockeytime.com/tournamentdetails3.asp?tournyid=2013",
   "standingsUrl": "https://www.itshockeytime.com/tournamentdetails3.asp?tournyid=2013",
+  "_notes": {
+    "loginInfo": {
+      "teamCode": "ZQ12806826LF1QZ43",
+      "tournamentCode": "P94Y420136VG3965A",
+      "loginLink": "http://itshockeytime.com",
+      "registrationUrl": "https://www.itshockeytime.com/tournamentregistration4.asp?tournyid=2013&teamid=128068"
+    }
+  },
   "opponents": [
     "chesterfield-a1",
     {
@@ -14,7 +22,7 @@
       "mhrUrl": "https://myhockeyrankings.com/team-info?t=2315&y=2025",
       "note": "Added as tournament-only opponent.",
       "rating": 82.45,
-      "updatedFromMHRAt": "2025-12-29T21:04:53.636Z",
+      "updatedFromMHRAt": "2025-12-29T21:57:04.827Z",
       "record": "17-11-1",
       "mhrNationalRank": 528,
       "mhrStateRank": 56
@@ -25,7 +33,7 @@
       "mhrUrl": "https://myhockeyrankings.com/team_info.php?y=2024&t=1813",
       "note": "Added as tournament-only opponent.",
       "rating": 86.26,
-      "updatedFromMHRAt": "2025-12-29T21:04:56.997Z",
+      "updatedFromMHRAt": "2025-12-29T21:57:08.557Z",
       "record": "20-23-5",
       "mhrNationalRank": 83,
       "mhrStateRank": 37
@@ -36,7 +44,7 @@
       "mhrUrl": "https://myhockeyrankings.com/team-info?t=30275&y=2025",
       "note": "Added as tournament-only opponent.",
       "rating": 83.57,
-      "updatedFromMHRAt": "2025-12-29T21:05:00.102Z",
+      "updatedFromMHRAt": "2025-12-29T21:57:11.600Z",
       "record": "23-5-5",
       "mhrNationalRank": 431,
       "mhrStateRank": 50
@@ -47,7 +55,7 @@
       "mhrUrl": "https://myhockeyrankings.com/team-info?t=5000&y=2025",
       "note": "Added as tournament-only opponent.",
       "rating": 81.45,
-      "updatedFromMHRAt": "2025-12-29T21:05:04.679Z",
+      "updatedFromMHRAt": "2025-12-29T21:57:15.892Z",
       "record": "14-6-2",
       "mhrNationalRank": 622,
       "mhrStateRank": 34
