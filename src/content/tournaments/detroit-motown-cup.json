@@ -7,6 +7,28 @@
   "infoUrl": "https://www.itshockeytime.com/tournamentdetails3.asp?tournyid=2013",
   "standingsUrl": "https://www.itshockeytime.com/tournamentdetails3.asp?tournyid=2013",
   "opponents": [
-    "chesterfield-a1"
+    "chesterfield-a1",
+    {
+      "name": "Kensington Valley Raiders 12U AA",
+      "website": "https://wmha.net/Teams/2662/",
+      "mhrUrl": "https://myhockeyrankings.com/team-info?t=2315&y=2025",
+      "note": "Added as tournament-only opponent.",
+      "rating": 82.45,
+      "updatedFromMHRAt": "2025-12-29T19:50:34.039Z",
+      "record": "17-11-1",
+      "mhrNationalRank": 528,
+      "mhrStateRank": 56
+    },
+    {
+      "name": "AMHERST KNIGHTS 13 AAA",
+      "website": "https://amherstyouthhockey.org/teams/51034/",
+      "mhrUrl": "https://myhockeyrankings.com/team_info.php?y=2024&t=1813",
+      "note": "Added as tournament-only opponent.",
+      "rating": 86.26,
+      "updatedFromMHRAt": "2025-12-29T19:50:37.061Z",
+      "record": "20-23-5",
+      "mhrNationalRank": 83,
+      "mhrStateRank": 37
+    }
   ]
 }
