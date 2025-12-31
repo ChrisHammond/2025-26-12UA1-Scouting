@@ -22,7 +22,7 @@
       "mhrUrl": "https://myhockeyrankings.com/team-info?t=2315&y=2025",
       "note": "Added as tournament-only opponent.",
       "rating": 82.48,
-      "updatedFromMHRAt": "2025-12-31T11:22:10.721Z",
+      "updatedFromMHRAt": "2025-12-31T16:03:55.988Z",
       "record": "17-11-1",
       "mhrNationalRank": 529,
       "mhrStateRank": 56
@@ -33,7 +33,7 @@
       "mhrUrl": "https://myhockeyrankings.com/team_info.php?y=2024&t=1813",
       "note": "Added as tournament-only opponent.",
       "rating": 86.26,
-      "updatedFromMHRAt": "2025-12-31T11:22:12.972Z",
+      "updatedFromMHRAt": "2025-12-31T16:04:00.690Z",
       "record": "20-23-5",
       "mhrNationalRank": 83,
       "mhrStateRank": 37
@@ -44,7 +44,7 @@
       "mhrUrl": "https://myhockeyrankings.com/team-info?t=30275&y=2025",
       "note": "Added as tournament-only opponent.",
       "rating": 83.61,
-      "updatedFromMHRAt": "2025-12-31T11:22:16.707Z",
+      "updatedFromMHRAt": "2025-12-31T16:04:05.360Z",
       "record": "23-5-5",
       "mhrNationalRank": 428,
       "mhrStateRank": 50
@@ -55,10 +55,43 @@
       "mhrUrl": "https://myhockeyrankings.com/team-info?t=5000&y=2025",
       "note": "Added as tournament-only opponent.",
       "rating": 81.21,
-      "updatedFromMHRAt": "2025-12-31T11:22:20.428Z",
+      "updatedFromMHRAt": "2025-12-31T16:04:09.759Z",
       "record": "14-6-2",
       "mhrNationalRank": 642,
       "mhrStateRank": 34
+    },
+    {
+      "name": "Mooretown Jr Flags U13 B2",
+      "website": "https://mooretownminorhockey.com/Teams/1994/",
+      "mhrUrl": "https://myhockeyrankings.com/team_info.php?y=2025&t=21621",
+      "note": "Added as tournament-only opponent.",
+      "rating": 81.96,
+      "updatedFromMHRAt": "2025-12-31T16:04:14.180Z",
+      "record": "26-2-3",
+      "mhrNationalRank": 999,
+      "mhrStateRank": 54
+    },
+    {
+      "name": "Mooretown Jr Flags U13 B",
+      "website": "https://mooretownminorhockey.com/Teams/1993/",
+      "mhrUrl": "https://myhockeyrankings.com/team_info.php?y=2025&t=17253",
+      "note": "Added as tournament-only opponent.",
+      "rating": 83.21,
+      "updatedFromMHRAt": "2025-12-31T16:04:18.477Z",
+      "record": "14-14-5",
+      "mhrNationalRank": 999,
+      "mhrStateRank": 30
+    },
+    {
+      "name": "Talbot Trail Blazers U13 B",
+      "website": "https://essex-southpoint.com/Teams/1394/",
+      "mhrUrl": "https://myhockeyrankings.com/team_info.php?y=2025&t=5063",
+      "note": "Added as tournament-only opponent.",
+      "rating": 80.64,
+      "updatedFromMHRAt": "2025-12-31T16:04:22.967Z",
+      "record": "15-13-4",
+      "mhrNationalRank": 999,
+      "mhrStateRank": 82
     }
   ]
 }
