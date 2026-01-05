@@ -17,7 +17,7 @@
   "opponents": [
     "chesterfield-a1",
     {
-      "name": "Kensington Valley Raiders 12U AA",
+      "name": "Kensington Valley Raiders 12U AA (RED)",
       "website": "https://wmha.net/Teams/2662/",
       "mhrUrl": "https://myhockeyrankings.com/team-info?t=2315&y=2025",
       "note": "Added as tournament-only opponent.",
@@ -28,7 +28,7 @@
       "mhrStateRank": 56
     },
     {
-      "name": "Amherst Knights 13 AAA",
+      "name": "Amherst Knights 13 AAA (RED)",
       "website": "https://amherstyouthhockey.org/teams/51034/",
       "mhrUrl": "https://myhockeyrankings.com/team_info.php?y=2024&t=1813",
       "note": "Added as tournament-only opponent.",
@@ -39,7 +39,7 @@
       "mhrStateRank": 37
     },
     {
-      "name": "Canton Wolves 12U AA (RED)",
+      "name": "Canton Wolves 12U AA (BLUE)",
       "website": "https://www.cantonhockey.org/2013",
       "mhrUrl": "https://myhockeyrankings.com/team-info?t=30275&y=2025",
       "note": "Added as tournament-only opponent.",
@@ -50,7 +50,7 @@
       "mhrStateRank": 50
     },
     {
-      "name": "California Heat",
+      "name": "California Heat (RED)",
       "website": "https://caheathockey.com/",
       "mhrUrl": "https://myhockeyrankings.com/team-info?t=5000&y=2025",
       "note": "Added as tournament-only opponent.",
@@ -61,7 +61,7 @@
       "mhrStateRank": 34
     },
     {
-      "name": "Mooretown Jr Flags U13 B2",
+      "name": "Mooretown Jr Flags U13 B2 (RED)",
       "website": "https://mooretownminorhockey.com/Teams/1994/",
       "mhrUrl": "https://myhockeyrankings.com/team_info.php?y=2025&t=21621",
       "note": "Added as tournament-only opponent.",
@@ -72,7 +72,7 @@
       "mhrStateRank": 54
     },
     {
-      "name": "Mooretown Jr Flags U13 B (RED)",
+      "name": "Mooretown Jr Flags U13 B (BLUE)",
       "website": "https://mooretownminorhockey.com/Teams/1993/",
       "mhrUrl": "https://myhockeyrankings.com/team_info.php?y=2025&t=17253",
       "note": "Added as tournament-only opponent.",
@@ -83,7 +83,7 @@
       "mhrStateRank": 30
     },
     {
-      "name": "Talbot Trail Blazers U13 B (RED)",
+      "name": "Talbot Trail Blazers U13 B (BLUE)",
       "website": "https://essex-southpoint.com/Teams/1394/",
       "mhrUrl": "https://myhockeyrankings.com/team_info.php?y=2025&t=5063",
       "note": "Added as tournament-only opponent.",
