@@ -92,7 +92,7 @@
   {
     "date": "2026-01-16",
     "time": "13:00",
-    "opponent": "CVHA Wolves 13-14AA",
+    "opponent": "Amherst Knights 13AAA",
     "homeAway": "Neutral",
     "leagueGame": false,
     "venue": "USA Hockey Arena 14900 Beck Rd Plymouth MI 48170",
@@ -102,7 +102,7 @@
   {
     "date": "2026-01-16",
     "time": "19:25",
-    "opponent": "Talbot Trail Blazers 13-14B",
+    "opponent": "Mooretown Jr. Flags 13-14 B DIV 1",
     "homeAway": "Neutral",
     "leagueGame": false,
     "venue": "USA Hockey Arena 14900 Beck Rd Plymouth MI 48170",
@@ -111,8 +111,8 @@
   },
   {
     "date": "2026-01-17",
-    "time": "17:20",
-    "opponent": "Mooretown Jr. Flags 13-14A1",
+    "time": "16:00",
+    "opponent": "CVHA Wolves 13-14AA",
     "homeAway": "Neutral",
     "leagueGame": false,
     "venue": "Lincoln Park Community Center 3525 Dix Hwy Lincoln Park MI 48146",
@@ -122,10 +122,10 @@
   {
     "date": "2026-01-18",
     "time": "12:00",
-    "opponent": "SEMI-FINALS",
+    "opponent": "Consolation Game",
     "homeAway": "Neutral",
     "leagueGame": false,
-    "venue": "TBD    ",
+    "venue": "15800 White Ave 15800 White Ave Allen Park MI 48101",
     "source": "ics",
     "sourceId": "7072155175963@www.accounts.crossbar.org"
   },
@@ -135,7 +135,7 @@
     "opponent": "CHAMPIONSHIP GAME",
     "homeAway": "Neutral",
     "leagueGame": false,
-    "venue": "TBD    ",
+    "venue": "USA Hockey Arena 14900 Beck Rd Plymouth MI 48170",
     "source": "ics",
     "sourceId": "8023973175963@www.accounts.crossbar.org"
   },
