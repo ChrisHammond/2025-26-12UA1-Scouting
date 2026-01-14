@@ -17,15 +17,15 @@
   "opponents": [
     "chesterfield-a1",
     {
-      "name": "Amherst Knights 13 AAA",
-      "website": "https://amherstyouthhockey.org/teams/51034/",
-      "mhrUrl": "https://myhockeyrankings.com/team_info.php?y=2024&t=1813",
+      "name": "Amherst Knights 12u AAA",
+      "website": "https://amherstyouthhockey.leagueapps.com/clubteams/4550978/teamRoster?teamId=7283189",
+      "mhrUrl": "https://myhockeyrankings.com/team-info?y=2025&t=1814",
       "note": "Added as tournament-only opponent.",
-      "rating": 86.26,
-      "updatedFromMHRAt": "2026-01-13T11:22:23.780Z",
-      "record": "20-23-5",
-      "mhrNationalRank": 83,
-      "mhrStateRank": 37
+      "rating": 84.27,
+      "updatedFromMHRAt": "2026-01-14T04:47:29.407Z",
+      "record": "4-27-5",
+      "mhrNationalRank": 376,
+      "mhrStateRank": 48
     },
     {
       "name": "Canton Wolves 12U AA",
@@ -33,7 +33,7 @@
       "mhrUrl": "https://myhockeyrankings.com/team-info?t=30275&y=2025",
       "note": "Added as tournament-only opponent.",
       "rating": 83.79,
-      "updatedFromMHRAt": "2026-01-13T11:22:26.567Z",
+      "updatedFromMHRAt": "2026-01-14T04:47:32.409Z",
       "record": "23-5-5",
       "mhrNationalRank": 428,
       "mhrStateRank": 50
@@ -44,7 +44,7 @@
       "mhrUrl": "https://myhockeyrankings.com/team_info.php?y=2025&t=17253",
       "note": "Added as tournament-only opponent.",
       "rating": 83.48,
-      "updatedFromMHRAt": "2026-01-13T11:22:28.881Z",
+      "updatedFromMHRAt": "2026-01-14T04:47:35.336Z",
       "record": "15-15-7",
       "mhrNationalRank": 999,
       "mhrStateRank": 30
