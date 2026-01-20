@@ -1,0 +1,85 @@
+{
+  "name": "PREDSidents Day Classic",
+  "slug": "predsidents",
+  "location": "Nashville, TN",
+  "startDate": "2026-02-13",
+  "endDate": "2026-02-16",
+  "infoUrl": "https://tphevents.leagueapps.com/app/tournaments/4554710",
+  "standingsUrl": "https://tphevents.leagueapps.com/tournaments/4554710/standings",
+  "_notes": {},
+  "opponents": [
+    "chesterfield-a1",
+    {
+      "name": "Breakers 12U AA",
+      "organization": "Palm Beach Breakers",
+      "website": "https://pointstreak.com/players/players-team.html?seasonid=17377&teamid=626245",
+      "mhrUrl": "https://myhockeyrankings.com/team-info/19146/2025",
+      "note": "Added as tournament-only opponent.",
+      "rating": 84.24,
+      "updatedFromMHRAt": "2026-01-20T17:00:27.499Z",
+      "record": "3-17-3",
+      "mhrNationalRank": 394,
+      "mhrStateRank": 20
+    },
+    {
+      "name": "CCYHA 2014 A Blue Jackets",
+      "organization": "Central Ohio Chill Youth Hockey Association",
+      "website": "https://www.ccyha.org/team/118956",
+      "mhrUrl": "https://myhockeyrankings.com/team-info?t=9478&y=2025",
+      "note": "",
+      "rating": 75.85,
+      "updatedFromMHRAt": "2026-01-20T17:00:30.446Z",
+      "record": "20-11-8",
+      "mhrNationalRank": 278,
+      "mhrStateRank": 56
+    },
+    {
+      "name": "Lakeland Jr Mocs 12U A Red",
+      "organization": "Lakeland Jr Mocs",
+      "website": "https://jrmocs.com/",
+      "mhrUrl": "https://myhockeyrankings.com/team-info.php?t=3629&y=2025",
+      "note": "Added as tournament-only opponent.",
+      "rating": 85.61,
+      "updatedFromMHRAt": "2026-01-20T17:00:33.446Z",
+      "record": "14-10-1",
+      "mhrNationalRank": 300,
+      "mhrStateRank": 17
+    },
+    {
+      "name": "Nashville Jr. Predators 12U AA",
+      "organization": "Nashville Elite Hockey Club",
+      "website": "https://www.jrpredators.com/team/12u-aa/",
+      "mhrUrl": "https://myhockeyrankings.com/team-info?t=14627&y=2025",
+      "note": "Team page varies; using tournament participant list as team-specific reference.",
+      "rating": 79.98,
+      "updatedFromMHRAt": "2026-01-20T17:00:37.596Z",
+      "record": "4-25-2",
+      "mhrNationalRank": 800,
+      "mhrStateRank": 8
+    },
+    {
+      "name": "Sno-King Jr Thunderbirds A1",
+      "organization": "Sno-King Jr Thunderbirds",
+      "website": "https://snokinghockey.sprocketsports.com/team/4490/program/9765/overview?navigationTeamID=25469",
+      "mhrUrl": "https://myhockeyrankings.com/team_info.php?t=5153&y=2025",
+      "note": "Using the 12U A1 MHR team page (has ranks).",
+      "rating": 87.47,
+      "updatedFromMHRAt": "2026-01-20T17:00:40.783Z",
+      "record": "20-14-4",
+      "mhrNationalRank": 202,
+      "mhrStateRank": 1
+    },
+    {
+      "name": "Ventura Mariners 12U - Phillips",
+      "organization": "Ventura Mariners",
+      "website": "https://www.venturamariners.com/",
+      "mhrUrl": "https://myhockeyrankings.com/team-info/21092/2025/last10",
+      "note": "Populated using Ventura Mariners 12U A MHR page. If 'Phillips' corresponds to 12U BB instead, we should swap to the 12U BB MHR page.",
+      "rating": 80.04,
+      "updatedFromMHRAt": "2026-01-20T17:00:43.807Z",
+      "record": "5-14-1",
+      "mhrNationalRank": 794,
+      "mhrStateRank": 41
+    }
+  ]
+}
