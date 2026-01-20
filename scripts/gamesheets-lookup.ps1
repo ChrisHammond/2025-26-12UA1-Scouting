@@ -1,15 +1,17 @@
 # ---- Search range ----
 $id    = 13200
-$maxId = 13600
+$maxId = 14600
 
 # ---- What you're looking for ----
 $targetCity      = "Detroit"
-$targetStartDate = [datetime]"2026-01-16"
-$targetEndDate   = [datetime]"2026-01-19"
+$targetStartDate = [datetime]"2026-02-13"
+$targetEndDate   = [datetime]"2026-02-16"
 
 # Keywords that often work even when associationTitle varies
-$titleKeywords = @("Motown", "Detroit")
-$assocKeywords = @("Hockey Time", "Hockey Time Productions")
+# $titleKeywords = @("Motown", "Detroit")
+# $assocKeywords = @("Hockey Time", "Hockey Time Productions")
+$titleKeywords = @("PREDSident", "Nashville")
+$assocKeywords = @("TPH", "TPH Events")
 
 # Output containers
 $matches    = New-Object System.Collections.Generic.List[object]
