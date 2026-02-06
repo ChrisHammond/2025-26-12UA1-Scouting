@@ -16,7 +16,7 @@
       "mhrUrl": "https://myhockeyrankings.com/team-info/19146/2025",
       "note": "Added as tournament-only opponent.",
       "rating": 83.99,
-      "updatedFromMHRAt": "2026-02-06T11:25:01.358Z",
+      "updatedFromMHRAt": "2026-02-06T15:32:49.371Z",
       "record": "3-21-3",
       "mhrNationalRank": 430,
       "mhrStateRank": 20
@@ -28,11 +28,7 @@
       "mhrUrl": "https://myhockeyrankings.com/team-info?t=9478&y=2025",
       "note": "",
       "rating": 76.32,
-<<<<<<< HEAD
-      "updatedFromMHRAt": "2026-02-06T11:25:04.055Z",
-=======
-      "updatedFromMHRAt": "2026-02-05T04:53:56.662Z",
->>>>>>> 4087f99 (Updates)
+      "updatedFromMHRAt": "2026-02-06T15:32:52.387Z",
       "record": "23-11-8",
       "mhrNationalRank": 277,
       "mhrStateRank": 54
@@ -44,11 +40,7 @@
       "mhrUrl": "https://myhockeyrankings.com/team-info.php?t=3629&y=2025",
       "note": "Added as tournament-only opponent.",
       "rating": 85.32,
-<<<<<<< HEAD
-      "updatedFromMHRAt": "2026-02-06T11:25:06.443Z",
-=======
-      "updatedFromMHRAt": "2026-02-05T04:53:59.534Z",
->>>>>>> 4087f99 (Updates)
+      "updatedFromMHRAt": "2026-02-06T15:32:55.354Z",
       "record": "18-10-2",
       "mhrNationalRank": 321,
       "mhrStateRank": 17
@@ -60,13 +52,8 @@
       "mhrUrl": "https://myhockeyrankings.com/team-info?t=14627&y=2025",
       "note": "Team page varies; using tournament participant list as team-specific reference.",
       "rating": 80.25,
-<<<<<<< HEAD
-      "updatedFromMHRAt": "2026-02-06T11:25:09.049Z",
+      "updatedFromMHRAt": "2026-02-06T15:32:58.323Z",
       "record": "5-28-2",
-=======
-      "updatedFromMHRAt": "2026-02-05T04:54:02.467Z",
-      "record": "5-27-2",
->>>>>>> 4087f99 (Updates)
       "mhrNationalRank": 796,
       "mhrStateRank": 8
     },
@@ -77,11 +64,7 @@
       "mhrUrl": "https://myhockeyrankings.com/team_info.php?t=5153&y=2025",
       "note": "Using the 12U A1 MHR team page (has ranks).",
       "rating": 87.71,
-<<<<<<< HEAD
-      "updatedFromMHRAt": "2026-02-06T11:25:11.658Z",
-=======
-      "updatedFromMHRAt": "2026-02-05T04:54:05.326Z",
->>>>>>> 4087f99 (Updates)
+      "updatedFromMHRAt": "2026-02-06T15:33:01.185Z",
       "record": "21-17-4",
       "mhrNationalRank": 198,
       "mhrStateRank": 1
@@ -93,11 +76,7 @@
       "mhrUrl": "https://myhockeyrankings.com/team-info/21092/2025/last10",
       "note": "Populated using Ventura Mariners 12U A MHR page. If 'Phillips' corresponds to 12U BB instead, we should swap to the 12U BB MHR page.",
       "rating": 80.49,
-<<<<<<< HEAD
-      "updatedFromMHRAt": "2026-02-06T11:25:14.197Z",
-=======
-      "updatedFromMHRAt": "2026-02-05T04:54:08.225Z",
->>>>>>> 4087f99 (Updates)
+      "updatedFromMHRAt": "2026-02-06T15:33:05.842Z",
       "record": "8-17-1",
       "mhrNationalRank": 766,
       "mhrStateRank": 41
