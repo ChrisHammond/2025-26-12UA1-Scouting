@@ -16,7 +16,7 @@
       "mhrUrl": "https://myhockeyrankings.com/team-info/19146/2025",
       "note": "Added as tournament-only opponent.",
       "rating": 83.99,
-      "updatedFromMHRAt": "2026-02-08T11:23:12.151Z",
+      "updatedFromMHRAt": "2026-02-09T11:30:54.941Z",
       "record": "3-21-3",
       "mhrNationalRank": 430,
       "mhrStateRank": 20
@@ -28,8 +28,8 @@
       "mhrUrl": "https://myhockeyrankings.com/team-info?t=9478&y=2025",
       "note": "",
       "rating": 76.32,
-      "updatedFromMHRAt": "2026-02-08T11:23:15.186Z",
-      "record": "23-11-8",
+      "updatedFromMHRAt": "2026-02-09T11:30:57.794Z",
+      "record": "25-13-8",
       "mhrNationalRank": 277,
       "mhrStateRank": 54
     },
@@ -40,7 +40,7 @@
       "mhrUrl": "https://myhockeyrankings.com/team-info.php?t=3629&y=2025",
       "note": "Added as tournament-only opponent.",
       "rating": 85.32,
-      "updatedFromMHRAt": "2026-02-08T11:23:19.695Z",
+      "updatedFromMHRAt": "2026-02-09T11:31:01.006Z",
       "record": "18-10-2",
       "mhrNationalRank": 321,
       "mhrStateRank": 17
@@ -52,8 +52,8 @@
       "mhrUrl": "https://myhockeyrankings.com/team-info?t=14627&y=2025",
       "note": "Team page varies; using tournament participant list as team-specific reference.",
       "rating": 80.25,
-      "updatedFromMHRAt": "2026-02-08T11:23:22.443Z",
-      "record": "5-29-2",
+      "updatedFromMHRAt": "2026-02-09T11:31:03.103Z",
+      "record": "5-30-2",
       "mhrNationalRank": 796,
       "mhrStateRank": 8
     },
@@ -64,7 +64,7 @@
       "mhrUrl": "https://myhockeyrankings.com/team_info.php?t=5153&y=2025",
       "note": "Using the 12U A1 MHR team page (has ranks).",
       "rating": 87.71,
-      "updatedFromMHRAt": "2026-02-08T11:23:25.108Z",
+      "updatedFromMHRAt": "2026-02-09T11:31:05.664Z",
       "record": "21-17-4",
       "mhrNationalRank": 198,
       "mhrStateRank": 1
@@ -76,7 +76,7 @@
       "mhrUrl": "https://myhockeyrankings.com/team-info/21092/2025/last10",
       "note": "Populated using Ventura Mariners 12U A MHR page. If 'Phillips' corresponds to 12U BB instead, we should swap to the 12U BB MHR page.",
       "rating": 80.49,
-      "updatedFromMHRAt": "2026-02-08T11:23:27.691Z",
+      "updatedFromMHRAt": "2026-02-09T11:31:08.162Z",
       "record": "8-17-1",
       "mhrNationalRank": 766,
       "mhrStateRank": 41
