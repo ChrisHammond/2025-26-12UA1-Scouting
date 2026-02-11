@@ -15,10 +15,10 @@
       "website": "https://pointstreak.com/players/players-team.html?seasonid=17377&teamid=626245",
       "mhrUrl": "https://myhockeyrankings.com/team-info/19146/2025",
       "note": "Added as tournament-only opponent.",
-      "rating": 83.99,
-      "updatedFromMHRAt": "2026-02-10T11:33:37.953Z",
+      "rating": 84.01,
+      "updatedFromMHRAt": "2026-02-11T11:31:32.588Z",
       "record": "3-21-3",
-      "mhrNationalRank": 430,
+      "mhrNationalRank": 437,
       "mhrStateRank": 20
     },
     {
@@ -27,10 +27,10 @@
       "website": "https://www.ccyha.org/team/118956",
       "mhrUrl": "https://myhockeyrankings.com/team-info?t=9478&y=2025",
       "note": "",
-      "rating": 76.32,
-      "updatedFromMHRAt": "2026-02-10T11:33:40.548Z",
+      "rating": 76.29,
+      "updatedFromMHRAt": "2026-02-11T11:31:35.074Z",
       "record": "25-13-8",
-      "mhrNationalRank": 277,
+      "mhrNationalRank": 278,
       "mhrStateRank": 54
     },
     {
@@ -39,10 +39,10 @@
       "website": "https://jrmocs.com/",
       "mhrUrl": "https://myhockeyrankings.com/team-info.php?t=3629&y=2025",
       "note": "Added as tournament-only opponent.",
-      "rating": 85.32,
-      "updatedFromMHRAt": "2026-02-10T11:33:43.024Z",
+      "rating": 85.36,
+      "updatedFromMHRAt": "2026-02-11T11:31:37.542Z",
       "record": "18-10-2",
-      "mhrNationalRank": 321,
+      "mhrNationalRank": 323,
       "mhrStateRank": 17
     },
     {
@@ -51,10 +51,10 @@
       "website": "https://www.jrpredators.com/team/12u-aa/",
       "mhrUrl": "https://myhockeyrankings.com/team-info?t=14627&y=2025",
       "note": "Team page varies; using tournament participant list as team-specific reference.",
-      "rating": 80.25,
-      "updatedFromMHRAt": "2026-02-10T11:33:45.506Z",
-      "record": "5-30-2",
-      "mhrNationalRank": 796,
+      "rating": 80.21,
+      "updatedFromMHRAt": "2026-02-11T11:31:39.816Z",
+      "record": "6-30-3",
+      "mhrNationalRank": 805,
       "mhrStateRank": 8
     },
     {
@@ -63,8 +63,8 @@
       "website": "https://snokinghockey.sprocketsports.com/team/4490/program/9765/overview?navigationTeamID=25469",
       "mhrUrl": "https://myhockeyrankings.com/team_info.php?t=5153&y=2025",
       "note": "Using the 12U A1 MHR team page (has ranks).",
-      "rating": 87.71,
-      "updatedFromMHRAt": "2026-02-10T11:33:48.130Z",
+      "rating": 87.74,
+      "updatedFromMHRAt": "2026-02-11T11:31:43.106Z",
       "record": "21-17-4",
       "mhrNationalRank": 198,
       "mhrStateRank": 1
@@ -75,10 +75,10 @@
       "website": "https://www.venturamariners.com/",
       "mhrUrl": "https://myhockeyrankings.com/team-info/21092/2025/last10",
       "note": "Populated using Ventura Mariners 12U A MHR page. If 'Phillips' corresponds to 12U BB instead, we should swap to the 12U BB MHR page.",
-      "rating": 80.49,
-      "updatedFromMHRAt": "2026-02-10T11:33:50.852Z",
-      "record": "8-17-1",
-      "mhrNationalRank": 766,
+      "rating": 80.55,
+      "updatedFromMHRAt": "2026-02-11T11:31:45.661Z",
+      "record": "8-18-1",
+      "mhrNationalRank": 769,
       "mhrStateRank": 41
     }
   ]
