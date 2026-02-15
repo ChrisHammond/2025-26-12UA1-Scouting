@@ -1,15 +1,5 @@
 [
   {
-    "date": "2026-01-15",
-    "time": "00:00",
-    "opponent": "TRAVEL DAY",
-    "homeAway": "Neutral",
-    "leagueGame": false,
-    "venue": "Detroit  Detroit MI ",
-    "source": "ics",
-    "sourceId": "7072030175963@www.accounts.crossbar.org"
-  },
-  {
     "date": "2026-01-16",
     "time": "13:00",
     "opponent": "Amherst Knights 13AAA",
@@ -142,7 +132,7 @@
   {
     "date": "2026-02-15",
     "time": "14:30",
-    "opponent": "TBD",
+    "opponent": "Sno-King Jr Thunderbirds",
     "homeAway": "Neutral",
     "leagueGame": false,
     "venue": "Ford Ice Center Bellevue 7638 B Hwy 70 S Nashville TN 37221",
