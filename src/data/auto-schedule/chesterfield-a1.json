@@ -1,25 +1,5 @@
 [
   {
-    "date": "2026-01-16",
-    "time": "13:00",
-    "opponent": "Amherst Knights 13AAA",
-    "homeAway": "Neutral",
-    "leagueGame": false,
-    "venue": "USA Hockey Arena 14900 Beck Rd Plymouth MI 48170",
-    "source": "ics",
-    "sourceId": "7072099175963@www.accounts.crossbar.org"
-  },
-  {
-    "date": "2026-01-16",
-    "time": "19:25",
-    "opponent": "Mooretown Jr. Flags 13-14 B DIV 1",
-    "homeAway": "Neutral",
-    "leagueGame": false,
-    "venue": "USA Hockey Arena 14900 Beck Rd Plymouth MI 48170",
-    "source": "ics",
-    "sourceId": "8023932175963@www.accounts.crossbar.org"
-  },
-  {
     "date": "2026-01-17",
     "time": "16:00",
     "opponent": "CVHA Wolves 13-14AA",
@@ -148,5 +128,35 @@
     "venue": "Nashville  Nashville TN ",
     "source": "ics",
     "sourceId": "7072992175963@www.accounts.crossbar.org"
+  },
+  {
+    "date": "2026-02-21",
+    "time": "23:00",
+    "opponent": "STP",
+    "homeAway": "Neutral",
+    "leagueGame": false,
+    "venue": "Queeny Park Rink 550 Weidman Rd Manchester MO 63011",
+    "source": "ics",
+    "sourceId": "8201974175963@www.accounts.crossbar.org"
+  },
+  {
+    "date": "2026-02-22",
+    "time": "23:00",
+    "opponent": "Round 2-TBD",
+    "homeAway": "Neutral",
+    "leagueGame": false,
+    "venue": "Kirkwood Ice Rink 111 S Geyer Rd Kirkwood MO 63122",
+    "source": "ics",
+    "sourceId": "8202988175963@www.accounts.crossbar.org"
+  },
+  {
+    "date": "2026-03-01",
+    "time": "19:45",
+    "opponent": "BNC Championship Placeholder",
+    "homeAway": "Neutral",
+    "leagueGame": false,
+    "venue": "Centene Community Ice Center 750 Casino Center Dr Maryland Heights MO 63043",
+    "source": "ics",
+    "sourceId": "8202998175963@www.accounts.crossbar.org"
   }
 ]
