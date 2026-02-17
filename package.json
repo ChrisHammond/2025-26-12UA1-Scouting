@@ -18,7 +18,7 @@
     "@tailwindcss/vite": "^4.1.13",
     "astro": "^5.17.2",
     "chart.js": "^4.5.1",
-    "node-ical": "^0.23.1",
+    "node-ical": "^0.25.2",
     "tailwindcss": "^4.1.13"
   },
   "devDependencies": {
