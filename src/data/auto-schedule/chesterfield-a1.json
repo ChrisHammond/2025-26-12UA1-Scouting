@@ -1,15 +1,5 @@
 [
   {
-    "date": "2026-01-17",
-    "time": "16:00",
-    "opponent": "CVHA Wolves 13-14AA",
-    "homeAway": "Neutral",
-    "leagueGame": false,
-    "venue": "Lincoln Park Community Center 3525 Dix Hwy Lincoln Park MI 48146",
-    "source": "ics",
-    "sourceId": "7072236175963@www.accounts.crossbar.org"
-  },
-  {
     "date": "2026-01-18",
     "time": "12:00",
     "opponent": "Consolation Game",
@@ -138,6 +128,16 @@
     "venue": "Queeny Park Rink 550 Weidman Rd Manchester MO 63011",
     "source": "ics",
     "sourceId": "8201974175963@www.accounts.crossbar.org"
+  },
+  {
+    "date": "2026-02-21",
+    "time": "23:00",
+    "opponent": "STP 12U - A1 Heller",
+    "homeAway": "Neutral",
+    "leagueGame": false,
+    "venue": "Queeny 550 Weidman Rd Ballwin MO 63011",
+    "source": "ics",
+    "sourceId": "8206222175963@www.accounts.crossbar.org"
   },
   {
     "date": "2026-02-22",
