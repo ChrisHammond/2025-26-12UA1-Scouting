@@ -22,6 +22,6 @@
     "tailwindcss": "^4.1.13"
   },
   "devDependencies": {
-    "playwright-chromium": "^1.55.1"
+    "playwright-chromium": "^1.58.2"
   }
 }
