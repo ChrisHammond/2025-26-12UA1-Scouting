@@ -1,25 +1,5 @@
 [
   {
-    "date": "2026-01-18",
-    "time": "12:00",
-    "opponent": "Consolation Game",
-    "homeAway": "Neutral",
-    "leagueGame": false,
-    "venue": "15800 White Ave 15800 White Ave Allen Park MI 48101",
-    "source": "ics",
-    "sourceId": "7072155175963@www.accounts.crossbar.org"
-  },
-  {
-    "date": "2026-01-18",
-    "time": "16:55",
-    "opponent": "CHAMPIONSHIP GAME",
-    "homeAway": "Neutral",
-    "leagueGame": false,
-    "venue": "USA Hockey Arena 14900 Beck Rd Plymouth MI 48170",
-    "source": "ics",
-    "sourceId": "8023973175963@www.accounts.crossbar.org"
-  },
-  {
     "date": "2026-01-19",
     "time": "00:00",
     "opponent": "TRAVEL DAY",
@@ -122,16 +102,6 @@
   {
     "date": "2026-02-21",
     "time": "23:00",
-    "opponent": "STP",
-    "homeAway": "Neutral",
-    "leagueGame": false,
-    "venue": "Queeny Park Rink 550 Weidman Rd Manchester MO 63011",
-    "source": "ics",
-    "sourceId": "8201974175963@www.accounts.crossbar.org"
-  },
-  {
-    "date": "2026-02-21",
-    "time": "23:00",
     "opponent": "STP 12U - A1 Heller",
     "homeAway": "Neutral",
     "leagueGame": false,
@@ -140,12 +110,12 @@
     "sourceId": "8206222175963@www.accounts.crossbar.org"
   },
   {
-    "date": "2026-02-22",
-    "time": "23:00",
+    "date": "2026-02-23",
+    "time": "01:00",
     "opponent": "Round 2-TBD",
     "homeAway": "Neutral",
     "leagueGame": false,
-    "venue": "Kirkwood Ice Rink 111 S Geyer Rd Kirkwood MO 63122",
+    "venue": "Centene Community Ice Center 750 Casino Center Dr Maryland Heights MO 63043",
     "source": "ics",
     "sourceId": "8202988175963@www.accounts.crossbar.org"
   },
