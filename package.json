@@ -15,7 +15,7 @@
     "update:all": "npm run update:teams:from-mhr && npm run update:schedules && npm run update:tournaments:inline -- --force && npm run update:teamsranks"
   },
   "dependencies": {
-    "@tailwindcss/vite": "^4.1.13",
+    "@tailwindcss/vite": "^4.2.1",
     "astro": "^5.17.2",
     "chart.js": "^4.5.1",
     "node-ical": "^0.23.1",
