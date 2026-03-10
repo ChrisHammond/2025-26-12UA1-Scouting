@@ -1,9 +1,9 @@
 name: Daily data refresh
 
 on:
-  schedule:
-    # Runs daily at 11:15 UTC (≈ 05:15 America/Chicago most of the year).
-    - cron: "15 11 * * *"
+  # schedule:
+  #  # Runs daily at 11:15 UTC (≈ 05:15 America/Chicago most of the year).
+  #  - cron: "15 11 * * *"
   workflow_dispatch: {}
 
 permissions:
