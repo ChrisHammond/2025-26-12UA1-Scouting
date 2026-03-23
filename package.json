@@ -19,7 +19,7 @@
     "astro": "^5.18.0",
     "chart.js": "^4.5.1",
     "node-ical": "^0.25.5",
-    "tailwindcss": "^4.2.1"
+    "tailwindcss": "^4.2.2"
   },
   "devDependencies": {
     "playwright-chromium": "^1.58.2"
