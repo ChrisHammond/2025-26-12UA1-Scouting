@@ -1,3 +1,6 @@
+# NO LONGER MAINTAINED
+For 2026-27 a new portal has been created, it is not configured in a public repository type of way. If you're interested in getting your own, reach out, I can build one for you ($$$) 
+
 # Scouting Portal (Astro + Tailwind) — **Starter**
 
 An almost-maybe-ready-to-use Astro site for youth hockey scouting: teams, tournaments, games, plus **MyHockeyRankings (MHR)** rating/record/ranks and a rating-history chart.
